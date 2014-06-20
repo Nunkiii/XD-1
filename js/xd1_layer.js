@@ -317,7 +317,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	if(typeof prms[p].onchange == 'undefined')
 	    ui.onchange=function(){
 		//console.log("Change pvals[" + this.layer.id + "]["+this.id+"]=" + this.value);
-		lay.p_values[this.id]=this.value;
+		lay.p_values[this.id]=1.0*this.value;
 		update_pvalues();	    
 	    //update_shader_cb(this.layer.lay.p_values, this.layer.id);
 	    }; 
@@ -561,8 +561,8 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 		    
 		    var rangeLocation = gl.getUniformLocation(xd.program, "u_layer_range");
 		    
-		    xd.p_layer_range[2*lid]=1.0;//w*1.0/w;
-		    xd.p_layer_range[2*lid+1]=1.0;//h*1.0/h;
+		    xd.p_layer_range[2*lid]=lay.width/xd.w;
+		    xd.p_layer_range[2*lid+1]=lay.height/xd.h;
 		    
 		    gl.uniform2fv(rangeLocation, xd.p_layer_range);
 		    var fv=xd.fv;
@@ -698,8 +698,8 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 		console.log("Filling big array with layer  " + id + " : " + w + ", " + h + " global dims " + w + ", "+h);
 		
 		var rangeLocation = gl.getUniformLocation(xd.program, "u_layer_range");
-		xd.p_layer_range[2*id]=w*1.0/w;
-		xd.p_layer_range[2*id+1]=h*1.0/h;
+		xd.p_layer_range[2*id]=lay.width*1.0/xd.w;
+		xd.p_layer_range[2*id+1]=lay.height*1.0/xd.h;
 		
 		gl.uniform2fv(rangeLocation, xd.p_layer_range);
 		var fv=xd.fv;
@@ -1152,6 +1152,23 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     */
 }
 
+/*
+        float lpos=(float(l)+.5)/4.0;
+        float alpha=u_pvals[2*l+1][1];//this layer's angle
+        mat2 rm =mat2(cos(alpha),sin(alpha),-sin(alpha),cos(alpha));//this layer's rotation matrix
+        vec2 trl=vec2(u_pvals[2*l][2],u_pvals[2*l][3]);//this layer's translation (x,y) vector
+        float lzoom=u_pvals[2*l+1][0]; //This layer's zoom level
+        vec2 screen_center = u_screen/2.0; //Screen center
+        vec2 image_tex_center = u_layer_range[l]/2.0; //The center of this layer image within the "whole" texture.
+
+        vec2 p =(gl_FragCoord.xy-screen_center);
+	
+	p = p/u_zoom+u_tr-u_rotc;
+	p = rmg*p+u_rotc;
+	p = p/lzoom+trl-u_rotcenters[l];
+	p = rm*p+u_rotcenters[l];
+	p = p/u_resolution+image_tex_center;
+*/
 
 
 layer.prototype.update_geometry=  function (){
@@ -1160,32 +1177,46 @@ layer.prototype.update_geometry=  function (){
     var alpha_l=-1.0*this.p_values[5];
     var alpha=-1.0*xd.angle;
 
-    this.g_scale=1.0*this.p_values[4]*xd.zoom;
-    this.g_tr=[xd.tr[0]+1.0*this.p_values[2],xd.tr[1]+1.0*this.p_values[3]];
-    this.g_mrot=numeric.dot([[Math.cos(alpha_l),Math.sin(alpha_l)],
-			     [-1.0*Math.sin(alpha_l),Math.cos(alpha_l)]],
-			    [[Math.cos(alpha),Math.sin(alpha)],
-			     [-1.0*Math.sin(alpha),1.0*Math.cos(alpha)]]);
+    this.g_lzoom=1.0*this.p_values[4]; //*xd.zoom;
+
+    this.g_trl=[1.0*this.p_values[2],1.0*this.p_values[3]]; //xd.tr[]
+    this.g_rm=[[Math.cos(alpha_l),Math.sin(alpha_l)],
+	       [-1.0*Math.sin(alpha_l),Math.cos(alpha_l)]];
+    this.g_rmg=[[Math.cos(alpha),Math.sin(alpha)],
+		[-1.0*Math.sin(alpha),1.0*Math.cos(alpha)]];
     this.g_screen_center=[xd.canvas.width/2.0, xd.canvas.height/2.0];
-    //console.log("ROT = " + JSON.stringify(this.g_mrot) + "TR " + JSON.stringify(tr)+ "TR " + JSON.stringify(this.g_tr) + " scale " + this.g_scale);
+    this.g_rotc=[1.0*xd.p_rotcenters[2*this.id],1.0*xd.p_rotcenters[2*this.id+1]];
+    this.g_texc=[this.width/xd.w/2.0, this.height/xd.h/2.0];
+    
+    //console.log("ROTC = " + JSON.stringify(this.g_rotc) + "TEXC " + JSON.stringify(this.g_texc)+ "TR " + JSON.stringify(this.g_trl) + " scale " + this.g_lzoom);
 
 }
 layer.prototype.get_image_pixel= function(screen_pixel) {
+    var xd=this.xd;
     var ipix=[
-	screen_pixel[0]-this.g_screen_center[0]+this.g_tr[0]*this.g_scale,
-	screen_pixel[1]-this.g_screen_center[1]+this.g_tr[1]*this.g_scale
+	(screen_pixel[0]-this.g_screen_center[0])/xd.zoom+xd.tr[0]-xd.rotcenter[0],
+	(screen_pixel[1]-this.g_screen_center[1])/xd.zoom+xd.tr[1]-xd.rotcenter[1]
     ];
     
-    ipix= numeric.dot(this.g_mrot,ipix);
+    ip= numeric.dot(this.g_rmg,ipix);
     
-    ipix[0]=(ipix[0]/this.g_scale+this.width/2.0);
-    ipix[1]=(ipix[1]/this.g_scale+this.height/2.0);
-//    console.log("P="+JSON.stringify(ipix));
+    ipix[0]=((ip[0]+xd.rotcenter[0])/this.g_lzoom+this.g_trl[0]-this.g_rotc[0]);
+    ipix[1]=((ip[1]+xd.rotcenter[1])/this.g_lzoom+this.g_trl[1]-this.g_rotc[1]);
+
+    ip= numeric.dot(this.g_rm,ipix);
+
+//    ipix[0]=(((ipix[0]+this.g_rotc[0])/xd.w+.5)*this.width);
+//    ipix[1]=(((ipix[1]+this.g_rotc[1])/xd.h+.5)*this.height);
+
+    ipix[0]=(ip[0]+this.g_rotc[0])+this.width/2.0;///xd.w+this.g_texc[0];
+    ipix[1]=(ip[1]+this.g_rotc[1])+this.height/2.0;///xd.h+this.g_texc[1];
+    console.log("P="+JSON.stringify(ipix));
     return ipix;
 }
 
 layer.prototype.update_pointer_info=function(screen_pixel){
-    if(typeof this.opts=='undefined') return;
+
+//    if(typeof this.opts=='undefined') return;
 
     var ipix=this.get_image_pixel(screen_pixel);
     if(ipix[0]<0 || ipix[0]>=this.width || ipix[1]<0 || ipix[1]>=this.height){
@@ -1201,7 +1232,7 @@ layer.prototype.update_pointer_info=function(screen_pixel){
 
     this.pointer_info.innerHTML="("+ipix[0]+","+ipix[1]+")<br/>" + Math.floor(pixel_value*1000)/1000.0;
     //POS " +pos + " L= " + this.arr.length + 
-//	" D : " + this.width + "," + this.height ;
+    //	" D : " + this.width + "," + this.height ;
     
 }
 

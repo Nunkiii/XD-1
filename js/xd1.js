@@ -324,11 +324,29 @@ function webGLStart() {
 }
 
 
+var sadira;
+
 window.onload = function(){
     glx_canvas=select(document, "#glxline");       
     //var shad_script=document.getElementById("shader-xd1");
-    var xd1= new xdone();
-
+    
+    var xd1;
+    var hostname//="ws://192.168.1.134:9999";
+	="ws://localhost:9999";
+    
+    sadira=new sadira({ server : hostname}, function(error){
+	console.log("Error sadira init : " + JSON.stringify(error));
+	xd1= new xdone();
+	
+	return;
+    }, function(connected){
+	console.log("Connected !");
+	xd1= new xdone();
+    });
+    
+    
+    
+    
     
 
     //  window.sadira=new sadira({}, function(error){}, function(connected){
@@ -420,6 +438,8 @@ function xdone() {
     this.angle=0;
     this.rotcenter=[0,0];
     this.infs=true;
+
+    if(typeof sadira != 'undefined') this.sadira=sadira;
     
     var xd=this;
 
@@ -785,15 +805,6 @@ function xdone() {
 	xd.canvas.focus();
     });
 
-    var hostname="ws://192.168.1.134:9999";
-    //="ws://localhost:9999";
-    xd.sadira=new sadira({ server : hostname}, function(error){
-	console.log("Error sadira init : " + JSON.stringify(error));
-	return;
-    }, function(connected){
-	console.log("Connected !");
-    });
-    
     
 }
 

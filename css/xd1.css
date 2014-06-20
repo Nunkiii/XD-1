@@ -26,7 +26,7 @@
      background-color: white;
 
      color: #eee;
-     background-color: #222;
+     background-color: black;
 
 
 
@@ -96,20 +96,23 @@
 
 
    input{
-     display: inline-block;
+          display: inline-block;
+          background: rgba(120,220,255,0.5);
+          color: white;
+          border:0px;
+          border-radius: .2em;
      /* max-width: 5em; */
    }
    
-   input[type="color"]{
-     width: 2em;
-   }
-   /*
-   input[type="number"]{
-     width: 100%;
-   }
+input[type="color"]{
+                     width: 2em;
+                     }
+input[type="number"]{
+                      padding: .2em;
+                      }
    
 
-*/
+
    
    header{
      font-size: 2em;
@@ -205,12 +208,12 @@
    }
 
    #gfx{
-     display: inline-block;
-   /*  color: white; */
-     border:1px solid #333;
-     border-radius: .5em;
-     margin-top: 2px;
-
+         display: inline-block;
+         /*  color: white; */
+         border:1px solid #333;
+         border-radius: .5em;
+         margin-top: 2px;
+         vertical-align: bottom;
    }
 
    .layer{
@@ -239,20 +242,20 @@
     }
 
 
-   #gfx_bar{
- font-size: 0.7em;
-     display: block;
-     padding:10px;
+#gfx_bar{
+          font-size: 0.7em;
+          display: block;
+          padding:10px;
+          
+          border-radius: .5em;
+          background-image: url("../ico/discovery1.jpg");
+          background-repeat: no-repeat;
+          height: 60px;
+          background-position: left;
+          
+          }
 
-     border-radius: .5em;
-/*background-image: url("icons/discovery.jpg");
-background-repeat: no-repeat;
-height: 60px;*/
-background-position: right;
-
-   }
-
-   #gfx_bar>strong{
+#gfx_bar>strong{
      font-size: 2.2em; /*color: #d78; */
 
    }
@@ -266,7 +269,9 @@ background-position: right;
      display: inline-block;
    }
 
-   #connexion_status{
+#connexion_status{
+                   position: fixed;
+                   right: 1em;
      display: inline-block;
      border:1px solid #eee;
      padding: .1em;
@@ -373,23 +378,25 @@ background-position: right;
 }
 
 .bar_cnt{
-  display: inline-block;
-  color: #bbb;
-  border: 1px solid #ccc;
-  border-radius: .2em;
-  padding: .2em;
-  border-radius: .5em;
-  margin-bottom: .3em;
+          display: inline-block;
+          color: #bbb;
+          border: 1px solid #ccc;
+          border-radius: .2em;
+          padding: .2em;
+          margin-top: 0em;
+          margin-left: 250px;
+          border-radius: .5em;
+          margin-bottom: 0em;
+          width:60%;
+          
+          }
 
-
-}
-
-   .camera_status{
-     width: 16em;
-     height: 6em;
-     overflow-y: scroll;
-     overflow-x: scroll;
-     background: white;
-     color: black;
-   }
+.camera_status{
+                width: 16em;
+                height: 6em;
+                overflow-y: scroll;
+                overflow-x: scroll;
+                background: white;
+                color: black;
+                }
 
