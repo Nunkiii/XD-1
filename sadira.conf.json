@@ -1,4 +1,4 @@
 {
-	dialogs : ["dialogs/sbig.dialog.js"]
-
+	"https_port": null,
+	"dialogs" : ["/home/fullmoon/prog/dev/XD-1/dialogs/sbig.dialog"]
 }
