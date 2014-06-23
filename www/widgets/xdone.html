@@ -1,0 +1,55 @@
+    <div id="gfx_bar">
+      <header>XD-1</header>
+      <button id="newlayer">Add a new layer</button>
+      <div class="bar_cnt">
+	<strong>Scale</strong> 
+	<input id="zoom", step="0.1", min="0.00001", max="100", type="number", style="display: inline-block;"></input>
+	<strong>Translation</strong> 
+	(TX,TY) = (
+	<input id="tx", type="number", step="10", min="-8192", max="8192", style="display: inline-block;"></input>, 
+	<input id="ty", type="number", step="10", min="-8192", max="8192", style="display: inline-block;"></input>
+	)
+      </div>
+      <div class="bar_cnt"><strong>Rotation</strong> 
+	Angle (rad) : <input id="angle", type="number", step="0.1", min="-100", max="100", style="display: inline-block;"></input>
+	center (X,Y) = ( 
+	<input id="rx", type="number", step="1", min="-8192", max="8192", style="display: inline-block;"></input>, 
+	<input id="ry", type="number", step="1", min="-8192", max="8192", style="display: inline-block;"></input>
+	) 
+	Swap X : <input id="xswap" type="checkbox"></input>
+	Swap Y : <input id="yswap" type="checkbox"></input>
+	<button id="rotselect">Pointer</button>
+	<button id="fullscreen">full/aside</button>
+      </div>
+      <div id="connexion_status"></div>
+      <!-- <div class="bar_cnt"><strong>Display size</strong>  -->
+
+      <!-- 	(DX,DY) = ( -->
+      <!-- 	<input id="dx", type="number", step="10", min="0", max="2048", style="display: inline-block;"></input>, -->
+      <!-- 	<input id="dy", type="number", step="10", min="0", max="2048", style="display: inline-block;"></input> -->
+      <!-- 	) -->
+      <!-- </div> -->
+
+      
+
+    </div>
+    <div id="bottom">
+      <div id="cuts"></div>
+      <div id="gfx" style="display: inline-block; vertical-align: top;">
+	<div id="drawing">
+	  <!-- <svg width="600" height="600" id="svglayer"> -->
+	<!-- 	<polygon points="100,10 40,180 190,60 10,60 160,180" -->
+	<!-- 		 style="fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" /> -->
+	
+	<!-- </svg> -->
+	<canvas id="glscreen" ></canvas>
+	<canvas id="glxline" ></canvas>
+	
+	</div>
+	
+	<div id="drawing_info"><div id=canvas_info></div> Pointer : <div id="pointer_info"></div> </div>
+      </div>
+    </div>
+    <footer>
+      Pierre Sprimont, 2014, INAF/IASF-Bologna, Italy 
+    </footer>
