@@ -66,18 +66,25 @@ dialog_handlers.sbig = {
 		    //fifi.write_image_hdu(img);
 		    
 		    //if( m instanceof sbig.mat_ushort){
-		    
+	  
 		    image.swapx();
 		    image.swapy();
-
+	  
 		    var data=image.get_data();
 
 		    console.log("Got data  + " + (typeof data) );
+
+
+		    console.log("We have the data buffer serializing... SRZ is  " + typeof SRZ);
+		    console.log("We have the data buffer serializing... SRZ is  " + typeof SRZ.srz_mem);
 		    
 		    var srep=new SRZ.srz_mem(data);
+
+		    console.log("Filling header");
+
 		    srep.header={width : image.width(), height: image.height(), name : "SBIG capture"};
 		    //srep.header={width : 512, height: 512 };
-		    
+
 		    console.log("SRZ configured size= " + srep.size());
 		    
 		    srep.on_done=function(){
@@ -85,18 +92,20 @@ dialog_handlers.sbig = {
 			//dlg.close();
 		    };
 		    
+		    send_info("serializing...");
+		    console.log("serializing...");
 		    dlg.srz_initiate(srep, function(error){
 			if(error) console.log("SRZ error : " + error);
 		    });
-		    
+		    console.log("serializing call done...");
 
 
 		}
 		    
 		if(expo_message.done){
-		    
+		    console.log("Sending DONE message .... ");
 		    send_info(expo_message.done + " --> standby ...");
-
+		    console.log("Sending DONE message .... DONE ");
 
 		    /*
 		    cam.shutdown(function (shut_msg){
@@ -105,9 +114,19 @@ dialog_handlers.sbig = {
 		    });
 		    */
 		}
-		
+	
 		if(expo_message.error){		
+		    console.log("EXPO ERROR!");
 		    send_info(expo_message.error + "");
+		}
+
+
+		if(expo_message.expo_complete){		
+		    send_info(expo_message.expo_complete);
+		}
+
+		if(expo_message.grab_complete){		
+		    send_info(expo_message.grab_complete);
 		}
 		
 	    });
