@@ -4,7 +4,7 @@
    /*   margin:0em; */
    /* } */
    
-  [data-widget="xdone_false"]>button {
+  button {
      display: inline-block;
      text-decoration: none; 
      background: #e66;
@@ -16,7 +16,7 @@
      padding: 0.3em;
    }
    
-    [data-widget="xdone_false"]>button: hover{
+    button: hover{
      background: #fe8;
    }
    
@@ -35,7 +35,7 @@
      font-family: Sans-Serif;
    }
    
-    [data-widget="xdone_false"]>h2{
+    h2{
      color: #20ffff;
      /* text-shadow: 1px 1px 2px rgba(255, 255, 255, 1.0); */
    }
@@ -44,15 +44,15 @@
      color : white;
    }
 
-    [data-widget="xdone_false"]>nav.layer_head{
+    nav.layer_head{
      display: inline-block;
      
    }
  
-   [data-widget="xdone_false"]>nav.layer_head{
+   nav.layer_head{
     list-style-type:none;
    }
-    [data-widget="xdone_false"]>nav.layer_head>li{
+    nav.layer_head>li{
      display: inline-block;
      padding: .3em;
      background-color: #66a;
@@ -61,7 +61,7 @@
      cursor: pointer;
      border-radius : 1em 1em 0em 0em;
    }
-    [data-widget="xdone_false"]>nav.layer_head>li:hover{
+    nav.layer_head>li:hover{
      background-color: #33b;
    }
 
@@ -72,11 +72,11 @@
 
    /* source sections */
    
-    [data-widget="xdone_false"]>nav.source_head{
+    nav.source_head{
     list-style-type:none;
    }
 
-    [data-widget="xdone_false"]>nav.source_head>li{
+    nav.source_head>li{
      display: inline-block;
      padding: .3em;
      background-color: #6a6;
@@ -85,7 +85,7 @@
      cursor: pointer;
      border-radius : 1em 1em 0em 0em;
    }
-    [data-widget="xdone_false"]>nav.source_head>li:hover{
+    nav.source_head>li:hover{
      background-color: #3b3;
    }
 
@@ -95,7 +95,7 @@
    }
 
 
-    [data-widget="xdone_false"]>input{
+    input{
           display: inline-block;
           background: rgba(120,220,255,0.5);
           color: white;
@@ -104,24 +104,24 @@
      /* max-width: 5em; */
    }
    
- [data-widget="xdone_false"]>input[type="color"]{
+ input[type="color"]{
                      width: 2em;
                      }
- [data-widget="xdone_false"]>input[type="number"]{
+ input[type="number"]{
                       padding: .2em;
                       }
    
 
 
    
-    [data-widget="xdone_false"]>header{
+    header{
      font-size: 2em;
      float: left;
      margin-right : .3em;
      text-shadow: 1px 1px 2px rgba(255, 55, 55, 1.0); 
    }
    
-    [data-widget="xdone_false"]>footer{
+    footer{
      text-align: right;
      font-size: 0.7em;
      vertical-align: middle;
@@ -146,7 +146,7 @@
     }
 
 
-     [data-widget="xdone_false"]>h1{
+     h1{
     
     display: inline-block;
     font-size: 1.5em;
@@ -157,12 +157,12 @@
     }
     
 
-    [data-widget="xdone_false"]>table{
-     border-collapse: collapse;
-
-   }
+table{
+  border-collapse: collapse;
+  
+}
    
-    [data-widget="xdone_false"]>td{
+    td{
      align : center;
    }
 

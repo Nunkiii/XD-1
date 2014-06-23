@@ -430,6 +430,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     function init_cam_source() {
 
 	var table=document.createElement("table");
+
 	var tr1=table.appendChild(document.createElement("tr"));
 	var tr2=table.appendChild(document.createElement("tr"));
 	var tr3=table.appendChild(document.createElement("tr"));
@@ -437,11 +438,18 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 
 	var dialog_button = document.createElement("button");	
 	var start_stop_button = document.createElement("button");	
+	start_stop_button.innerHTML="Start camera";
+
+	var start_expo = document.createElement("button");
+	start_expo.innerHTML="Start exposure";
+
+
 	var exptime = document.createElement("input");
 	var status = document.createElement("div");
 	status.style.overflow="scroll";
 
 
+	
 	exptime.type="number";
 	exptime.value=1.0;
 	exptime.step=1.0;
@@ -456,14 +464,11 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	nexpo.min=0;
 	nexpo.max=100;
 	
-	var start_expo = document.createElement("button");
 	var camera_status = document.createElement("div");
 	//camera_status.style.overflow="scroll";	
 	camera_status.className="camera_status";
 	
 	dialog_button.innerHTML="Start ws dialog";
-	start_stop_button.innerHTML="Start camera";
-	start_expo.innerHTML="Start exposure";
 	
 	cam_source.div.appendChild(table);
 	cam_source.div.appendChild(status);
@@ -474,7 +479,8 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	td.appendChild(start_stop_button);
 
 	td=tr1.appendChild(document.createElement("td"));
-	td.appendChild(camera_status);
+	td.appendChild(start_expo);
+
 
 
 	td=tr2.appendChild(document.createElement("th"));
@@ -483,15 +489,24 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	td.innerHTML="Nexpo";
 
 	td=tr3.appendChild(document.createElement("td"));
+	td.appendChild(camera_status);
+
+	td=tr2.appendChild(document.createElement("td"));
 	td.appendChild(exptime);
-	td=tr3.appendChild(document.createElement("td"));
+	td=tr2.appendChild(document.createElement("td"));
 	td.appendChild(nexpo);
-	td=tr3.appendChild(document.createElement("td"));
-	td.appendChild(start_expo);
+
 	
 	//camera_status.innerHTML="Not connected";
+
+
+	
+
 	
 	dialog_button.onclick=function(){
+
+
+
 	    
 	    var d= xd.sadira.dialogs.create_dialog({ handler : "sbig.drive"});
 	    

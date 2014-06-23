@@ -336,7 +336,7 @@ window.onload = function(){
     var hostname//="ws://192.168.1.134:9999";
 	="ws://localhost:9999";
     
-    sadira=new sadira({ server : hostname, widget_prefix : "widgets", server_prefix : "~fullmoon/XD-1/www"}, function(error){
+    sadira=new sadira({ server : hostname, widget_prefix : "widgets", server_prefix : "~fullmoon/XD-1"}, function(error){
 	console.log("Error sadira init : " + JSON.stringify(error));
 	xd1= new xdone();
 	
@@ -430,7 +430,7 @@ function xdone() {
     xd.layer_menu=mb.add_item("Layers", function(e){});
     xd.layer_menu=mb.add_item("About", function(e){});
 
-    xd.set_menu(mb);    
+//    xd.set_menu(mb);    
 
     this.gl=null;
     this.canvas=null;
@@ -731,7 +731,7 @@ xdone.prototype.xdone_init=function(){
 			   );
 	    
 	    
-	    xd.add_widget(l);
+	    //xd.add_widget(l);
 	    
 	    xd.layers[xd.nlayers]=l;
 	    xd.layer_enabled[xd.nlayers]=1;
