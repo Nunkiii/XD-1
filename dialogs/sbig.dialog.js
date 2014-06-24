@@ -31,9 +31,26 @@ dialog_handlers.sbig = {
 	    
 	});
 
+	dlg.listen("get_cooling_info",function(dgram){
+	    var cooling = cam.get_temp();
+	    dlg.send_datagram({type : "cooling_info", cooling_info : cooling},null,function(error){} );
+//	    console.log("Cam t = " + JSON.stringify(temp));
+	});
 
+	dlg.listen("set_cooling",function(dgram){
+	    var enabled=dgram.header.enabled * 1.0;
+	    var setpoint=dgram.header.setpoint*1.0;
+	    // if(!enabled || !setpoint){
+	    // 	send_info("Error, bad cooling parameters! enabled="+enabled + " sp="+setpoint);
+	    // 	return;
+	    // }
+	    cam.set_temp(enabled,setpoint);
+	    send_info("Cooling parameters set !");
+//	    console.log("Cam t = " + JSON.stringify(temp));
+	});
+	
 	dlg.listen("start_expo",function(dgram){
-
+	    
 	    
 	    var expo_counter=0;
 	    cam.exptime=dgram.header.exptime;
@@ -122,11 +139,11 @@ dialog_handlers.sbig = {
 
 
 		if(expo_message.expo_complete){		
-		    send_info(expo_message.expo_complete);
+		    dlg.send_datagram({type : "expo_progress", value : expo_message.expo_complete},null,function(error){} );
 		}
 
 		if(expo_message.grab_complete){		
-		    send_info(expo_message.grab_complete);
+		    dlg.send_datagram({type : "grab_progress", value : expo_message.grab_complete},null,function(error){} );
 		}
 		
 	    });

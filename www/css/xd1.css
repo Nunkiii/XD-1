@@ -320,6 +320,13 @@ table{
   stroke-width: 3px;
 }
 
+
+
+.tline {
+  stroke: red;
+  stroke-width: 2px;
+}
+
 .brush rect.extent {
   fill: purple; /*steelblue;*/
   fill-opacity: .425;
@@ -392,7 +399,6 @@ table{
           }
 
 .camera_status{
-                width: 16em;
                 height: 6em;
                 overflow-y: scroll;
                 overflow-x: scroll;
