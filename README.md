@@ -16,7 +16,9 @@ Then simply open the `xd1.html` file with a web browser to view your local FITS 
 
 The code published here may be highly unstable, see online web demos for more "stable" versions.
 
-http://ross.iasfbo.inaf.it/~gloria/xd1/
+* http://ross.iasfbo.inaf.it/~gloria/js9/ (oldest)
+* http://ross.iasfbo.inaf.it/~gloria/xd1/  (older)
+* http://sadira.iasfbo.inaf.it/~pg/XD-1/   (newest)
 
 ####Starting the sadira server (To handle experimental SBIG camera support)
 
