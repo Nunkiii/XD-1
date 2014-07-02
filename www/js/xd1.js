@@ -3,155 +3,6 @@ var gl,glx=null,glx_canvas;
 //simplest vertex shader for the box.
 var vertex_shader_src="attribute vec4 vPosition; void main() {gl_Position = vPosition;}";
 
-
-// creates a global "addWheelListener" method
-// example: addWheelListener( elem, function( e ) { console.log( e.deltaY ); e.preventDefault(); } );
-(function(window,document) {
-
-    var prefix = "", _addEventListener, onwheel, support;
-
-    // detect event model
-    if ( window.addEventListener ) {
-        _addEventListener = "addEventListener";
-    } else {
-        _addEventListener = "attachEvent";
-        prefix = "on";
-    }
-
-    // detect available wheel event
-    support = "onwheel" in document.createElement("div") ? "wheel" : // Modern browsers support "wheel"
-    document.onmousewheel !== undefined ? "mousewheel" : // Webkit and IE support at least "mousewheel"
-    "DOMMouseScroll"; // let's assume that remaining browsers are older Firefox
-
-    window.addWheelListener = function( elem, callback, useCapture ) {
-        _addWheelListener( elem, support, callback, useCapture );
-
-        // handle MozMousePixelScroll in older Firefox
-        if( support == "DOMMouseScroll" ) {
-            _addWheelListener( elem, "MozMousePixelScroll", callback, useCapture );
-        }
-    };
-
-    function _addWheelListener( elem, eventName, callback, useCapture ) {
-        elem[ _addEventListener ]( prefix + eventName, support == "wheel" ? callback : function( originalEvent ) {
-            !originalEvent && ( originalEvent = window.event );
-
-            // create a normalized event object
-            var event = {
-                // keep a ref to the original event object
-                originalEvent: originalEvent,
-                target: originalEvent.target || originalEvent.srcElement,
-                type: "wheel",
-                deltaMode: originalEvent.type == "MozMousePixelScroll" ? 0 : 1,
-                deltaX: 0,
-                delatZ: 0,
-                preventDefault: function() {
-                    originalEvent.preventDefault ?
-                        originalEvent.preventDefault() :
-                        originalEvent.returnValue = false;
-                }
-            };
-            
-            // calculate deltaY (and deltaX) according to the event
-            if ( support == "mousewheel" ) {
-                event.deltaY = - 1/40 * originalEvent.wheelDelta;
-                // Webkit also support wheelDeltaX
-                originalEvent.wheelDeltaX && ( event.deltaX = - 1/40 * originalEvent.wheelDeltaX );
-            } else {
-                event.deltaY = originalEvent.detail;
-            }
-
-            // it's time to fire the callback
-            return callback( event );
-
-        }, useCapture || false );
-    }
-    
-})(window,document);
-
-
-// Returns a transformation matrix as a flat array with 16 components, given:
-// ox, oy, oz: new origin (translation)
-// rx, ry, rz: rotation angles (radians)
-// s: scaling factor
-// d: distance between camera and origin after translation,
-//     if d <= -n skips projection completely
-// f: z coordinate of far plane (normally positive)
-// n: z coordinate of near plane (normally negative)
-// ar: aspect ratio of the viewport (e.g. 16/9)
-// exz: if true exchanges X and Z coords after projection
-function getTransformationMatrix(ox, oy, oz, rx, ry, rz, s, d, f, n, ar, exz)
-{
-    // Pre-computes trigonometric values
-    var cx = Math.cos(rx), sx = Math.sin(rx);
-    var cy = Math.cos(ry), sy = Math.sin(ry);
-    var cz = Math.cos(rz), sz = Math.sin(rz);
-    
-    // Tests if d is too small, hence making perspective projection not possible
-    if (d <= -n)
-    {
-	// Transformation matrix without projection
-	return new Float32Array([
-	    (cy*cz*s)/ar,cy*s*sz,-s*sy,0,
-	    (s*(cz*sx*sy-cx*sz))/ar,s*(sx*sy*sz+cx*cz),cy*s*sx,0,
-	    (s*(sx*sz+cx*cz*sy))/ar,s*(cx*sy*sz-cz*sx),cx*cy*s,0,
-	    (s*(cz*((-oy*sx-cx*oz)*sy-cy*ox)-(oz*sx-cx*oy)*sz))/ar,
-	    s*(((-oy*sx-cx*oz)*sy-cy*ox)*sz+cz*(oz*sx-cx*oy)),
-	    s*(ox*sy+cy*(-oy*sx-cx*oz)),1    
-	]);
-    }
-    else
-    {
-	// Pre-computes values determined with wxMaxima
-	var A=d;
-	var B=(n+f+2*d)/(f-n);
-	var C=-(d*(2*n+2*f)+2*f*n+2*d*d)/(f-n);
-	
-	// Tests if X and Z must be exchanged
-	if(!exz)
-	{
-	    // Full transformation matrix
-	    return new Float32Array([
-		(cy*cz*s*A)/ar,cy*s*sz*A,-s*sy*B,-s*sy,
-		(s*(cz*sx*sy-cx*sz)*A)/ar,s*(sx*sy*sz+cx*cz)*A,cy*s*sx*B,cy*s*sx,
-		(s*(sx*sz+cx*cz*sy)*A)/ar,s*(cx*sy*sz-cz*sx)*A,cx*cy*s*B,cx*cy*s,
-		(s*(cz*((-oy*sx-cx*oz)*sy-cy*ox)-(oz*sx-cx*oy)*sz)*A)/ar,
-		s*(((-oy*sx-cx*oz)*sy-cy*ox)*sz+cz*(oz*sx-cx*oy))*A,
-		C+(s*(ox*sy+cy*(-oy*sx-cx*oz))+d)*B,s*(ox*sy+cy*(-oy*sx-cx*oz))+d
-	    ]);
-	}
-	else
-	{
-	    // Full transformation matrix with XZ exchange
-	    return new Float32Array([
-		    -s*sy*B,cy*s*sz*A,(cy*cz*s*A)/ar,-s*sy,
-		cy*s*sx*B,s*(sx*sy*sz+cx*cz)*A,(s*(cz*sx*sy-cx*sz)*A)/ar,cy*s*sx,
-		cx*cy*s*B,s*(cx*sy*sz-cz*sx)*A,(s*(sx*sz+cx*cz*sy)*A)/ar,cx*cy*s,
-		C+(s*(ox*sy+cy*(-oy*sx-cx*oz))+d)*B,s*(((-oy*sx-cx*oz)*sy-cy*ox)*sz+cz*(oz*sx-cx*oy))*A,
-		(s*(cz*((-oy*sx-cx*oz)*sy-cy*ox)-(oz*sx-cx*oy)*sz)*A)/ar,s*(ox*sy+cy*(-oy*sx-cx*oz))+d
-	    ]);
-	}
-    }
-}
-
-
-//Returns a dom object present in this widget's HTML dom structure based on a selector.
-
-function select(node, selector){
-    var tmp_objects=node.querySelectorAll(selector);
-    for(var i=0;i<tmp_objects.length;i++) 
-	if(tmp_objects[i].dataset)
-	    return tmp_objects[i];
-    return null;
-}
-
-//Returns a dom object present in this widget's HTML dom structure based on a selector.
-
-function select_all(node, selector){
-    return node.querySelectorAll(selector);
-}
-
-
 function create_shader(gldev, shader_source, type) {
     var shader;
     if (typeof type == 'undefined')
@@ -333,9 +184,10 @@ window.onload = function(){
 //    alert(JSON.stringify(window.location.pathname));
 
     var xd1;
-    var hostname="ws://192.168.176.103:9999";
+    var hostname
+    //="ws://192.168.176.103:9999";
     //="ws://192.168.1.134:9999";
-    //="ws://localhost:9999";
+    ="ws://localhost:9999";
     
     sadira=new sadira({ server : hostname, widget_prefix : "widgets", server_prefix : "~fullmoon/XD-1"}, function(error){
 	console.log("Error sadira init : " + JSON.stringify(error));
@@ -408,30 +260,20 @@ window.onload = function(){
 	 0, //Rot
 	 1.0, //Luminosity
 	 0
-	]
-    ];
+	 ]
+];
+
+
 
 
 function xdone() {
 
-    console.log("xd1 constructor");
-    this.widget_name="xdone";
+    var hash = CryptoJS.SHA1("sadira");
+    console.log("sadira="+hash);
+
     this.title="XD-1";
 
-    sobj.prototype.constructor.apply(this,arguments);
-    
     var xd=this;    
-      
-    var mb=xd.menubar=new menu_item();
-    mb.set_root();//{cls :"vertical"});
-    mb.ul.style.zIndex=20;
-
-    console.log("xd1 wname is " + this.widget_name);
-
-    xd.layer_menu=mb.add_item("Layers", function(e){});
-    xd.layer_menu=mb.add_item("About", function(e){});
-
-//    xd.set_menu(mb);    
 
     this.gl=null;
     this.canvas=null;
@@ -470,21 +312,13 @@ function xdone() {
     var tr_loc;
     var rotcenter_loc;
 
-
-    this.set_html(function(){
-	xd.xdone_init();
-    });
+    xd.xdone_init();
 }
 
-xdone.prototype=new sobj();
-xdone.prototype.constructor = xdone; 
 
 xdone.prototype.xdone_init=function(){
 
-
-    console.log("xd1 init");
     var xd=this;
-
     
     function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
@@ -497,13 +331,94 @@ xdone.prototype.xdone_init=function(){
     this.selected_layer=null;
 
     var xdone_node  = document.getElementById("xdone");
-    xdone_node.appendChild(this.widget_div);
+    var bar_node  = select(xdone_node,"#gfx_bar");
+    var cuts_node  = select(xdone_node,"#cuts");
 
-    var pointer_info  = xd.select('#pointer_info');
-    var cmap_el=xd.select('#cuts');
-    var canvas_info  = xd.select('#canvas_info');
-    glx_canvas=xd.select("#glxline");       
+    //var dbv = new db_view(tmaster.templates["gl_view_2d"]);
+    //xdone_node.appendChild(dbv.widget_div);
     
+    // var layer_view= new db.object(tmaster.templates["gl_view_2d"]);
+    
+    // layer_view.create({}, function() {
+
+    // 	xdone_node.appendChild(layer_view.odiv);
+    // } );
+    
+    
+    var glv_opts = tmaster.build_template("gl_view_2d"); 
+
+    var tr=glv_opts.elements.translation;
+    var zm=glv_opts.elements.zoom; 
+    var ag=glv_opts.elements.rotation.elements.angle; 
+    var rc=glv_opts.elements.rotation.elements.center;
+
+    tr.onchange = function(){
+	xd.tr[0]=this.value[0];
+	xd.tr[1]=this.value[1];
+	//console.log("Tx changed " + JSON.stringify(xd.tr));
+	gl.uniform2fv(tr_loc, xd.tr);
+	xd.render();
+    };
+    zm.onchange=function(){
+	xd.zoom=this.value;
+	update_zoom();
+    }
+    ag.onchange=function(){
+	xd.angle=this.value;
+	gl.uniform1f(angle_loc, xd.angle);
+	xd.render();
+    }
+    rc.onchange=function(){
+	xd.rotcenter[0]=this.value[0];
+	xd.rotcenter[1]=this.value[1];
+	gl.uniform2fv(rotcenter_loc, xd.rotcenter);
+	xd.render();
+    }
+    
+    bar_node.appendChild(create_ui({ type: "short", root_classes : ["flat"] } , glv_opts));
+
+
+    var layer_tabs=new tab_widget();
+    cuts_node.appendChild(layer_tabs.div);
+
+    var mb=new menu_item(); mb.set_root();
+    
+    var xdm=mb.add_item("");
+    xdm.add_item("Add layer", function(e){
+	if(xd.nlayers<xd.maxlayers){
+	    var l=new layer(xd, xd.nlayers,opts,
+			    function(p_values, layer_id){
+			    },
+			    function(cmap_data, layer_id){
+			    }
+			   );
+
+	    xd.layers[xd.nlayers]=l;
+	    xd.layer_enabled[xd.nlayers]=1;
+	    var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
+	    gl.uniform4iv(le_loc, layer_enabled);
+	    
+
+	    l.li_layer=layer_tabs.add_frame("Layer "+xd.nlayers);
+	    console.log("Setting bg to " + l.cmap.gradient_css_string);
+	    l.li_layer.style.background=l.cmap.gradient_css_string;
+
+	    l.li_layer.appendChild(l.pointer_info);
+	    l.li_layer.div.appendChild(l.div);
+	    xd.nlayers++;
+	    xd.fullscreen(false);
+	}else alert("Max 4 layers!");
+
+    });
+
+    xdm.add_item("About XD-1", function(e){});
+    
+    attach_menu(glv_opts, mb);
+
+    var pointer_info  = select(xdone_node,'#pointer_info');
+    var cmap_el=select(xdone_node,'#cuts');
+    var canvas_info  = select(xdone_node,'#canvas_info');
+    glx_canvas=select(xdone_node,"#glxline");       
 
     this.layer_nav=cmap_el.appendChild(document.createElement("nav"));
     this.layer_view=cmap_el.appendChild(document.createElement("div"));
@@ -511,12 +426,11 @@ xdone.prototype.xdone_init=function(){
     this.layer_view.className="layer_view";
     this.layer_nav.className="layer_nav";
     canvas_info.className="canvas_info";
-    
 
     
-    xd.canvas        = xd.select('#glscreen');
+    xd.canvas        = select(xdone_node,'#glscreen');
     xd.gl            = xd.canvas.getContext('experimental-webgl');
-    gl=xd.gl;
+
     //xd.ctx    = xd.canvas.getContext('2d');
     
     var mouseon = false;
@@ -565,13 +479,14 @@ xdone.prototype.xdone_init=function(){
 
 	return false;
     });
+
+    
     
     
     function update_zoom(){
 	xd.gl.uniform1f(zoom_loc, xd.zoom);
 	xd.zoom=Math.floor(xd.zoom*1000.0)/1000;
-	zm.step=Math.floor(zm.value*100)/1000; 
-	
+	zm.ui.step=Math.floor(zm.value*100)/1000; 
 	xd.render();
 
     }
@@ -587,6 +502,7 @@ xdone.prototype.xdone_init=function(){
 	(delta > 0)?xd.zoom-=xd.zoom/10.0 : xd.zoom+=xd.zoom/10.0;
 	update_zoom();	    
 	zm.value=xd.zoom;
+	zm.set_value();
 	
 	//canvas.style.width = Math.max(sq.zoom, Math.min(sq.nw, canvas.width + (sq.zoom * delta))) + "px";
 
@@ -597,6 +513,13 @@ xdone.prototype.xdone_init=function(){
     addWheelListener( xd.canvas, mouse_wheel);
 
     
+    gl=xd.gl;
+    
+    if(!gl){
+	alert("WebGL support lacking on your browser, you cannot use this application, sorry!");
+	return;
+    }
+
     var available_extensions = xd.gl.getSupportedExtensions();
     //glexts.innerHTML="<pre>"+JSON.stringify(available_extensions,null,4)+"</pre>";
     
@@ -606,13 +529,12 @@ xdone.prototype.xdone_init=function(){
 	return;
     }
     
-    
     var buffer = xd.gl.createBuffer();
     gl.bindBuffer(xd.gl.ARRAY_BUFFER, buffer);
     
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 1, gl.FLOAT, false, 0, 0);
-    
+
     gl.bufferData(
 	gl.ARRAY_BUFFER, 
 	new Float32Array([
@@ -625,19 +547,14 @@ xdone.prototype.xdone_init=function(){
 	gl.STATIC_DRAW
     );
 
-    
+
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
-    
     gl.shaderSource(vertexShader, vertex_shader_src);
-    
     gl.compileShader(vertexShader);
 
-    xd.select("#fullscreen").onclick=function(){ xd.fullscreen(xd.infs?false:true);};
+    select(xdone_node,"#fullscreen").onclick=function(){ xd.fullscreen(xd.infs?false:true);};
 
-    var layer_enabled = new Int32Array([1,0,0,0]);
-    this.layer_enabled=layer_enabled;
-    //var layers =[];
-    //var nlayers=1;
+    var layer_enabled = this.layer_enabled= new Int32Array([1,0,0,0]);
 
     this.p_vals=new Float32Array(4*8);
     this.p_rotcenters=new Float32Array(4*2);
@@ -645,9 +562,6 @@ xdone.prototype.xdone_init=function(){
     this.ncolors=new Int32Array([0,0,0,0]);    
     this.cmap_texdata = new Float32Array(16*128);
     this.cmap_fracdata = new Float32Array(16*128);
-
-    //gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
-
 
     var texture = gl.createTexture();
     var cmap_texture = gl.createTexture();
@@ -657,135 +571,15 @@ xdone.prototype.xdone_init=function(){
     this.cmap_texture=cmap_texture;
     this.cmap_frac=cmap_frac;
 
+    webGLStart(select(xdone_node,'#glxline'));
 
     xd.zoom=1.0;
     xd.angle=0.0;
     xd.tr=[0,0];
     xd.rotcenter=[0,0];
 
-    var zm=xd.select('#zoom');
-    var tx=xd.select('#tx');
-    var ty=xd.select('#ty');
-    var rx=xd.select('#rx');
-    var ry=xd.select('#ry');
-
-    var ag=xd.select('#angle');
-    
-    tx.value=xd.tr[0];
-    ty.value=xd.tr[1];
-    rx.value=xd.rotcenter[0];
-    ry.value=xd.rotcenter[1];
-
-    ag.value=xd.angle;    
-    zm.value=xd.zoom;
-
-    webGLStart(xd.select('#glxline'));
-
-    zm.onchange=function(){
-	xd.zoom=this.value;
-	update_zoom();
-    }
-
-    ag.onchange=function(){
-	xd.angle=this.value;
-	gl.uniform1f(angle_loc, xd.angle);
-	xd.render();
-    }
-
-    tx.onchange=function(){
-	xd.tr[0]=this.value;
-	gl.uniform2fv(tr_loc, xd.tr);
-	xd.render();
-    }
-    ty.onchange=function(){
-	xd.tr[1]=this.value;
-	gl.uniform2fv(tr_loc, xd.tr);
-	xd.render();
-    }
-    rx.onchange=function(){
-	xd.rotcenter[0]=this.value;
-	gl.uniform2fv(rotcenter_loc, xd.rotcenter);
-	xd.render();
-    }
-    ry.onchange=function(){
-	xd.rotcenter[1]=this.value;
-	gl.uniform2fv(rotcenter_loc, xd.rotcenter);
-	xd.render();
-    }
-    
-    //    for(var i=0;i <4;i++) 
-
-    //var opts = {source : "sadira"};
     var opts = {source : "fits"};
 
-    var newlayer=xd.select("#newlayer");
-
-    
-    
-    newlayer.onclick=function(){
-	if(xd.nlayers<xd.maxlayers){
-	    var l=new layer(xd, xd.nlayers,opts,
-			    function(p_values, layer_id){
-			    },
-			    function(cmap_data, layer_id){
-			    }
-			   );
-	    
-	    
-	    //xd.add_widget(l);
-	    
-	    xd.layers[xd.nlayers]=l;
-	    xd.layer_enabled[xd.nlayers]=1;
-	    var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
-	    gl.uniform4iv(le_loc, layer_enabled);
-
-	    l.li_layer=document.createElement("li");
-
-	    var check_enabled=document.createElement("input");
-	    check_enabled.style.display="inline-block";
-	    check_enabled.type="checkbox";
-	    check_enabled.checked=true;
-	    var check_caption=document.createElement("span");
-	    check_caption.innerHTML+=" Visible "; //+l.div.innerHTML;
-	    l.layer_head.appendChild(check_caption);
-	    l.layer_head.appendChild(check_enabled);
-	    
-
-	    
-	    check_enabled.addEventListener("click",function(){
-		//console.log("Check Click !!!");
-		xd.layer_enabled[l.id]=this.checked;
-		
-		var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
-		gl.uniform4iv(le_loc, xd.layer_enabled);
-		
-		//alert(this.checked + " lid= "+l.id  + " : " + layer_enabled[l.id]);
-		xd.render();
-	    }, true);
-
-	    //    check_enabled.="Hide layer";
-	    //l.li_layer.appendChild(check_enabled);
-	    
-
-	    l.li_layer.innerHTML+="Layer "+xd.nlayers; 
-	    l.li_layer.appendChild(l.pointer_info);
-	    l.li_layer.layer=l;
-	    xd.layer_nav.appendChild(l.li_layer);
-	    
-	    l.li_layer.addEventListener("click",function(){
-		console.log("li clicked!");
-		xd.display_layer_ui(this.layer);
-		
-	    }, true);
-	    
-	    xd.display_layer_ui(l);
-	    xd.nlayers++;
-	    xd.fullscreen(false);
-	}else alert("Max 4 layers!");
-    }
-
-
-    
     xhr_query("xd1.glsl", function (error, shader_src) {
 
 	if(error!=null){
@@ -793,19 +587,8 @@ xdone.prototype.xdone_init=function(){
 	    return;
 	}
 
-	//console.log("Got the shader script !!!! " + shader_src);
 	var program = xd.program=gl.createProgram();
-
 	var xd1_fragment_shader = create_shader(gl, shader_src);    
-	//    console.log("Got the shader ["+xd1_shader+"]");
-	//    fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
-	//gl.shaderSource(fragmentShader, xd1_shader);
-	//gl.shaderSource(fragmentShader, fragment_shader_src);
-	//    gl.shaderSource(fragmentShader, ss);
-	//    gl.compileShader(fragmentShader);
-	
-
-	
 	
 	gl.attachShader(program, vertexShader);
 	gl.attachShader(program, xd1_fragment_shader);
@@ -834,8 +617,8 @@ xdone.prototype.xdone_init=function(){
 	    xd.tr[0]=t_start[0]-mouse_delta[0]/xd.zoom;
 	    xd.tr[1]=t_start[1]+mouse_delta[1]/xd.zoom;
 	    
-	    tx.value=mouse_delta[0];
-	    ty.value=mouse_delta[1];
+	    tr.value=mouse_delta;
+	    tr.set_value();
 	    
 	    gl.uniform2fv(tr_loc, xd.tr);
 	    xd.render();
@@ -849,16 +632,6 @@ xdone.prototype.xdone_init=function(){
     
 }
 
-
-xdone.prototype.display_layer_ui= function (layer){
-    if(this.selected_layer!=null)
-	this.layer_view.removeChild(this.selected_layer.div);
-    
-    this.selected_layer=layer;
-    this.layer_view.appendChild(this.selected_layer.div);
-    
-}
-
 xdone.prototype.resize_canvas=function(nw,nh){
     var xd=this;
     xd.canvas.width  = nw;
@@ -866,7 +639,6 @@ xdone.prototype.resize_canvas=function(nw,nh){
     var loc = xd.gl.getUniformLocation(xd.program, "u_screen");
     xd.gl.uniform2f(loc, nw,nh );
     xd.gl.viewport(0, 0, xd.gl.drawingBufferWidth, xd.gl.drawingBufferHeight);
-    
 }
 
 
@@ -927,7 +699,7 @@ xdone.prototype.render=function () {
 xdone.prototype.fullscreen=function(on){
 
     var xd=this;
-    var gfx_bar=xd.select("#gfx_bar");
+    //var gfx_bar=select(xdone_node,"#gfx_bar");
 
     var footer=select(document, "footer");    
     var di=select(document, "#drawing_info");    
@@ -937,8 +709,8 @@ xdone.prototype.fullscreen=function(on){
 
     if(on==false){
 	//console.log("GF height = " + footer.clientHeight);
-	xd.resize_canvas(bo.clientWidth-la.clientWidth-10,window.innerHeight-
-			 gfx_bar.clientHeight
+	xd.resize_canvas(bo.clientWidth-la.clientWidth-10,window.innerHeight
+			 //-gfx_bar.clientHeight
 			 -footer.clientHeight
 			 -di.clientHeight
 			 -xline.clientHeight-10);
@@ -954,7 +726,7 @@ xdone.prototype.fullscreen=function(on){
     
     //var bd=[document.body.clientWidth,document.body.clientHeight];
     var bd=[window.innerWidth,window.innerHeight];
-    var drawing_info=xd.select("#drawing_info");
+    var drawing_info=select(xdone_node,"#drawing_info");
     gfx_bar.style.width=bd[0];
     
     console.log("doc body  d = " + bd[0] + ","+bd[1]);

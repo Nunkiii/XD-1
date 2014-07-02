@@ -2,11 +2,14 @@
 
 <head>
 
+  <script src="sadira/js/community/async.js"></script>
   <script src="sadira/js/community/bson.js"></script>
   <script src="sadira/js/community/numeric-1.2.6.js"></script>
   <script src="sadira/js/community/d3.v3.min.js"></script>
+  <script src="sadira/js/community/sha1.js"></script>
 
   <script src="sadira/js/utils.js"></script>
+  <script src="sadira/js/db.js"></script>
   <script src="sadira/js/db_utils.js"></script>
   <script src="sadira/js/datagram.js"></script> 
   <script src="sadira/js/serializer.js"></script> 
@@ -15,23 +18,19 @@
   <script src="sadira/js/colormap.js"></script>
 
   <script src="sadira/js/menu.js"></script>
-  <script src="sadira/js/widget.js"></script>
-  <script src="sadira/js/sobj.js"></script>
-
 
   <script src="js/community/gl-matrix.js"></script>
   <script src="js/community/webgl-utils.js"></script>
   <script src="js/community/fits.js"></script>
+
   <script src="js/xd1_layer.js"></script>
   <script src="js/xd1.js"></script>
-
   
-  <style type="text/css"> @import url("sadira/css/sadira.css"); </style> 
+  <style type="text/css"> @import url("sadira/css/db.css"); </style>  
   <style type="text/css"> @import url("sadira/css/menu.css"); </style> 
   <style type="text/css"> @import url("css/xd1.css"); </style> 
-  
-  <title>XD-1 WebGL FITS Viewer </title>
-  
+
+  <!-- <style type="text/css"> @import url("sadira/css/sadira.css"); </style>  -->
   
   <script id="shader-fs" type="x-shader/x-fragment">
    
@@ -52,11 +51,37 @@
    }
 
   </script>
-  
+
+  <title>XD-1 WebGL FITS Viewer </title>
+
 </head>
 
 <body>
-  <div id="xdone"></div>
+  <div id="xdone">
+    <header id="gfx_bar"></header>
+    <div id="bottom">
+      <div id="cuts"></div>
+      <div id="gfx" style="display: inline-block; vertical-align: top;">
+	<div id="drawing">
+	  <!-- <svg width="600" height="600" id="svglayer"> -->
+	  <!-- 	<polygon points="100,10 40,180 190,60 10,60 160,180" -->
+	  <!-- 		 style="fill:lime;stroke:purple;stroke-width:5;fill-rule:evenodd;" /> -->
+	  
+	  <!-- </svg> -->
+	  <canvas id="glscreen" ></canvas>
+	  <canvas id="glxline" ></canvas>
+	  
+	</div>
+	
+	<div id="drawing_info"><div id=canvas_info></div> Pointer : <div id="pointer_info"></div> </div>
+      </div>
+    </div>
+    <footer>
+      <div id="connexion_status"></div>
+      <button id="fullscreen">full/aside</button>
+      Pierre Sprimont, 2014, INAF/IASF-Bologna, Italy 
+    </footer>
+  </div>
 </body>
 
 <!-- <h2>About XD-1</h2>   -->
