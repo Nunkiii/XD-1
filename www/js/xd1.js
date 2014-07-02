@@ -383,7 +383,7 @@ xdone.prototype.xdone_init=function(){
 
     var mb=new menu_item(); mb.set_root();
     
-    var xdm=mb.add_item("");
+    var xdm=mb.add_item("XD-1");
     xdm.add_item("Add layer", function(e){
 	if(xd.nlayers<xd.maxlayers){
 	    var l=new layer(xd, xd.nlayers,opts,
