@@ -58,24 +58,22 @@ var xd1_templates={
 	    }
 	}
     },
-    colormap_section : {
-	name : "Color section",
-	elements : {
-	    incol : { name : "Inside", type : "color", value : "white", ui_opts : {root_classes : ["inline"]}},
-	    outcol : { name : "Outside", type : "color", value : "black", ui_opts : {root_classes : ["inline"]}},
-	    frac : {name : "Position", type : "double", value : "0", min : "0", max : "1", step : ".01",ui_opts : {root_classes : []} },
-	    blend : { name : "Blend", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
-	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, root_classes : ["inline"]}}
 
-	}
-    },
     colormap_edit : {
-	name : "",
+	name : "Color segment edit",
 	elements : {
-	    split : {name : "Split section", type : "action"},
-	    left : {name : "Left", type : "template", template_name : "colormap_section"},
-	    right : {name : "Right", type : "template", template_name : "colormap_section"}
+	    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
+	    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
+	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, root_classes : ["inline"]}},
+	    range : {name : "Range", type : "labelled_vector", value : [0,1], value_labels : ["Start","End"], min : "0", max : "1", step : ".01",ui_opts : {root_classes : [], editable : true, type : "short"} },	    
+
+	    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+	    inleft : { name : "InL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+	    inright : { name : "InR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+	    outright : { name : "OutR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+	    split : {name : "Split section", type : "action"}
 	}
+	
     },
     
     binary_resource_location : {},
