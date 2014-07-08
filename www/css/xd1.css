@@ -292,7 +292,8 @@ tr>td {
 }
 
 #cuts{
-    display: inline-block;
+  display: inline-block;
+  width: 27em;
 }
 
 #xdone{

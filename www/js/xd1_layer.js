@@ -35,12 +35,12 @@ var xd1_templates={
 	value : [0, 0],
 	value_labels : ["Dx", "Dy"]
     },
+
     image : {
 	name : "Image",
 	elements : {
 	    data : { name : "Data", type: "template", template_name : "binary_object"},
 	    dims : { type: "template", template_name : "image_dimensions"},
-
 	}
     },
     
@@ -390,10 +390,6 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 		fits_file.elements.dims.value[1]=h;
 		fits_file.elements.dims.set_value();
 
-		
-
-		
-		
 		lay.arr=arr;
 		lay.ext=extent;
 

@@ -183,7 +183,7 @@ window.onload = function(){
 //    alert(JSON.stringify(document.URL));
 //    alert(JSON.stringify(window.location.pathname));
 
-
+    
     var xd1;
     var hostname
     //="ws://192.168.176.103:9999";
@@ -273,8 +273,6 @@ window.onload = function(){
 
 function xdone() {
 
-    var hash = CryptoJS.SHA1("sadira");
-    console.log("sadira="+hash);
 
     this.title="XD-1";
 
