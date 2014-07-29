@@ -301,7 +301,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     var fits_file=layer_opts.elements.image;
 
     layer_opts.onchange = function(){
-	console.log("Change !!!");
+  //console.log("Change !!!");
 	xd.layer_enabled[lay.id]=this.value;
 	var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
 	gl.uniform4iv(le_loc, xd.layer_enabled);

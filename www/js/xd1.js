@@ -297,8 +297,16 @@ xdone.prototype.xdone_init=function(){
     this.selected_layer=null;
 
     var xdone_node  = document.getElementById("xdone");
-    var bar_node  = select(xdone_node,"#gfx_bar");
-    var cuts_node  = select(xdone_node,"#cuts");
+    
+    var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; //select(xdone_node,"#gfx_bar");
+    var bottom_node=cc("div", xdone_node); bottom_node.id="bottom";
+
+    var cuts_node=cc("div", bottom_node); cuts_node.id="cuts";
+    var gfx_node=cc("div", bottom_node); gfx_node.id="gfx";
+    var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
+    
+
+    //var cuts_node  = select(xdone_node,"#cuts");
 
     //var dbv = new db_view(tmaster.templates["gl_view_2d"]);
     //xdone_node.appendChild(dbv.widget_div);
@@ -381,20 +389,25 @@ xdone.prototype.xdone_init=function(){
     
     attach_menu(glv_opts, mb);
 
-    var pointer_info  = select(xdone_node,'#pointer_info');
-    var cmap_el=select(xdone_node,'#cuts');
-    var canvas_info  = select(xdone_node,'#canvas_info');
-    glx_canvas=select(xdone_node,"#glxline");       
+    var info_node =  cc("div", gfx_node); info_node.id="drawing_info";
+    var canvas_info  = cc("div",info_node); canvas_info.id="canvas_info";  
+    var pointer_info  = cc("div",info_node); pointer_info.id="pointer_info";  //select(xdone_node,'#pointer_info');
 
-    this.layer_nav=cmap_el.appendChild(document.createElement("nav"));
-    this.layer_view=cmap_el.appendChild(document.createElement("div"));
+//    var cmap_el=select(xdone_node,'#cuts');
+//    var canvas_info  = select(xdone_node,'#canvas_info');
+//    glx_canvas=select(xdone_node,"#glxline");       
 
+
+    this.layer_nav=cc("nav", cuts_node); 
+    this.layer_view=cc("div", cuts_node); 
+    
     this.layer_view.className="layer_view";
     this.layer_nav.className="layer_nav";
     canvas_info.className="canvas_info";
 
     
-    xd.canvas        = select(xdone_node,'#glscreen');
+    xd.canvas        = cc("canvas", drawing_node); xd.canvas.id="glscreen";// select(xdone_node,'#glscreen');
+
     xd.gl            = xd.canvas.getContext('experimental-webgl');
 
     //xd.ctx    = xd.canvas.getContext('2d');
@@ -517,8 +530,9 @@ xdone.prototype.xdone_init=function(){
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, vertex_shader_src);
     gl.compileShader(vertexShader);
-
-    select(xdone_node,"#fullscreen").onclick=function(){ xd.fullscreen(xd.infs?false:true);};
+    
+    var fs_but=cc("button",drawing_node); fs_but.innerHTML="Fullscreen";
+    fs_but.onclick=function(){ xd.fullscreen(xd.infs?false:true);};
 
     var layer_enabled = this.layer_enabled= new Int32Array([1,0,0,0]);
 
@@ -663,7 +677,8 @@ xdone.prototype.render=function () {
 
 
 xdone.prototype.fullscreen=function(on){
-
+    
+    return;
     var xd=this;
     //var gfx_bar=select(xdone_node,"#gfx_bar");
 
