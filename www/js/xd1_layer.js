@@ -4,7 +4,6 @@
   
 */
 
-
 var xd1_templates={
     
     binary_source : {
@@ -62,10 +61,11 @@ var xd1_templates={
     colormap_edit : {
 	name : "Color segment edit",
 	elements : {
+	    range : {name : "Range", type : "labelled_vector", value : [0,1], value_labels : ["Start","End"], min : "0", max : "1", step : ".01",ui_opts : {root_classes : [], editable : true, type : "short"} },	    
 	    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
 	    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
 	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, root_classes : ["inline"]}},
-	    range : {name : "Range", type : "labelled_vector", value : [0,1], value_labels : ["Start","End"], min : "0", max : "1", step : ".01",ui_opts : {root_classes : [], editable : true, type : "short"} },	    
+
 
 	    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
 	    inleft : { name : "InL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
@@ -605,7 +605,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	var cmap_data=cmap.value;
 	xd.ncolors[lay.id]=cmap_data.length;
 	
-	console.log("Update Colormap ncolors: "+xd.ncolors[lay.id]+"  data :" + JSON.stringify(cmap_data));
+	//console.log("Update Colormap ncolors: "+xd.ncolors[lay.id]+"  data :" + JSON.stringify(cmap_data));
 
 	var of=128*4*lay.id;
 	for(var cmi=0;cmi<cmap_data.length;cmi++){
