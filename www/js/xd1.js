@@ -1,6 +1,6 @@
 var gl,glx=null,glx_canvas;
 
-//simplest vertex shader for the box.
+//simplest vertex shader for the unique fullscreen box.
 var vertex_shader_src="attribute vec4 vPosition; void main() {gl_Position = vPosition;}";
 
 function create_shader(gldev, shader_source, type) {
@@ -44,8 +44,8 @@ function get_shader(gldev, script_node) {
 	k = k.nextSibling;
     }
 
-//    str=script_node.innerHTML;
-//    console.log("Got shader code ["+str+"]");
+    //    str=script_node.innerHTML;
+    //    console.log("Got shader code ["+str+"]");
     return create_shader(gldev, str, script_node.type); 
 
 }
@@ -86,7 +86,7 @@ function initShaders() {
 
 var pointsBuffer=null;
 
-    
+
 
 function initBuffers() {
 
@@ -129,7 +129,7 @@ function linePoints() {
 	var y = 300 - 100 * Math.cos(2.0 * Math.PI * x / 100.0) + 30 * Math.cos(4.0 * Math.PI * x / 100.0) + 6 * Math.cos(6.0 * Math.PI * x / 100.0);
 
 	res.push(x * a , 30*Math.cos(x/5.0)+35, 0);
-//	res.push(x*a, 10, 0.0);
+	//	res.push(x*a, 10, 0.0);
 
     }
 
@@ -169,48 +169,11 @@ function render_line() {
 
 function webGLStart() {
 
-//    initGL(glx_canvas);
-//    initShaders();
+    //    initGL(glx_canvas);
+    //    initShaders();
 
 }
 
-
-var sadira;
-
-window.onload = function(){
-    //var shad_script=document.getElementById("shader-xd1");
-    
-//    alert(JSON.stringify(document.URL));
-//    alert(JSON.stringify(window.location.pathname));
-
-    
-    var xd1;
-    var hostname
-    //="ws://192.168.176.103:9999";
-    //="ws://192.168.1.134:9999";
-    ="ws://localhost:9999";
-
-    xd1= new xdone();
-    
-    return;
-    
-    sadira=new sadira({ server : hostname, widget_prefix : "widgets", server_prefix : "~fullmoon/XD-1"}, function(error){
-	console.log("Error sadira init : " + JSON.stringify(error));
-	xd1= new xdone();
-	
-	return;
-    }, function(connected){
-	console.log("Connected !");
-	xd1= new xdone();
-    });
-    
-    
-    
-    
-    
-
-    //  window.sadira=new sadira({}, function(error){}, function(connected){
-}
 
 
 
@@ -221,51 +184,51 @@ window.onload = function(){
 */
 
 
-    var def_colormaps=[
-	[[0,0,0,1,0],[0.8,0.2,0.8,1.0,0.5],[1,1,1,1,1]],
-	[[0,0,0,1,0],[0.2,0.8,0.1,1.0,0.5],[1,1,1,1,1]],
-	[[0,0,0,1,0],[0.1,0.2,0.8,1.0,0.5],[1,1,1,1,1]],
-	[[0,0,0,1,0],[0.1,0.8,0.2,1.0,0.5],[1,1,1,1,1]]
-    ];
-    
-    
-    var def_parameters=[
-	[0, //low cut
-	 5.0, //high cut
-	 0, //Tx
-	 0, //Ty
-	 1.0, //Scale
-	 0, //Rot
-	 1.0, //Luminosity
-	 0
-	],
-	[0, //low cut
-	 20.0, //high cut
-	 0, //Tx
-	 0, //Ty
-	 1.0, //Scale
-	 0, //Rot
-	 1.0, //Luminosity
-	 0
-	],
-	[0, //low cut
-	 5.0, //high cut
-	 0, //Tx
-	 0, //Ty
-	 1.0, //Scale
-	 0, //Rot
-	 1.0, //Luminosity
-	 0
-	],
-	[0, //low cut
-	 2.0, //high cut
-	 0, //Tx
-	 0, //Ty
-	 1.0, //Scale
-	 0, //Rot
-	 1.0, //Luminosity
-	 0
-	 ]
+var def_colormaps=[
+    [[0,0,0,1,0],[0.8,0.2,0.8,1.0,0.5],[1,1,1,1,1]],
+    [[0,0,0,1,0],[0.2,0.8,0.1,1.0,0.5],[1,1,1,1,1]],
+    [[0,0,0,1,0],[0.1,0.2,0.8,1.0,0.5],[1,1,1,1,1]],
+    [[0,0,0,1,0],[0.1,0.8,0.2,1.0,0.5],[1,1,1,1,1]]
+];
+
+
+var def_parameters=[
+    [0, //low cut
+     5.0, //high cut
+     0, //Tx
+     0, //Ty
+     1.0, //Scale
+     0, //Rot
+     1.0, //Luminosity
+     0
+    ],
+    [0, //low cut
+     20.0, //high cut
+     0, //Tx
+     0, //Ty
+     1.0, //Scale
+     0, //Rot
+     1.0, //Luminosity
+     0
+    ],
+    [0, //low cut
+     5.0, //high cut
+     0, //Tx
+     0, //Ty
+     1.0, //Scale
+     0, //Rot
+     1.0, //Luminosity
+     0
+    ],
+    [0, //low cut
+     2.0, //high cut
+     0, //Tx
+     0, //Ty
+     1.0, //Scale
+     0, //Rot
+     1.0, //Luminosity
+     0
+    ]
 ];
 
 
@@ -718,7 +681,7 @@ xdone.prototype.fullscreen=function(on){
 			 -di.clientHeight
 			 -xline.clientHeight-10);
 
-//	xline.width=bo.clientWidth-la.clientWidth-10;
+	//	xline.width=bo.clientWidth-la.clientWidth-10;
 	
 	//gfx_bar.style.width=xd.canvas.style.width;
 	xd.infs=false;
