@@ -278,12 +278,14 @@ function xdone() {
     var tr_loc;
     var rotcenter_loc;
 
-    xd.xdone_init();
+//    xd.xdone_init();
 }
 
 
-xdone.prototype.xdone_init=function(){
+xdone.prototype.xdone_init=function(server_root){
 
+
+    if(typeof server_root == "Undefined") server_root="";
     var xd=this;
     
     function getMousePos(canvas, evt) {
@@ -296,11 +298,14 @@ xdone.prototype.xdone_init=function(){
     
     this.selected_layer=null;
 
+    console.log("XXX");
     var xdone_node  = document.getElementById("xdone");
     
+    console.log("XXX xdnode is  " + xdone_node);
     var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; //select(xdone_node,"#gfx_bar");
+    console.log("XXX");
     var bottom_node=cc("div", xdone_node); bottom_node.id="bottom";
-
+    console.log("XXX");
     var cuts_node=cc("div", bottom_node); cuts_node.id="cuts";
     var gfx_node=cc("div", bottom_node); gfx_node.id="gfx";
     var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
@@ -560,7 +565,7 @@ xdone.prototype.xdone_init=function(){
 
     var opts = {source : "fits"};
 
-    xhr_query("xd1.glsl", function (error, shader_src) {
+    xhr_query(server_root+"xd1.glsl", function (error, shader_src) {
 
 	if(error!=null){
 	    console.log("Error " + error);

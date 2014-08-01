@@ -15,7 +15,8 @@ window.onload = function(){
     ="ws://localhost:9999";
 
     xd1= new xdone();
-    
+    xd1.xdone_init();
+
     return;
     
     sadira=new sadira({ server : hostname, widget_prefix : "widgets", server_prefix : "~fullmoon/XD-1"}, function(error){
