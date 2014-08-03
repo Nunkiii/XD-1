@@ -168,7 +168,11 @@ var xd1_templates={
 					      [0.9,0.9,0.2,1.0,0.2],
 					      [0.9,0.9,0.2,1.0,0.5],
 					      [0.9,0.2,0.2,1.0,0.5],
-					      [1,1,1,1,1]] }
+					      [1,1,1,1,1]] },
+			    histo : {
+				name : "Histogram", type : "vector",
+				ui_opts : {width: 200, height: 100, margin : {top: 0, right: 10, bottom: 30, left: 50} }
+			    }
 			    
 			}
 		    }
@@ -290,6 +294,8 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     var layer_opts = this.layer_opts= tmaster.build_template("gl_image_layer"); 
     
     var cuts=layer_opts.elements.general.elements.histo.elements.cuts; 
+    var histo_tpl=layer_opts.elements.general.elements.histo.elements.histo; 
+
     var cmap=this.cmap=layer_opts.elements.general.elements.histo.elements.cmap; 
 
     var lum=layer_opts.elements.general.elements.lum; 
@@ -311,6 +317,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     cuts.onchange = function(){
 	lay.p_values[0]=this.value[0];
 	lay.p_values[1]=this.value[1];
+	console.log("Cuts changed to " + JSON.stringify(this.value));
 	update_pvalues();
     };
     
@@ -452,7 +459,25 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 
     //    var x_domain_full=null; //[low+.5*bsize,low+(nbins-.5)*bsize];
 
-    
+    function auto_cuts(){
+
+	var histo=histo_tpl.value;
+	var max=0,maxid=0, total=0, frac=.95, cf=0;
+	for(var i=0;i<histo.length;i++){
+	    var v=histo[i].n;
+	    if(v>max){max=v;maxid=i;}
+	    total+=v;
+	}
+	
+	for(var i=0;i<histo.length;i++){
+	    cf+=histo[i].n;
+	    if(cf*1.0/total>=frac) break;
+	}
+	
+	if(maxid-2>=0) maxid-=2;
+	cuts.set_value([histo[maxid].x,histo[i].x]);
+	cuts.onchange();
+    }
 
     function reset_histogram(){
 
@@ -463,7 +488,10 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	console.log("X DOM " + x_domain[0] + ", " + x_domain[1]);
 	bsize=(high-low)/nbins;
 	compute_histogram(x_domain[0],x_domain[1]);
-	draw_histogram();
+	auto_cuts();
+
+	//draw_histogram();
+	
     }
 
 /*
@@ -700,10 +728,9 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	
 
 	var bsize=(high-low)/nbins;
-	
 	var data=lay.arr;
 	var dl=data.length;
-	var histo=lay.histo=[];
+	var histo=histo_tpl.value=[];
 	
 
 	for(var i=0;i<nbins;i++){
@@ -721,7 +748,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 		    histo[bid].n++; 
 	    }
 	}
-	
+	histo_tpl.set_value();
 	//console.log("Histo : " + JSON.stringify(lay.histo));
 	
     }  
@@ -766,7 +793,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.FLOAT, xd.fv);
 	gl.uniform1i(gl.getUniformLocation(xd.program, "u_image"), 0);
 	
-	//reset_histogram();
+	reset_histogram();
 	
 	//cmap.create_colors(def_colormaps[lay.id]);
 	//cmap.last.insert_color([0.0,0.4,0.0,1.0], 0.5);

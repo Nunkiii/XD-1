@@ -135,10 +135,12 @@ ul.colul li{
 #gfx{
   display: inline-block;
   /*  color: white; */
+  vertical-align: top;
   border:1px solid #333;
   border-radius: .5em;
-  margin-top: 2px;
-  vertical-align: bottom;
+  margin-left: 1em;
+
+  
 }
 
 .layer{
@@ -193,7 +195,10 @@ tr>td {
      border-radius:.5em;
    }
 
-   #drawing{}
+   #drawing{
+width: 800px;
+height: 600px;
+  }
 
    #svglayer{
      display : inline-block;
@@ -201,7 +206,7 @@ tr>td {
 
    #glscreen{
      background-color: black;
-     display : block;
+     display : inline-block;
      cursor: crosshair;
    }
 
@@ -293,7 +298,8 @@ tr>td {
 
 #cuts{
   display: inline-block;
-  width: 27em;
+  vertical-align: top;
+  width: 25%;
 }
 
 #xdone{

@@ -282,11 +282,16 @@ function xdone() {
 }
 
 
-xdone.prototype.xdone_init=function(server_root){
-
-
-    if(typeof server_root == "Undefined") server_root="";
+xdone.prototype.xdone_init=function(options){
+    
+    var server_root="";
+    
+    if(typeof options != "undefined"){
+	if(typeof options.server_root != "Undefined") server_root=options.server_root;
+    }
     var xd=this;
+
+    console.log("sr " + server_root);
     
     function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
@@ -297,29 +302,19 @@ xdone.prototype.xdone_init=function(server_root){
     }
     
     this.selected_layer=null;
-
-    console.log("XXX");
-    var xdone_node  = document.getElementById("xdone");
     
-    console.log("XXX xdnode is  " + xdone_node);
+    var xdone_node  = document.getElementById("xdone");
     var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; //select(xdone_node,"#gfx_bar");
-    console.log("XXX");
     var bottom_node=cc("div", xdone_node); bottom_node.id="bottom";
-    console.log("XXX");
     var cuts_node=cc("div", bottom_node); cuts_node.id="cuts";
     var gfx_node=cc("div", bottom_node); gfx_node.id="gfx";
     var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
     
-
     //var cuts_node  = select(xdone_node,"#cuts");
-
     //var dbv = new db_view(tmaster.templates["gl_view_2d"]);
     //xdone_node.appendChild(dbv.widget_div);
-    
     // var layer_view= new db.object(tmaster.templates["gl_view_2d"]);
-    
     // layer_view.create({}, function() {
-
     // 	xdone_node.appendChild(layer_view.odiv);
     // } );
     
@@ -556,7 +551,7 @@ xdone.prototype.xdone_init=function(server_root){
     this.cmap_texture=cmap_texture;
     this.cmap_frac=cmap_frac;
 
-    webGLStart(select(xdone_node,'#glxline'));
+    //webGLStart(select(xdone_node,'#glxline'));
 
     xd.zoom=1.0;
     xd.angle=0.0;
@@ -683,6 +678,9 @@ xdone.prototype.render=function () {
 
 xdone.prototype.fullscreen=function(on){
     
+    var bo=select(document, "#drawing");    
+    this.resize_canvas(bo.clientWidth,bo.clientHeight);
+
     return;
     var xd=this;
     //var gfx_bar=select(xdone_node,"#gfx_bar");
