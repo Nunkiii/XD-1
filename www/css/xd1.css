@@ -196,8 +196,8 @@ tr>td {
    }
 
    #drawing{
-width: 800px;
-height: 600px;
+             width: 800px;
+             height: 600px;
   }
 
    #svglayer{
@@ -228,16 +228,16 @@ height: 600px;
 
 .axis text {
 /*   color: white; */
-   font-size: .8em;
+   font-size: 1em;
    font-weight: normal;
    stroke: white; 
 }
 
 .line {
-  fill: blue;
+  fill: yellow;
   fill-opacity: .825;
   stroke: block;
-  stroke-width: 3px;
+  stroke-width: 1px;
 }
 
 
@@ -248,13 +248,13 @@ height: 600px;
 }
 
 .brush rect.extent {
-  fill: purple; /*steelblue;*/
-  fill-opacity: .425;
+  fill: #8080EE;
+  fill-opacity: .225;
 }
 
 .brush .resize path {
   fill: #eee;
-  stroke: steelblue;
+  stroke: black;
 }
 
 
@@ -299,7 +299,7 @@ height: 600px;
 #cuts{
   display: inline-block;
   vertical-align: top;
-  width: 25%;
+
 }
 
 #xdone{
