@@ -327,10 +327,10 @@ xdone.prototype.xdone_init=function(options){
     var rc=glv_opts.elements.rotation.elements.center;
 
     tr.onchange = function(){
-	xd.tr[0]=this.value[0];
-	xd.tr[1]=this.value[1];
+	// xd.tr[0]=this.value[0];
+	// xd.tr[1]=this.value[1];
 	//console.log("Tx changed " + JSON.stringify(xd.tr));
-	gl.uniform2fv(tr_loc, xd.tr);
+	gl.uniform2fv(tr_loc, this.value);
 	xd.render();
     };
     zm.onchange=function(){
@@ -417,13 +417,14 @@ xdone.prototype.xdone_init=function(options){
     var t_start=[];
 
     xd.canvas.onmousedown = function(e){
+
 	mouseon = true;
 	
 	mouse_start.x=e.screenX;
 	mouse_start.y=e.screenY;
 
-	t_start[0]=xd.tr[0];
-	t_start[1]=xd.tr[1];
+	t_start[0]=tr.value[0];
+	t_start[1]=tr.value[1];
     }
 
     xd.canvas.onmouseup = function(e){
@@ -555,7 +556,7 @@ xdone.prototype.xdone_init=function(options){
 
     xd.zoom=1.0;
     xd.angle=0.0;
-    xd.tr=[0,0];
+    tr.value=[0,0];
     xd.rotcenter=[0,0];
 
     var opts = {source : "fits"};
@@ -586,7 +587,7 @@ xdone.prototype.xdone_init=function(options){
 	gl.uniform2f(resolutionLocation, xd.canvas.width, xd.canvas.height);
 	gl.uniform1f(zoom_loc, xd.zoom );
 	gl.uniform1f(angle_loc, xd.angle);
-	gl.uniform2fv(tr_loc, xd.tr);
+	gl.uniform2fv(tr_loc, tr.value);
 	gl.uniform2fv(rotcenter_loc, xd.rotcenter);
 	
 	xd.canvas.addEventListener("mousemove", function(e){
@@ -594,13 +595,11 @@ xdone.prototype.xdone_init=function(options){
 
 	    var mouse_delta=[e.screenX-mouse_start.x,e.screenY-mouse_start.y];
 	    
-	    xd.tr[0]=t_start[0]-mouse_delta[0]/xd.zoom;
-	    xd.tr[1]=t_start[1]+mouse_delta[1]/xd.zoom;
-	    
-	    tr.value=mouse_delta;
+	    tr.value[0]=t_start[0]-mouse_delta[0]/xd.zoom;
+	    tr.value[1]=t_start[1]+mouse_delta[1]/xd.zoom;
 	    tr.set_value();
 	    
-	    gl.uniform2fv(tr_loc, xd.tr);
+	    gl.uniform2fv(tr_loc, tr.value);
 	    xd.render();
 	    return false;
 	});

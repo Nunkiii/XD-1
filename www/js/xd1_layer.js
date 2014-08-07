@@ -90,7 +90,7 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : ["inline", "number_fixed_size","newline"], editable : true}
+		ui_opts: {root_classes : ["inline", "number_fixed_size"], editable : true}
 	    },
 
 	    rotation : {
@@ -116,7 +116,7 @@ var xd1_templates={
 	    
 	}
     },
-	
+
     cuts : {
 	type : "labelled_vector",
 	value : [0,0],
@@ -124,7 +124,7 @@ var xd1_templates={
 	min : "-100000", 
 	max : "100000", 
 	step: "100",
-	ui_opts : { editable : true, root_classes : ["newline"] }
+	ui_opts : { editable : true, root_classes : [] }
 	//ui_opts: {root_classes : ["inline"]}
     },
     
@@ -158,9 +158,21 @@ var xd1_templates={
 			    ui_opts : {input_type : "range", editable: true} },
 		    
 		    histo : {
-			name : "Colour-value editor",
+			name : "Colormap and cuts",
 			
 			elements : {
+			    bounds : {
+				type : "labelled_vector",
+				name : "Data bounds",
+				value : [0,0],
+				value_labels : ["Min","Max"],
+				min : "-100000", 
+				max : "100000", 
+				ui_opts : { editable : false, root_classes : [] }
+				//ui_opts: {root_classes : ["inline"]}
+			    },
+			    
+			    
 			    cuts : { name : "Value cuts", type : "template", template_name : "cuts", ui_opts: {}},
 			    cmap : { name : "Colormap", type : "colormap", ui_opts : {editable : true},
 				     value : [[0,0,0,1,0],
@@ -171,7 +183,9 @@ var xd1_templates={
 					      [1,1,1,1,1]] },
 			    histo : {
 				name : "Histogram", type : "vector",
-				ui_opts : {width: 200, height: 100, margin : {top: 0, right: 10, bottom: 30, left: 50} }
+				ui_opts : {width: 400, height: 200, margin : {top: 20, right: 20, bottom: 30, left: 30},
+					   root_classes : ["newline"]
+					  }
 			    }
 			    
 			}
@@ -293,6 +307,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 
     var layer_opts = this.layer_opts= tmaster.build_template("gl_image_layer"); 
     
+    var bounds=layer_opts.elements.general.elements.histo.elements.bounds; 
     var cuts=layer_opts.elements.general.elements.histo.elements.cuts; 
     var histo_tpl=layer_opts.elements.general.elements.histo.elements.histo; 
 
@@ -305,6 +320,10 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     var rc=layer_opts.elements.geometry.elements.rotation.elements.center;
 
     var fits_file=layer_opts.elements.image;
+
+    var nbins=512;
+    var bsize=null; 
+
 
     layer_opts.onchange = function(){
   //console.log("Change !!!");
@@ -388,7 +407,8 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 
 		fits_file.elements.file_size.value=fits_file.ui.files[0].size;
 		fits_file.elements.file_size.set_value();
-
+		
+		bounds.set_value(extent);
 		console.log("Frame read : D=("+lay.width+","+lay.height+")  externt " + extent[0] + "," + extent[1]);
 		//image_info.innerHTML="Dims : ("+lay.width+", "+lay.height+")";
 		
@@ -450,33 +470,34 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     
     
     var canvas_info  = document.getElementById('canvas_info');
-    var x_domain=null;
-    var brush=null;
-    var nbins=512;
-
-
-    var bsize=null; 
 
     //    var x_domain_full=null; //[low+.5*bsize,low+(nbins-.5)*bsize];
 
     function auto_cuts(){
 
+
 	var histo=histo_tpl.value;
 	var max=0,maxid=0, total=0, frac=.95, cf=0;
+
+	console.log("cuts.... ND=" + histo.length);
+
 	for(var i=0;i<histo.length;i++){
-	    var v=histo[i].n;
+	    var v=histo[i];
 	    if(v>max){max=v;maxid=i;}
 	    total+=v;
 	}
 	
+	console.log("cuts.... total " + total + " maxid " + maxid + " max " + max);
+
 	for(var i=0;i<histo.length;i++){
-	    cf+=histo[i].n;
+	    cf+=histo[i];
 	    if(cf*1.0/total>=frac) break;
 	}
 	
-	if(maxid-2>=0) maxid-=2;
-	cuts.set_value([histo[maxid].x,histo[i].x]);
+	if(maxid-2>=0) maxid-=3;
+	cuts.set_value([histo_tpl.start+histo_tpl.step*maxid,histo_tpl.start+histo_tpl.step*i]);
 	cuts.onchange();
+	console.log("cuts....done");
     }
 
     function reset_histogram(){
@@ -484,10 +505,10 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	var low=lay.ext[0];
 	var high=lay.ext[1];
 
-	x_domain=[low+.5*bsize,low+(nbins-.5)*bsize];
-	console.log("X DOM " + x_domain[0] + ", " + x_domain[1]);
-	bsize=(high-low)/nbins;
-	compute_histogram(x_domain[0],x_domain[1]);
+	//cuts.set_value([low+.5*bsize,low+(nbins-.5)*bsize]);
+	//console.log("X DOM " + x_domain[0] + ", " + x_domain[1]);
+	//bsize=(high-low)/nbins;
+	compute_histogram(nbins,lay.ext);
 	auto_cuts();
 
 	//draw_histogram();
@@ -724,30 +745,34 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     }
     
     
-    function compute_histogram(low, high){
+    function compute_histogram(nbins, data_bounds){
 	
-
-	var bsize=(high-low)/nbins;
 	var data=lay.arr;
 	var dl=data.length;
-	var histo=histo_tpl.value=[];
-	
 
+	var histo=histo_tpl.value=[];
+	var step=histo_tpl.step=(data_bounds[1]-data_bounds[0])/nbins;
+	var start=histo_tpl.start=data_bounds[0]+.5*step;
+
+	bsize=(histo_tpl.cuts.value[1]-histo_tpl.cuts.value[0])/nbins;
+	
+	
 	for(var i=0;i<nbins;i++){
-	    histo[i]={x: low+(i+.5)*bsize, n:0};
+	    histo[i]=0;
 	}
 	
-	console.log("Data bounds : " + lay.ext[0] + ", " + lay.ext[1], " bin size = " + bsize);
+	console.log("Data bounds : " + lay.ext[0] + ", " + lay.ext[1], " bin size = " + bsize + " nbins " + nbins + " ndata=" + dl + " start " + start + " step " + step);
 	
 	
 	for(var i=0;i<dl;i++){
 	    var v=data[i];
-	    if(v>=low&&v<=high){
-		var bid=Math.floor( (v-low)/bsize);
+	    if(v>=data_bounds[0]&&v<=data_bounds[1]){
+		var bid=Math.floor( (v-data_bounds[0])/step);
 		if(bid>=0&&bid<nbins)
-		    histo[bid].n++; 
+		    histo[bid]++; 
 	    }
 	}
+	
 	histo_tpl.set_value();
 	//console.log("Histo : " + JSON.stringify(lay.histo));
 	
@@ -780,10 +805,11 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	lay.p_values[1]=lay.ext[1];
 	
 	//x_domain_full=[lay.p_values[0]+.5*bsize,lay.p_values[0]+(nbins-.5)*bsize];
-	compute_histogram(lay.p_values[0],lay.p_values[1]);
-	
+	histo_tpl.cuts.set_value(lay.ext);
+	compute_histogram(nbins, lay.ext);
+	auto_cuts();
 	//if(bsize==null)
-	bsize=(lay.p_values[1]-lay.p_values[0])/nbins;
+	
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, xd.texture);
@@ -793,7 +819,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.FLOAT, xd.fv);
 	gl.uniform1i(gl.getUniformLocation(xd.program, "u_image"), 0);
 	
-	reset_histogram();
+	//reset_histogram();
 	
 	//cmap.create_colors(def_colormaps[lay.id]);
 	//cmap.last.insert_color([0.0,0.4,0.0,1.0], 0.5);
@@ -913,7 +939,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
       gl.uniform2f(cuts_loc, cuts[0], cuts[1]);
       gl.uniform2f(tr_loc, tr[0], tr[1]);
       gl.uniform1f(angle_loc, angle);
-      gl.uniform1f(zoom_loc, zoom );
+gl.uniform1f(zoom_loc, zoom );
     */
 }
 
@@ -952,11 +978,15 @@ layer.prototype.update_geometry=  function (){
     this.g_screen_center=[xd.canvas.width/2.0, xd.canvas.height/2.0];
     this.g_rotc=[1.0*xd.p_rotcenters[2*this.id],1.0*xd.p_rotcenters[2*this.id+1]];
     this.g_texc=[this.width/xd.w/2.0, this.height/xd.h/2.0];
-    
-    //console.log("ROTC = " + JSON.stringify(this.g_rotc) + "TEXC " + JSON.stringify(this.g_texc)+ "TR " + JSON.stringify(this.g_trl) + " scale " + this.g_lzoom);
 
+
+    //console.log("ROTC = " + JSON.stringify(this.g_rotc) + "TEXC " + JSON.stringify(this.g_texc)+ "TR " + JSON.stringify(this.g_trl) + " scale " + this.g_lzoom);
+    
 }
+
 layer.prototype.get_image_pixel= function(screen_pixel) {
+    if(typeof this.g_trl=="undefined") return [0,0];
+
     var xd=this.xd;
     var ipix=[
 	(screen_pixel[0]-this.g_screen_center[0])/xd.zoom+xd.tr[0]-xd.rotcenter[0],
@@ -984,6 +1014,7 @@ layer.prototype.update_pointer_info=function(screen_pixel){
 //    if(typeof this.opts=='undefined') return;
 
     var ipix=this.get_image_pixel(screen_pixel);
+    
     if(ipix[0]<0 || ipix[0]>=this.width || ipix[1]<0 || ipix[1]>=this.height){
 	this.pointer_info.innerHTML="outside<br/>image";
 	return;
