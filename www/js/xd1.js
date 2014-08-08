@@ -320,11 +320,15 @@ xdone.prototype.xdone_init=function(options){
     
     
     var glv_opts = tmaster.build_template("gl_view_2d"); 
+    
+    console.log("xd1 template " + JSON.stringify(glv_opts));
 
     var tr=glv_opts.elements.translation;
     var zm=glv_opts.elements.zoom; 
     var ag=glv_opts.elements.rotation.elements.angle; 
     var rc=glv_opts.elements.rotation.elements.center;
+
+    var newlayer=glv_opts.elements.newlayer;
 
     tr.onchange = function(){
 	// xd.tr[0]=this.value[0];
@@ -333,32 +337,37 @@ xdone.prototype.xdone_init=function(options){
 	gl.uniform2fv(tr_loc, this.value);
 	xd.render();
     };
+
     zm.onchange=function(){
 	xd.zoom=this.value;
 	update_zoom();
-    }
+    };
+
     ag.onchange=function(){
 	xd.angle=this.value;
 	gl.uniform1f(angle_loc, xd.angle);
 	xd.render();
-    }
+    };
+
     rc.onchange=function(){
 	xd.rotcenter[0]=this.value[0];
 	xd.rotcenter[1]=this.value[1];
 	gl.uniform2fv(rotcenter_loc, xd.rotcenter);
 	xd.render();
-    }
+    };
     
+
     bar_node.appendChild(create_ui({ type: "short", root_classes : ["flat"] } , glv_opts));
 
 
     var layer_tabs=new tab_widget();
     cuts_node.appendChild(layer_tabs.div);
 
-    var mb=new menu_item(); mb.set_root();
+    // var mb=new menu_item(); mb.set_root();    
+    // var xdm=mb.add_item("XD-1");
+    // xdm.add_item("Add layer", function(e){
     
-    var xdm=mb.add_item("XD-1");
-    xdm.add_item("Add layer", function(e){
+    newlayer.onclick=function(){
 	if(xd.nlayers<xd.maxlayers){
 	    var l=new layer(xd, xd.nlayers,opts,
 			    function(p_values, layer_id){
@@ -383,11 +392,10 @@ xdone.prototype.xdone_init=function(options){
 	    xd.fullscreen(false);
 	}else alert("Max 4 layers!");
 
-    });
+    };
 
-    xdm.add_item("About XD-1", function(e){});
-    
-    attach_menu(glv_opts, mb);
+    // xdm.add_item("About XD-1", function(e){});    
+    // attach_menu(glv_opts, mb);
 
     var info_node =  cc("div", gfx_node); info_node.id="drawing_info";
     var canvas_info  = cc("div",info_node); canvas_info.id="canvas_info";  
