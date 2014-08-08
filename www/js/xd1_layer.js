@@ -90,11 +90,12 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : ["inline", "number_fixed_size"], editable : true}
+		ui_opts: {root_classes : ["inline", "number_fixed_size"], editable : true, sliding : true}
 	    },
 
 	    rotation : {
 		name : "Rotation",
+//		ui_opts : {sliding : true, sliding_dir : "h" },
 		elements : {
 		    center : {
 			name : "Center",
@@ -104,9 +105,10 @@ var xd1_templates={
 			min : "-8192", 
 			max : "8192", 
 			step: "1",
-			ui_opts: {root_classes : ["inline"], editable : true}
+			ui_opts: {root_classes : ["inline"], editable : true, sliding : true, sliding_dir : "h" }
 		    },
 		    angle : {
+			
 			name : "Angle",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, ui_opts : { editable : true }
 		    }
 		}
@@ -133,7 +135,8 @@ var xd1_templates={
 	name :  "GL Image layer",
 	type : "bool",
 	value : true,
-	ui_opts : { root_classes : ["column"], child_view_type : "tabbed", type : "edit" }, 
+	ui_opts : { root_classes : ["column"], child_view_type : "tabbed", type : "edit", sliding: true, sliding_dir : "v" }, 
+
 	elements : {
 	    image : {
 		type : "local_file",
@@ -202,11 +205,18 @@ var xd1_templates={
     },
     
     gl_view_2d :  {
-	name :  "",
+	name : "XD-1",
+	ui_opts: {sliding: true, sliding_dir:"h"},
 	type : "template",
-	template_name : "geometry"
+	template_name : "geometry",
+	elements : {
+	    newlayer : {
+		type : "action",
+		name : "Add new layer"
+	    }
+	}
     }
-    };
+};
 
 var tmaster=new local_templates();
 tmaster.add_templates(xd1_templates);
@@ -324,6 +334,10 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     var nbins=512;
     var bsize=null; 
 
+    histo_tpl.selection_change=function(new_cuts){
+	cuts.set_value(new_cuts);
+	cuts.onchange();
+    }
 
     layer_opts.onchange = function(){
   //console.log("Change !!!");
@@ -350,10 +364,12 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	lay.p_values[4]=this.value;
 	update_pvalues();
     }
+
     ag.onchange=function(){
 	lay.p_values[5]=this.value;
 	update_pvalues();
     }
+
     lum.onchange=function(){
 	lay.p_values[6]=this.value;
 	update_pvalues();
@@ -1011,7 +1027,7 @@ layer.prototype.get_image_pixel= function(screen_pixel) {
 
 layer.prototype.update_pointer_info=function(screen_pixel){
 
-//    if(typeof this.opts=='undefined') return;
+    if(typeof this.arr=='undefined') return;
 
     var ipix=this.get_image_pixel(screen_pixel);
     
