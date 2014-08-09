@@ -291,7 +291,7 @@ xdone.prototype.xdone_init=function(options){
     }
     var xd=this;
 
-    console.log("sr " + server_root);
+    //console.log("sr " + server_root);
     
     function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
@@ -305,9 +305,9 @@ xdone.prototype.xdone_init=function(options){
     
     var xdone_node  = document.getElementById("xdone");
     var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; //select(xdone_node,"#gfx_bar");
-    var bottom_node=cc("div", xdone_node); bottom_node.id="bottom";
-    var cuts_node=cc("div", bottom_node); cuts_node.id="cuts";
-    var gfx_node=cc("div", bottom_node); gfx_node.id="gfx";
+//    var bottom_node=cc("div", xdone_node); bottom_node.id="bottom";
+//    var cuts_node=cc("div", bottom_node); cuts_node.id="cuts";
+    var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";
     var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
     
     //var cuts_node  = select(xdone_node,"#cuts");
@@ -319,16 +319,16 @@ xdone.prototype.xdone_init=function(options){
     // } );
     
     
-    var glv_opts = tmaster.build_template("gl_view_2d"); 
+    var glv_opts = this.glv_opts=tmaster.build_template("gl_view_2d"); 
+    //console.log("xd1 template " + JSON.stringify(glv_opts));
     
-    console.log("xd1 template " + JSON.stringify(glv_opts));
+    var tr=glv_opts.elements.geometry.elements.translation;
+    var zm=glv_opts.elements.geometry.elements.zoom; 
+    var ag=glv_opts.elements.geometry.elements.rotation.elements.angle; 
+    var rc=glv_opts.elements.geometry.elements.rotation.elements.center;
 
-    var tr=glv_opts.elements.translation;
-    var zm=glv_opts.elements.zoom; 
-    var ag=glv_opts.elements.rotation.elements.angle; 
-    var rc=glv_opts.elements.rotation.elements.center;
-
-    var newlayer=glv_opts.elements.newlayer;
+    var newlayer=glv_opts.elements.layer_objects.elements.newlayer;
+    var layer_objects=glv_opts.elements.layers_objects;
 
     tr.onchange = function(){
 	// xd.tr[0]=this.value[0];
@@ -360,8 +360,8 @@ xdone.prototype.xdone_init=function(options){
     bar_node.appendChild(create_ui({ type: "short", root_classes : ["flat"] } , glv_opts));
 
 
-    var layer_tabs=new tab_widget();
-    cuts_node.appendChild(layer_tabs.div);
+    //var layer_tabs=new tab_widget();
+    //cuts_node.appendChild(layer_tabs.div);
 
     // var mb=new menu_item(); mb.set_root();    
     // var xdm=mb.add_item("XD-1");
@@ -369,25 +369,41 @@ xdone.prototype.xdone_init=function(options){
     
     newlayer.onclick=function(){
 	if(xd.nlayers<xd.maxlayers){
-	    var l=new layer(xd, xd.nlayers,opts,
+	    var layer_opts = tmaster.build_template("gl_image_layer"); 
+	    var lui=create_ui({type:"short" }, layer_opts, glv_opts.depth+1);
+	    
+	    var l=new layer(xd, xd.nlayers,layer_opts,
 			    function(p_values, layer_id){
 			    },
 			    function(cmap_data, layer_id){
 			    }
 			   );
+	    
+	    
+	    //var ui=create_ui(global_ui_opts,e, depth+1 );
+	    //glv_opts.elements.layers.elements.layer_objects.ui_childs=e;
+	    //console.log("ch" + typeof(glv_opts.elements.layers.ui_childs));
+
+	    //console.log("ch" + typeof(e.container.add_child));
+	    //e.container.add_child(e,e.ui_root);
+	    layer_opts.container=glv_opts.elements.layer_objects.ui_childs;
+	    glv_opts.elements.layer_objects.ui_childs.add_child(layer_opts,lui);
 
 	    xd.layers[xd.nlayers]=l;
 	    xd.layer_enabled[xd.nlayers]=1;
 	    var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
 	    gl.uniform4iv(le_loc, layer_enabled);
 	    
-
+	    
+	    /*
 	    l.li_layer=layer_tabs.add_frame("Layer "+xd.nlayers);
 	    console.log("Setting bg to " + l.cmap.gradient_css_string);
 	    l.li_layer.style.background=l.cmap.gradient_css_string;
 
 	    l.li_layer.appendChild(l.pointer_info);
 	    l.li_layer.div.appendChild(l.div);
+	    */
+
 	    xd.nlayers++;
 	    xd.fullscreen(false);
 	}else alert("Max 4 layers!");
@@ -406,11 +422,11 @@ xdone.prototype.xdone_init=function(options){
 //    glx_canvas=select(xdone_node,"#glxline");       
 
 
-    this.layer_nav=cc("nav", cuts_node); 
-    this.layer_view=cc("div", cuts_node); 
+    // this.layer_nav=cc("nav", cuts_node); 
+    // this.layer_view=cc("div", cuts_node); 
     
-    this.layer_view.className="layer_view";
-    this.layer_nav.className="layer_nav";
+    // this.layer_view.className="layer_view";
+    // this.layer_nav.className="layer_nav";
     canvas_info.className="canvas_info";
 
     
@@ -539,9 +555,11 @@ xdone.prototype.xdone_init=function(options){
     vertexShader = gl.createShader(gl.VERTEX_SHADER);
     gl.shaderSource(vertexShader, vertex_shader_src);
     gl.compileShader(vertexShader);
-    
+
+/*    
     var fs_but=cc("button",drawing_node); fs_but.innerHTML="Fullscreen";
     fs_but.onclick=function(){ xd.fullscreen(xd.infs?false:true);};
+*/
 
     var layer_enabled = this.layer_enabled= new Int32Array([1,0,0,0]);
 
@@ -685,33 +703,34 @@ xdone.prototype.render=function () {
 
 xdone.prototype.fullscreen=function(on){
     
-    var bo=select(document, "#drawing");    
-    this.resize_canvas(bo.clientWidth,bo.clientHeight);
+    //var bo=select(document, "#drawing");    
+    //this.resize_canvas(.clientWidth,bo.clientHeight);
 
-    return;
+
     var xd=this;
     //var gfx_bar=select(xdone_node,"#gfx_bar");
 
     var footer=select(document, "footer");    
     var di=select(document, "#drawing_info");    
-    var la=select(document, "#cuts");    
-    var bo=select(document, "#bottom");    
+    var la=select(document, "header");    
+    //var bo=select(document, "#bottom");    
     var xline=glx_canvas;
 
     if(on==false){
 	//console.log("GF height = " + footer.clientHeight);
-	xd.resize_canvas(bo.clientWidth-la.clientWidth-10,window.innerHeight
+	xd.resize_canvas(la.clientWidth -20, //-la.clientWidth-10,
+			 window.innerHeight
 			 //-gfx_bar.clientHeight
 			 -footer.clientHeight
-			 -di.clientHeight
-			 -xline.clientHeight-10);
+			 -la.clientHeight
+			 -75);
 
 	//	xline.width=bo.clientWidth-la.clientWidth-10;
 	
 	//gfx_bar.style.width=xd.canvas.style.width;
 	xd.infs=false;
 	xd.render();
-	render_line();
+	//render_line();
 	return;
     }
     

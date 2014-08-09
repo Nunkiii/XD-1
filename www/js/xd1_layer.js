@@ -62,16 +62,29 @@ var xd1_templates={
 	name : "Color segment edit",
 	elements : {
 	    range : {name : "Range", type : "labelled_vector", value : [0,1], value_labels : ["Start","End"], min : "0", max : "1", step : ".01",ui_opts : {root_classes : [], editable : true, type : "short"} },	    
-	    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
-	    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
 	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, root_classes : ["inline"]}},
+	    
+	    blend : { 
+		name: "Blend boundaries", 
+		ui_opts : {root_classes : ["newline"]},
+		elements : {
+		    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
+		    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
+		}
+	    },
+	    colors : {
+		name : "Colors",
+		ui_opts : {root_classes : ["newline"]},
+		elements : {
 
-
-	    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
-	    inleft : { name : "InL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
-	    inright : { name : "InR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
-	    outright : { name : "OutR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+		    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+		    inleft : { name : "InL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+		    inright : { name : "InR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+		    outright : { name : "OutR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+		}
+	    },
 	    split : {name : "Split section", type : "action"}
+	    
 	}
 	
     },
@@ -81,6 +94,8 @@ var xd1_templates={
     geometry : {
 	
 	name : "Geometry",
+	ui_opts: {root_classes : ["inline"],name_classes : ["inline"], child_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "h", slided : true},
+	//ui_opts: {root_classes : [], child_classes : [], sliding : true, sliding_dir : "h", slided : true},
 	elements : {
 	    translation : {
 		name : "Translation",
@@ -90,13 +105,17 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : ["inline", "number_fixed_size"], editable : true, sliding : true}
+		ui_opts: {root_classes : [ "inline", "number_fixed_size"], child_classes : [],  editable : true, sliding : true, sliding_dir : "v", slided : false}
 	    },
 
 	    rotation : {
 		name : "Rotation",
-//		ui_opts : {sliding : true, sliding_dir : "h" },
+		ui_opts: {sliding: true, sliding_dir:"v", slided : false, root_classes : ["inline", ]},
 		elements : {
+		    angle : {
+			name : "Angle (rad)",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, ui_opts : { editable : true }
+		    },
+
 		    center : {
 			name : "Center",
 			type : "labelled_vector",
@@ -105,16 +124,14 @@ var xd1_templates={
 			min : "-8192", 
 			max : "8192", 
 			step: "1",
-			ui_opts: {root_classes : ["inline"], editable : true, sliding : true, sliding_dir : "h" }
-		    },
-		    angle : {
-			
-			name : "Angle",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, ui_opts : { editable : true }
+			ui_opts: {root_classes : [ "inline"], editable : true, sliding : true, sliding_dir : "h", slided: false }
 		    }
 		}
 	    },
 	    
-	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, ui_opts : { editable : true} }
+	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
+		     ui_opts : { editable : true, root_classes : []} 
+		   }
 	    
 	}
     },
@@ -135,20 +152,31 @@ var xd1_templates={
 	name :  "GL Image layer",
 	type : "bool",
 	value : true,
-	ui_opts : { root_classes : ["column"], child_view_type : "tabbed", type : "edit", sliding: true, sliding_dir : "v" }, 
 
+	ui_opts : { root_classes : ["inline"], child_classes : ["inline"], name_classes : ["inline"], item_classes : ["inline"], 
+		    //child_view_type : "tabbed", 
+		    type : "edit", sliding: false, sliding_dir : "v" }, 
+	
 	elements : {
 	    image : {
 		type : "local_file",
-		ui_opts : { type: "edit" },
-		name : "FITS image",
+		ui_opts : { type: "edit", root_classes : ["inline"], child_classes : ["newline"] 
+			    ,sliding : true , sliding_dir : "h", slided : false
+			  },
+		name : "Image source",
 		elements :{
-		    dims : { type: "template", template_name : "image_dimensions"},
+		    dims : { 
+			type: "template", 
+			template_name : "image_dimensions",
+			ui_opts : { name_classes : ["newline"] }
+		    },
 		    file_size : {
+			ui_opts : {root_classes : ["inline"] },
 			name : "File size",
 			type : "bytesize"
 		    },
 		    size : {
+			ui_opts : {root_classes : ["inline"] },
 			name : "Image size",
 			type : "bytesize"
 		    }
@@ -156,14 +184,19 @@ var xd1_templates={
 	    },
 	    general : {
 		name : "Colours",
+		ui_opts : { type: "edit", root_classes : ["inline"], child_classes : ["inline"], 
+			    sliding : true , sliding_dir : "h", slided : false
+			  //  child_view_type : "tabbed" 
+			  },
+		//ui_opts : {child_classes : ["column"]},
 		elements : {
 		    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : "1.0", 
-			    ui_opts : {input_type : "range", editable: true} },
+			    ui_opts : {input_type : "range", editable: true ,  root_classes : []} },
 		    
-		    histo : {
-			name : "Colormap and cuts",
-			
-			elements : {
+		    // histo : {
+		    // 	name : "Colors and cuts",
+		    // 	ui_opts : { root_classes : ["inline"], child_classes : "inline", sliding : true , sliding_dir : "h", slided : false },
+		    // 	elements : {
 			    bounds : {
 				type : "labelled_vector",
 				name : "Data bounds",
@@ -171,13 +204,18 @@ var xd1_templates={
 				value_labels : ["Min","Max"],
 				min : "-100000", 
 				max : "100000", 
-				ui_opts : { editable : false, root_classes : [] }
+				ui_opts : { editable : false, sliding : true , sliding_dir : "h", slided : false }
 				//ui_opts: {root_classes : ["inline"]}
 			    },
 			    
 			    
-			    cuts : { name : "Value cuts", type : "template", template_name : "cuts", ui_opts: {}},
-			    cmap : { name : "Colormap", type : "colormap", ui_opts : {editable : true},
+			    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
+				     ui_opts: { sliding : true , sliding_dir : "h", slided : false}},
+			    cmap : { name : "Colormap", type : "colormap", 
+				     ui_opts : {editable : true, sliding : true , sliding_dir : "h", slided : false,
+						root_classes : "newline"
+						
+					       },
 				     value : [[0,0,0,1,0],
 					      [0.8,0.2,0.8,1.0,0.2],
 					      [0.9,0.9,0.2,1.0,0.2],
@@ -187,33 +225,62 @@ var xd1_templates={
 			    histo : {
 				name : "Histogram", type : "vector",
 				ui_opts : {width: 400, height: 200, margin : {top: 20, right: 20, bottom: 30, left: 30},
-					   root_classes : ["newline"]
+					   root_classes : [], sliding : true , sliding_dir : "h", slided : false
 					  }
 			    }
 			    
-			}
-		    }
+		    // 	}
+		    // }
 		}
 	    },
 	    geometry : {
 
 		name : "Geometry",
 		type : "template",
-		template_name : "geometry"
+		template_name : "geometry",
+		ui_opts : {  root_classes : ["inline"], child_classes : ["inline"], 
+			    sliding : true , sliding_dir : "h", slided : false
+			    //  child_view_type : "tabbed" 
+			  }
 	    }
 	}
     },
     
     gl_view_2d :  {
+
 	name : "XD-1",
-	ui_opts: {sliding: true, sliding_dir:"h"},
-	type : "template",
-	template_name : "geometry",
+	ui_opts: {root_classes : ["newline"], child_classes : ["inline"], name_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "v", slided : true},
+	//ui_opts: {sliding: true, sliding_dir:"h", root_classes : []},
+	// elements : {
+	//     layers : { 
+	// 	name: "Layers", 
 	elements : {
-	    newlayer : {
-		type : "action",
-		name : "Add new layer"
-	    }
+	    layer_objects : { 
+		name : "Layers",
+		// ui_opts: {
+		//     sliding: true, sliding_dir:"v", slided : false, root_classes : [], child_view_type : "tabbed"
+		// }
+		elements : {
+		    newlayer : {
+			type : "action",
+			name : "Add new layer"
+		    }
+		},
+		ui_opts: {
+		    sliding: true, sliding_dir:"v", slided : true, child_view_type : "tabbed", root_classes : [], name_classes : []
+		}
+	    },
+
+	    //	}
+	    //	    },
+	    
+	    geometry : {
+		name : "Geometry",
+		type : "template",
+		template_name : "geometry",
+		
+		
+	    },
 	}
     }
 };
@@ -221,7 +288,7 @@ var xd1_templates={
 var tmaster=new local_templates();
 tmaster.add_templates(xd1_templates);
 
-function layer(xd, id,update_shader_cb, update_cmap_cb){
+function layer(xd, id, layer_opts){
 
     var lay=this;
     var gl=xd.gl;
@@ -231,104 +298,19 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 
     var div=this.div=document.createElement("div"); 
     div.className="layer";
-    
-    
-    // this.layer_head=document.createElement("nav");
-    // this.layer_head.className="layer_head";
-    // div.appendChild(this.layer_head);
-
-    // var layer_menu=this.layer_head; //.appendChild(document.createElement("ul"));
-    // layer_menu.frames=[];
-
-    // layer_menu.select_frame=function(f){
-    // 	if(typeof this.selected_frame!='undefined')
-    // 	    this.selected_frame.div.style.display='none';
-    // 	f.div.style.display='block';
-    // 	this.selected_frame=f;
-    // 	return f;
-    // }
-
-    // layer_menu.add_frame=function(title){
-    // 	var lm=this;
-    // 	var li=this.appendChild(document.createElement("li"));
-    // 	li.innerHTML=title;
-    // 	li.div=div.appendChild(document.createElement("div"));
-    // 	li.div.className="layer_section";
-    // 	li.div.style.display='none';
-    // 	this.frames.push(li);
-	
-    // 	li.onclick=function(){
-    // 	    console.log("Click!!");
-    // 	    lm.select_frame(this); xd.fullscreen(false);
-    // 	}
-    // 	if(this.frames.length==1) this.select_frame(li);
-
-    // 	return li;
-    // }
-
-    // var source_div=layer_menu.add_frame("Data source").div;
-    // var settings_div=layer_menu.add_frame("Image settings").div;
-
-    // this.source_head=document.createElement("nav");
-    // this.source_head.className="source_head";
-    // source_div.appendChild(this.source_head);
-
-    // var source_menu=this.source_head; //.appendChild(document.createElement("ul"));
-    // source_menu.frames=[];
-
-    // source_menu.select_frame=function(f){
-    // 	if(typeof this.selected_frame!='undefined')
-    // 	    this.selected_frame.div.style.display='none';
-    // 	f.div.style.display='block';
-    // 	this.selected_frame=f;
-    // 	return f;
-    // }
-
-    // source_menu.add_frame=function(title){
-    // 	var lm=this;
-    // 	var li=this.appendChild(document.createElement("li"));
-    // 	li.innerHTML=title;
-    // 	li.div=source_div.appendChild(document.createElement("div"));
-    // 	li.div.className="source_section";
-    // 	li.div.style.display='none';
-    // 	this.frames.push(li);
-	
-    // 	li.onclick=function(){
-    // 	    lm.select_frame(this); xd.fullscreen(false);
-    // 	}
-    // 	if(this.frames.length==1) this.select_frame(li);
-
-    // 	return li;
-    // }
-
-
-    // var fits_source = source_menu.add_frame("Local FITS");
-    // var cam_source = source_menu.add_frame("Camera control");
-    // var db_source = source_menu.add_frame("DB Browser");
-
-    //lay.name.innerHTML="Layer " + lay.id + "";
 
     this.p_values=def_parameters[id];
     this.rotcenter=[0,0];
-    
 
-//    cmap_el.appendChild(div);
-
-
-    var layer_opts = this.layer_opts= tmaster.build_template("gl_image_layer"); 
-    
-    var bounds=layer_opts.elements.general.elements.histo.elements.bounds; 
-    var cuts=layer_opts.elements.general.elements.histo.elements.cuts; 
-    var histo_tpl=layer_opts.elements.general.elements.histo.elements.histo; 
-
-    var cmap=this.cmap=layer_opts.elements.general.elements.histo.elements.cmap; 
-
+    var bounds=layer_opts.elements.general.elements.bounds; 
+    var cuts=layer_opts.elements.general.elements.cuts; 
+    var histo_tpl=layer_opts.elements.general.elements.histo; 
+    var cmap=this.cmap=layer_opts.elements.general.elements.cmap; 
     var lum=layer_opts.elements.general.elements.lum; 
     var tr=layer_opts.elements.geometry.elements.translation;
     var zm=layer_opts.elements.geometry.elements.zoom; 
     var ag=layer_opts.elements.geometry.elements.rotation.elements.angle; 
     var rc=layer_opts.elements.geometry.elements.rotation.elements.center;
-
     var fits_file=layer_opts.elements.image;
 
     var nbins=512;
@@ -471,20 +453,7 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	});
 
     }
-    
-    div.appendChild(create_ui({type:"short" }, layer_opts));
 
-
-    
-    // var cmap=this.cmap=new colormap();  
-    
-    // //var cmap_data=cmap.json_colormap();
-
-
-    // var hzoom_but=document.createElement("button");
-    // var hreset_but=document.createElement("button");
-    
-    
     var canvas_info  = document.getElementById('canvas_info');
 
     //    var x_domain_full=null; //[low+.5*bsize,low+(nbins-.5)*bsize];
@@ -531,40 +500,6 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	
     }
 
-/*
-    hzoom_but.onclick=function(){
-	x_domain = [brush.extent()[0],brush.extent()[1]];//
-	compute_histogram(x_domain[0],x_domain[1]);
-	draw_histogram();
-    }
-    
-    hreset_but.onclick=function(){
-	console.log("Clicked!!");
-	reset_histogram();
-    }
-
-    lay.htd=document.createElement("td");
-    lay.htd.colSpan="6";
-    //htd.style.backgroundColor="white";
-    tre[4].appendChild(lay.htd);
-    
-    
-    var tdzoom=document.createElement("td");
-    var tdreset=document.createElement("td");
-    tdzoom.colSpan="3";
-    tdreset.colSpan="3";
-    tre[5].appendChild(tdzoom);
-    tre[5].appendChild(tdreset);
-    
-    tdzoom.appendChild(hzoom_but);
-    tdreset.appendChild(hreset_but);
-    
-    hzoom_but.innerHTML="Zoom in selection";
-    hreset_but.innerHTML="Reset histogram";
-    
-  */  
-
-
     this.pointer_info  = document.createElement('div');
     this.pointer_info.className="pointer_info";
 
@@ -576,96 +511,10 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
     this.g_screen_center=[0,0];
     this.g_scale=1.0;
 
-
-    
-    
-    // var tab=document.createElement("table");
-    // div.appendChild(tab);
-    
-    // var th=[document.createElement("tr"),document.createElement("tr"),document.createElement("tr")];
-    // var tre=[document.createElement("tr"),
-    // 	     document.createElement("tr"),
-    // 	     document.createElement("tr"),
-    // 	     document.createElement("tr"),
-    // 	     document.createElement("tr"),
-    // 	     document.createElement("tr")];
-
-    // tab.appendChild(th[0]);
-    // tab.appendChild(tre[0]);
-    // tab.appendChild(th[1]);
-    // tab.appendChild(tre[1]);
-    // tab.appendChild(th[2]);
-    // tab.appendChild(tre[2]);
-    // tab.appendChild(tre[3]);
-    // tab.appendChild(tre[4]);
-    // tab.appendChild(tre[5]);
-    
-    // var cap=document.createElement("td"); 
-    // cap.innerHTML="Color segment";
-    // cap.colSpan="3";
-    // th[2].appendChild(cap);
-    
-    // var cap=document.createElement("td"); 
-    // cap.colSpan="3";
-    // cap.appendChild(cmap.colornode);
-    // tre[2].appendChild(cap);
-    
-    // var cmt=document.createElement("td");
-    // cmt.colSpan="6";
-    // cmt.appendChild(cmap.domnode);
-    // tre[3].appendChild(cmt);
-    
-    // for(var p in prms){
-    // 	var cap=document.createElement("td"); 
-    // 	cap.colSpan=prms[p].cs;
-    // 	cap.innerHTML=prms[p].cap;
-    // 	th[prms[p].row].appendChild(cap);
-    // }
-    
-    // for(var p in prms){
-    // 	var td=document.createElement("td");
-    // 	td.colSpan=prms[p].cs;
-    // 	var ui=prms[p].ui;
-    // 	var id=prms[p].id;
-    // 	td.appendChild(ui);
-	
-    // 	tre[prms[p].row].appendChild(td);
-
-    // 	if(id>=0)
-    // 	    ui.value=lay.p_values[id];
-    // 	else
-    // 	    ui.value=prms[p].set_value(ui);
-
-    // 	ui.layer=lay;
-    // 	ui.id=id;
-    // 	ui.prm=prms[p];
-	
-    // 	if(typeof prms[p].onchange == 'undefined')
-    // 	    ui.onchange=function(){
-    // 		//console.log("Change pvals[" + this.layer.id + "]["+this.id+"]=" + this.value);
-    // 		lay.p_values[this.id]=1.0*this.value;
-    // 		update_pvalues();	    
-    // 	    //update_shader_cb(this.layer.lay.p_values, this.layer.id);
-    // 	    }; 
-    // 	else{
-	    
-    // 	    ui.onchange=function(){
-    // 		this.prm.onchange(this);
-    // 	    }
-    // 	}
-	
-    // 	//ui.onchange();
-    // 	//update_shader_cb(this.lay.p_values, lay.id);
-    // }
-    
     update_pvalues();	    
     
 
     cmap.update_callback=function(){
-	
-	//var cmap_data=cmap.json_colormap();
-	
-
 
 	var cmap_data=cmap.value;
 	xd.ncolors[lay.id]=cmap_data.length;
@@ -843,140 +692,12 @@ function layer(xd, id,update_shader_cb, update_cmap_cb){
 	cmap.display({type : "edit"});
 	
 	xd.fullscreen(false);
-
+	
 	
     }
     
-    
-    
-    // if(opts.source=="sadira"){
-    
-    //   var d= sadira.dialogs.create_dialog({ handler : "fits.test_get_data"});
-    
-    //   //var image_data;
-    //   d.lay_id=this.id;
-    
-    //   d.srz_request=function(dgram, result_cb){
-    
-    //     if(bbig==null){
-    
-    // 	sz=dgram.header.sz;
-    // 	w=dgram.header.width;
-    // 	h=dgram.header.height;
-    
-    // 	bbig=new ArrayBuffer(4*sz);
-    // 	fv = new Float32Array(bbig);
-    // 	for(var i=0;i<fv.length/4;i++){
-    // 	  fv[4*i]=0.0;
-    // 	  fv[4*i+1]=0.0;
-    // 	  fv[4*i+2]=0.0;
-    // 	  fv[4*i+3]=1.0;
-    // 	}
-    //     }
-    
-    //     lay.layer_name=dgram.header.name;
-    //     dinfo.innerHTML+="Ready to receive "+sz +" bytes. Image ["+dgram.header.name+"] size will be : " + w + ", " + h + "<br/>";
-    
-    //     var b=new ArrayBuffer(sz);
-    //     var fvp = new Float32Array(b);
 
-
-    //     console.log("AB: N= "+ fv.length +" =? "+sz/4+" first elms : " + fv[0] + ", " + fv[1] );
-    //     var sr=new srz_mem(b);
-    //     sr.lay_id=d.lay_id;
-    
-    //     sr.on_chunk=function(dgram){
-    // 	lay.name.innerHTML="Fetching data "+
-    // 	    		   " : "+(Math.floor(100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data)))+" %";
-    //     }
-    
-    //     sr.on_done=function(){
-    // 	  var lid=sr.lay_id;
-    
-    // 	  //test_webclgl(fvp);
-    
-    
-
-    // 	  for(var i=0;i<fvp.length;i++){
-    // 	    fv[4*i+lid]=fvp[i];
-    // 	  // fv[4*i+1]=0;
-    // 	  // fv[4*i+2]=0;
-    // 	  // fv[4*i+3]=0;
-    // 	  // console.log("v="+fvp[i]);
-    // 	}
-    // 	setup_layer_data(fv);
-    //     };
-
-    //     result_cb(null, sr);
-
-    //   };
-    
-    //   d.connect(function(error, init_dgram){
-    //     if(error)
-    //     dinfo.innerHTML+="Init data error= " + error + " init datagram = <pre> " + JSON.stringify(init_dgram,null,4)+" </pre><br/>";
-    
-    //     else{
-    
-    // 	lay.name.innerHTML+="Dialog handshake OK <br/>";
-    
-    // 	d.send_datagram({type : "get_data", imgid : lay.id},null,function(error){
-    // 	  if(error){
-    // 	    dinfo.innerHTML+="ERROR"+error+" <br/>";
-    // 	  }
-    
-    // 	});
-    //     }
-    
-    //   });
-    // }
-    
-
-    
-    
-//    init_fits_source();
-//    init_cam_source();
-
-//    xd.display_layer_ui(this);
-	
-    
-    
-
-    //var cuts=[0,2]; //pv[0] 0,1
-    //var tr=[0,0]; //pv[0] 2,3
-    //var zoom=1.0; //pv[1] 0
-    //var angle=0.0;//pv[1] 1
-
-
-    /*
-      var cuts_loc = gl.getUniformLocation(program, "u_cuts");
-      var zoom_loc=gl.getUniformLocation(program, "u_zoom");
-      var angle_loc=gl.getUniformLocation(program, "u_angle");
-      var tr_loc=gl.getUniformLocation(program, "u_tr");
-      gl.uniform2f(cuts_loc, cuts[0], cuts[1]);
-      gl.uniform2f(tr_loc, tr[0], tr[1]);
-      gl.uniform1f(angle_loc, angle);
-gl.uniform1f(zoom_loc, zoom );
-    */
 }
-
-/*
-        float lpos=(float(l)+.5)/4.0;
-        float alpha=u_pvals[2*l+1][1];//this layer's angle
-        mat2 rm =mat2(cos(alpha),sin(alpha),-sin(alpha),cos(alpha));//this layer's rotation matrix
-        vec2 trl=vec2(u_pvals[2*l][2],u_pvals[2*l][3]);//this layer's translation (x,y) vector
-        float lzoom=u_pvals[2*l+1][0]; //This layer's zoom level
-        vec2 screen_center = u_screen/2.0; //Screen center
-        vec2 image_tex_center = u_layer_range[l]/2.0; //The center of this layer image within the "whole" texture.
-
-        vec2 p =(gl_FragCoord.xy-screen_center);
-	
-	p = p/u_zoom+u_tr-u_rotc;
-	p = rmg*p+u_rotc;
-	p = p/lzoom+trl-u_rotcenters[l];
-	p = rm*p+u_rotcenters[l];
-	p = p/u_resolution+image_tex_center;
-*/
-
 
 layer.prototype.update_geometry=  function (){
     var xd=this.xd;
