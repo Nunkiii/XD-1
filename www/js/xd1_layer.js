@@ -282,7 +282,11 @@ var xd1_templates={
 		
 		
 	    },
+	    
+	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : true, slided : false} }
+
 	}
+
     }
 };
 
