@@ -623,6 +623,7 @@ xdone.prototype.xdone_init=function(options){
 	    
 	    tr.value[0]=t_start[0]-mouse_delta[0]/xd.zoom;
 	    tr.value[1]=t_start[1]+mouse_delta[1]/xd.zoom;
+
 	    tr.set_value();
 	    
 	    gl.uniform2fv(tr_loc, tr.value);
@@ -712,17 +713,18 @@ xdone.prototype.fullscreen=function(on){
 
     var footer=select(document, "footer");    
     var di=select(document, "#drawing_info");    
+    var dr=select(document, "#gfx");    
     var la=select(document, "header");    
     //var bo=select(document, "#bottom");    
     var xline=glx_canvas;
 
     if(on==false){
 	//console.log("GF height = " + footer.clientHeight);
-	xd.resize_canvas(la.clientWidth -20, //-la.clientWidth-10,
+	xd.resize_canvas( dr.clientWidth-20, //-la.clientWidth-10,
 			 window.innerHeight
 			 //-gfx_bar.clientHeight
-			 -footer.clientHeight
-			 -la.clientHeight
+			 //-footer.clientHeight
+			 //-la.clientHeight
 			 -75);
 
 	//	xline.width=bo.clientWidth-la.clientWidth-10;
