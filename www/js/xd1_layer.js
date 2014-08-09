@@ -224,7 +224,7 @@ var xd1_templates={
 					      [1,1,1,1,1]] },
 			    histo : {
 				name : "Histogram", type : "vector",
-				ui_opts : {width: 400, height: 200, margin : {top: 20, right: 20, bottom: 30, left: 30},
+				ui_opts : {width: 300, height: 200, margin : {top: 20, right: 20, bottom: 30, left: 30},
 					   root_classes : [], sliding : true , sliding_dir : "h", slided : false
 					  }
 			    }
@@ -367,6 +367,8 @@ function layer(xd, id, layer_opts){
 	
     }
 
+    console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
+
     fits_file.onchange=function(evt){
 
 	var FITS = astro.FITS;
@@ -404,8 +406,12 @@ function layer(xd, id, layer_opts){
 		layer_opts.ui_name.innerHTML=fits_file.ui.files[0].name;
 
 		fits_file.elements.file_size.value=fits_file.ui.files[0].size;
+
+		console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
+
 		fits_file.elements.file_size.set_value();
 		
+
 		bounds.set_value(extent);
 		console.log("Frame read : D=("+lay.width+","+lay.height+")  externt " + extent[0] + "," + extent[1]);
 		//image_info.innerHTML="Dims : ("+lay.width+", "+lay.height+")";
@@ -413,8 +419,9 @@ function layer(xd, id, layer_opts){
 		console.log("Setting " + w);
 		fits_file.elements.dims.value[0]=w;
 		fits_file.elements.dims.value[1]=h;
+		
 		fits_file.elements.dims.set_value();
-
+		
 		lay.arr=arr;
 		lay.ext=extent;
 
