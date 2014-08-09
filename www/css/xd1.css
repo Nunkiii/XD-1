@@ -131,6 +131,7 @@ body{
 /* } */
 
 #gfx{
+  width: 65%;
   display: inline-block;
   /*  color: white; */
   vertical-align: top;
@@ -163,8 +164,8 @@ body{
 
 
 #gfx_bar{
-  display: block;
-  width: 100%;
+  display: inline-block;
+  width: 30%;
   border-radius: .5em;
   margin-bottom: 1em;
 }
@@ -191,7 +192,7 @@ body{
    }
 
    #drawing{
-      width: 100%;
+      width: 70%;
       height: auto;
   }
 
