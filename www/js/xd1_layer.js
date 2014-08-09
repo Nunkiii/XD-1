@@ -60,6 +60,7 @@ var xd1_templates={
 
     colormap_edit : {
 	name : "Color segment edit",
+	ui_opts : { root_classes : "full"},
 	elements : {
 	    range : {name : "Range", type : "labelled_vector", value : [0,1], value_labels : ["Start","End"], min : "0", max : "1", step : ".01",ui_opts : {root_classes : [], editable : true, type : "short"} },	    
 	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, root_classes : ["inline"]}},
@@ -213,7 +214,7 @@ var xd1_templates={
 				     ui_opts: { sliding : true , sliding_dir : "h", slided : false}},
 			    cmap : { name : "Colormap", type : "colormap", 
 				     ui_opts : {editable : true, sliding : true , sliding_dir : "h", slided : false,
-						root_classes : "newline"
+						root_classes : ["full","newline"]
 						
 					       },
 				     value : [[0,0,0,1,0],
