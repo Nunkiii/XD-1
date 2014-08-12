@@ -224,7 +224,7 @@ var xd1_templates={
 	    general : {
 		name : "Colours",
 		ui_opts : { type: "edit", root_classes : ["inline"], child_classes : ["inline"], 
-			    sliding : true , sliding_dir : "h", slided : false
+			    sliding : true , sliding_dir : "h", slided : true
 			  //  child_view_type : "tabbed" 
 			  },
 		//ui_opts : {child_classes : ["column"]},
@@ -264,7 +264,7 @@ var xd1_templates={
 			    histo : {
 				name : "Histogram", type : "vector",
 				ui_opts : {width: 300, height: 200, margin : {top: 10, right: 10, bottom: 30, left: 42},
-					   root_classes : ["full"], item_classes : ["full"], sliding : true , sliding_dir : "h", slided : false
+					   root_classes : ["full"], item_classes : ["full"], sliding : true , sliding_dir : "h", slided : true
 					  }
 
 			    }
