@@ -303,20 +303,12 @@ xdone.prototype.xdone_init=function(options){
     
     this.selected_layer=null;
     
-    var xdone_node  = document.getElementById("xdone");
+    var xdone_node  = xd.xdone_node=document.getElementById("xdone");
     var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; //select(xdone_node,"#gfx_bar");
 //    var bottom_node=cc("div", xdone_node); bottom_node.id="bottom";
 //    var cuts_node=cc("div", bottom_node); cuts_node.id="cuts";
     var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";
     var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
-    
-    //var cuts_node  = select(xdone_node,"#cuts");
-    //var dbv = new db_view(tmaster.templates["gl_view_2d"]);
-    //xdone_node.appendChild(dbv.widget_div);
-    // var layer_view= new db.object(tmaster.templates["gl_view_2d"]);
-    // layer_view.create({}, function() {
-    // 	xdone_node.appendChild(layer_view.odiv);
-    // } );
     
     
     var glv_opts = this.glv_opts=tmaster.build_template("gl_view_2d"); 
@@ -369,45 +361,49 @@ xdone.prototype.xdone_init=function(options){
     
     newlayer.onclick=function(){
 	if(xd.nlayers<xd.maxlayers){
-	    var layer_opts = tmaster.build_template("gl_image_layer"); 
-	    var lui=create_ui({type:"short" }, layer_opts, glv_opts.depth+1);
 	    
-	    var l=new layer(xd, xd.nlayers,layer_opts,
-			    function(p_values, layer_id){
-			    },
-			    function(cmap_data, layer_id){
-			    }
-			   );
+	    var lay=new layer(xd, xd.nlayers,function(error, l){
+		
+		if(error){
+		    console.log("Error ! " + error);
+		    return;
+		}
+		
+		var layer_opts = l.layer_opts; 
+		
+		//var ui=create_ui(global_ui_opts,e, depth+1 );
+		//glv_opts.elements.layers.elements.layer_objects.ui_childs=e;
+		//console.log("ch" + typeof(glv_opts.elements.layers.ui_childs));
+		
+		//console.log("ch" + typeof(e.container.add_child));
+		//e.container.add_child(e,e.ui_root);
+		layer_opts.container=glv_opts.elements.layer_objects.ui_childs;
+		glv_opts.elements.layer_objects.ui_childs.add_child(layer_opts,l.ui);
+		
+		xd.layers[xd.nlayers]=l;
+		xd.layer_enabled[xd.nlayers]=1;
+		var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
+		gl.uniform4iv(le_loc, layer_enabled);
+		
+		
+		/*
+		  l.li_layer=layer_tabs.add_frame("Layer "+xd.nlayers);
+		  console.log("Setting bg to " + l.cmap.gradient_css_string);
+		  l.li_layer.style.background=l.cmap.gradient_css_string;
+		  
+		  l.li_layer.appendChild(l.pointer_info);
+		  l.li_layer.div.appendChild(l.div);
+		*/
+		
+		xd.nlayers++;
+		xd.fullscreen(false);
+		
+		
+		
+	    });
 	    
-	    
-	    //var ui=create_ui(global_ui_opts,e, depth+1 );
-	    //glv_opts.elements.layers.elements.layer_objects.ui_childs=e;
-	    //console.log("ch" + typeof(glv_opts.elements.layers.ui_childs));
-
-	    //console.log("ch" + typeof(e.container.add_child));
-	    //e.container.add_child(e,e.ui_root);
-	    layer_opts.container=glv_opts.elements.layer_objects.ui_childs;
-	    glv_opts.elements.layer_objects.ui_childs.add_child(layer_opts,lui);
-
-	    xd.layers[xd.nlayers]=l;
-	    xd.layer_enabled[xd.nlayers]=1;
-	    var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
-	    gl.uniform4iv(le_loc, layer_enabled);
-	    
-	    
-	    /*
-	    l.li_layer=layer_tabs.add_frame("Layer "+xd.nlayers);
-	    console.log("Setting bg to " + l.cmap.gradient_css_string);
-	    l.li_layer.style.background=l.cmap.gradient_css_string;
-
-	    l.li_layer.appendChild(l.pointer_info);
-	    l.li_layer.div.appendChild(l.div);
-	    */
-
-	    xd.nlayers++;
-	    xd.fullscreen(false);
 	}else alert("Max 4 layers!");
-
+	
     };
 
     // xdm.add_item("About XD-1", function(e){});    
@@ -431,7 +427,6 @@ xdone.prototype.xdone_init=function(options){
 
     
     xd.canvas        = cc("canvas", drawing_node); xd.canvas.id="glscreen";// select(xdone_node,'#glscreen');
-
     xd.gl            = xd.canvas.getContext('experimental-webgl');
 
     //xd.ctx    = xd.canvas.getContext('2d');
@@ -679,7 +674,7 @@ xdone.prototype.render=function () {
 
       var data   = '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">' +
       '<foreignObject width="100%" height="100%">' +
-      '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:40px">' +
+      '<div xmlns="http://www.w3.org/1999/xhtml" style="font-size:40px">' +xb
       '<em>I</em> like <span style="color:white; text-shadow:0 0 2px blue;">cheese</span>' +
       '</div>' +
       '</foreignObject>' +
@@ -709,27 +704,29 @@ xdone.prototype.fullscreen=function(on){
 
 
     var xd=this;
-    //var gfx_bar=select(xdone_node,"#gfx_bar");
-
+    var gfx_bar=select(xd.xdone_node,"#gfx_bar");
+    
     var footer=select(document, "footer");    
     var di=select(document, "#drawing_info");    
     var dr=select(document, "#gfx");    
     var la=select(document, "header");    
     //var bo=select(document, "#bottom");    
     var xline=glx_canvas;
+    var margin=[0,70];
 
     if(on==false){
 	//console.log("GF height = " + footer.clientHeight);
 	xd.resize_canvas( dr.clientWidth-20, //-la.clientWidth-10,
-			 window.innerHeight
+			  window.innerHeight
 			 //-gfx_bar.clientHeight
 			 //-footer.clientHeight
 			 //-la.clientHeight
-			 -75);
+			 -margin[1]);
 
 	//	xline.width=bo.clientWidth-la.clientWidth-10;
 	
-	//gfx_bar.style.width=xd.canvas.style.width;
+	gfx_bar.style.height=(window.innerHeight-margin[1])+"px";
+	
 	xd.infs=false;
 	xd.render();
 	//render_line();
@@ -738,7 +735,7 @@ xdone.prototype.fullscreen=function(on){
     
     //var bd=[document.body.clientWidth,document.body.clientHeight];
     var bd=[window.innerWidth,window.innerHeight];
-    var drawing_info=select(xdone_node,"#drawing_info");
+    var drawing_info=select(xd.xdone_node,"#drawing_info");
     gfx_bar.style.width=bd[0];
     
     console.log("doc body  d = " + bd[0] + ","+bd[1]);

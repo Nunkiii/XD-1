@@ -12,6 +12,7 @@
 
   <script src="sadira/js/utils.js"></script>
   <script src="sadira/js/db.js"></script>
+  <script src="gloria-widget/js/gloria_widget.js"></script>
   <script src="sadira/js/db_basetypes.js"></script>
   <script src="sadira/js/db_utils.js"></script>
   <script src="sadira/js/datagram.js"></script> 
@@ -65,53 +66,6 @@
   </footer>
 </body>
 
-<!-- <h2>About XD-1</h2>   -->
-
-  <!-- <p> -->
-  <!--   This early beta version has several limitations. Reload the page to load a new image. It is possible to render up to 4 different image layers coming from different FITS files. It will be possible also to load the data from a single FITS datacube (todo).  -->
-  <!-- </p> -->
-  <!-- <p> -->
-  <!--   The (actual) ugly look of the page and lack of controls will be changed into something more modern and practic, allowing full-screen view, image PNG/JPEG export of the WebGL canvas, WebGL computed histogram for fast automatic cut computation and selection, a selected column/line 1D plot, FITS data unit header view and probably many more, that will potentially make this tool a complete multi-platform, fast replacement of the good old ds9 program most astronomers are still using now. -->
-  <!-- </p> -->
-  
-  <!-- <\!-- <p> -\-> -->
-  <!-- <\!--   Select a FITS file on your disk. <input type="file" id="files" /><output id="list"></output>.  -\-> -->
-  <!-- <\!--   <br/> -\-> -->
-  <!-- <\!-- </p> -\-> -->
-  
-  <!-- <p> -->
-  <!--   This viewer makes use of <a href="http://www.astrojs.org"> astro.js </a> FITS library for JavaScript FITS file loading. -->
-  <!-- </p> -->
-
-  <!-- <p> -->
-
-  <!-- <h2>How does it work?</h2>   -->
-
-  
-  <!-- <p> -->
-  <!--   Nowaday's OpenGL rendering is done in parallel for every pixel of the screen (in practice the html <i>canvas</i> area) by programs called <i>shaders</i>, executed in the GPU by an increasingly big number of hard-silicium processing cores.</p> -->
-  <!-- <p> -->
-  <!--   These little program's aim was originally to compute the specific colors of the pixels produced by (parts of) a given 3D scene (for examples, famous shaders to produce light and reflection (computing of normals), shadow or fire effects in 3D video games).</p> -->
-  <!-- <p> We would want, in theory, to use this additional processing power for whatever computing needs we want, and possibly not only for specific pixel color rendering; but the specific hardware, drivers, programming interface paradigm's lack made this impossible, until now. If you see and can manipulate the cat's eye nebula layer's colors above, then this is finally possible, even for a simple downloaded text-script on your browser. Unfortunately, now in 2014, only browsers with openGL interface capable of floating point textures will work. This will be standard soon.  -->
-  <!-- </p> -->
-<!--   <p> -->
-<!--     <h2>Shader code</h2> -->
-
-<!--     This is the fragment shader code where all the color/geometry computations are done. Optimization on memory use is done by using a single floating point rgba texture to represent all the data. The four 'channels' of a pixel element represent four different image layers. Geometry transformations are computed by the algorithm using a single texture. Each of the (R,G,B,A) components can be used to store data for individual layers. This is why this rendering program handles at most four image layers. -->
-    
-<!--     <pre></pre> -->
-    
-    
-<!--   </p> -->
-  
-<!--   <h2>More</h2> -->
-<!--   <p> -->
-<!--     If you want to know how this web page works, look at the source html/javascript files, they are available in two clicks on your browser. -->
-<!--   </p> -->
-
-<!--   <h2>XD-1 ?</h2> -->
-
-<!--   This is the code-name of the <a href="http://en.wikipedia.org/wiki/Discovery_One">spaceship <i>Discovery One</i></a> appearing in the film <i>2001: A Space Odissey</i> and controlled by the Hal-9000 computer.  -->
 
 <!-- <footer> -->
 <!-- Pierre Sprimont<br/> INAF/IASF-Bologna, Italy  -->

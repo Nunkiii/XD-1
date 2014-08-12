@@ -160,12 +160,38 @@ var xd1_templates={
 	
 	elements : {
 	    image : {
-		type : "local_file",
-		ui_opts : { type: "edit", root_classes : ["inline"], child_classes : ["newline"] 
-			    ,sliding : true , sliding_dir : "h", slided : false
+
+		ui_opts : {  
+			    sliding : true , sliding_dir : "h", slided : false
 			  },
-		name : "Image source",
+		name : "FITS Image",
 		elements :{
+
+		    source : {
+			name : "Data source",
+			ui_opts : { child_display_type : "radio"}, 
+			elements : {
+			    
+			    local_fits : {
+				ui_opts : {editable: true},
+				name : "Local FITS file",
+				type : "local_file"
+			    },
+			    url_fits : {
+				ui_opts : {editable: true},
+				name : "FITS file URL",
+				type : "url"
+			    },
+			    gloria : {
+				ui_opts : {editable: false},
+				name : "GLORIA FITS database",
+				type : "template",
+				template_name : "image_db_browser"
+			    }
+			}
+			
+		    },
+
 		    dims : { 
 			type: "template", 
 			template_name : "image_dimensions",
@@ -173,12 +199,12 @@ var xd1_templates={
 		    },
 		    file_size : {
 			ui_opts : {root_classes : ["inline"] },
-			name : "File size",
+			name : "File size (original)",
 			type : "bytesize"
 		    },
 		    size : {
 			ui_opts : {root_classes : ["inline"] },
-			name : "Image size",
+			name : "Image size (double) in ArrayBuffer",
 			type : "bytesize"
 		    }
 		}
@@ -228,8 +254,9 @@ var xd1_templates={
 				ui_opts : {width: 300, height: 200, margin : {top: 20, right: 20, bottom: 30, left: 30},
 					   root_classes : [], sliding : true , sliding_dir : "h", slided : false
 					  }
+
 			    }
-			    
+		    
 		    // 	}
 		    // }
 		}
@@ -291,9 +318,11 @@ var xd1_templates={
 };
 
 var tmaster=new local_templates();
-tmaster.add_templates(xd1_templates);
 
-function layer(xd, id, layer_opts){
+tmaster.add_templates(xd1_templates);
+tmaster.add_templates(image_db_browser_templates);
+
+function layer(xd, id, cb){
 
     var lay=this;
     var gl=xd.gl;
@@ -307,6 +336,11 @@ function layer(xd, id, layer_opts){
     this.p_values=def_parameters[id];
     this.rotcenter=[0,0];
 
+
+    var layer_opts=this.layer_opts=tmaster.build_template("gl_image_layer"); 
+    var depth=1;//layer_opts.depth+1;
+    console.log("Hello");
+
     var bounds=layer_opts.elements.general.elements.bounds; 
     var cuts=layer_opts.elements.general.elements.cuts; 
     var histo_tpl=layer_opts.elements.general.elements.histo; 
@@ -316,8 +350,13 @@ function layer(xd, id, layer_opts){
     var zm=layer_opts.elements.geometry.elements.zoom; 
     var ag=layer_opts.elements.geometry.elements.rotation.elements.angle; 
     var rc=layer_opts.elements.geometry.elements.rotation.elements.center;
-    var fits_file=layer_opts.elements.image;
 
+    var image=layer_opts.elements.image;
+    var fits_file=image.elements.source.elements.local_fits;
+    var file_size=image.elements.file_size;
+    var image_size=image.elements.size;
+    var dims=image.elements.dims;
+    
     var nbins=512;
     var bsize=null; 
 
@@ -327,7 +366,7 @@ function layer(xd, id, layer_opts){
     }
 
     layer_opts.onchange = function(){
-  //console.log("Change !!!");
+	console.log("Change !!!");
 	xd.layer_enabled[lay.id]=this.value;
 	var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
 	gl.uniform4iv(le_loc, xd.layer_enabled);
@@ -372,16 +411,10 @@ function layer(xd, id, layer_opts){
 	
     }
 
-    console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
-
     fits_file.onchange=function(evt){
 
 	var FITS = astro.FITS;
 	// Define a callback function for when the FITS file is received
-	var callback = function() {
-	    
-	    // Do some wicked client side processing ...
-	}
 	
 	var FITS=astro.FITS;
 	var file = evt.target.files[0]; // FileList object
@@ -410,11 +443,11 @@ function layer(xd, id, layer_opts){
 		
 		layer_opts.ui_name.innerHTML=fits_file.ui.files[0].name;
 
-		fits_file.elements.file_size.value=fits_file.ui.files[0].size;
+		file_size.value=fits_file.ui.files[0].size;
 
-		console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
+		//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
 
-		fits_file.elements.file_size.set_value();
+		file_size.set_value();
 		
 
 		bounds.set_value(extent);
@@ -422,18 +455,19 @@ function layer(xd, id, layer_opts){
 		//image_info.innerHTML="Dims : ("+lay.width+", "+lay.height+")";
 		
 		console.log("Setting " + w);
-		fits_file.elements.dims.value[0]=w;
-		fits_file.elements.dims.value[1]=h;
+		dims.value[0]=w;
+		dims.value[1]=h;
 		
-		fits_file.elements.dims.set_value();
+		dims.set_value();
 		
 		lay.arr=arr;
 		lay.ext=extent;
-
+		
 		setup_bbig(w,h);
-	
-		fits_file.elements.size.value=arr.length;
-		fits_file.elements.size.set_value();
+		
+		image_size.ui_name.innerHTML="pixel byte size " + arr.length*1.0/w/h + " PixType " + typeof(arr[0]);
+
+		image_size.set_value(arr.length*4);
 
 		var id=lay.id;
 		
@@ -707,7 +741,10 @@ function layer(xd, id, layer_opts){
 	
 	
     }
+
+    this.ui=create_ui({type:"short" }, layer_opts, depth);
     
+    cb(null,this);
 
 }
 
