@@ -95,7 +95,7 @@ var xd1_templates={
     geometry : {
 	
 	name : "Geometry",
-	ui_opts: {root_classes : ["inline"],name_classes : ["inline"], child_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "h", slided : true},
+	ui_opts: {root_classes : ["inline"],name_classes : ["inline"], child_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "h", slided : false},
 	//ui_opts: {root_classes : [], child_classes : [], sliding : true, sliding_dir : "h", slided : true},
 	elements : {
 	    translation : {
@@ -111,7 +111,7 @@ var xd1_templates={
 
 	    rotation : {
 		name : "Rotation",
-		ui_opts: {sliding: true, sliding_dir:"v", slided : false, root_classes : ["inline", ]},
+		ui_opts: {sliding: true, sliding_dir:"v", slided : false, root_classes : ["inline"]},
 		elements : {
 		    angle : {
 			name : "Angle (rad)",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, ui_opts : { editable : true }
@@ -125,7 +125,9 @@ var xd1_templates={
 			min : "-8192", 
 			max : "8192", 
 			step: "1",
-			ui_opts: {root_classes : [ "inline"], editable : true, sliding : true, sliding_dir : "h", slided: false }
+			ui_opts: {
+			    //root_classes : [ "inline"], editable : true, 
+			    editable: true, sliding : true, sliding_dir : "h", slided: false }
 		    }
 		}
 	    },
@@ -169,43 +171,53 @@ var xd1_templates={
 
 		    source : {
 			name : "Data source",
-			ui_opts : { child_display_type : "radio"}, 
+			ui_opts : { child_view_type : "tabbed", sliding : true, slided : true}, 
 			elements : {
 			    
 			    local_fits : {
-				ui_opts : {editable: true},
+				ui_opts : {editable: true, sliding : false, slided : false},
 				name : "Local FITS file",
 				type : "local_file"
 			    },
 			    url_fits : {
-				ui_opts : {editable: true},
-				name : "FITS file URL",
+				ui_opts : {editable: true, sliding : false, slided : false},
+				name : "FITS URL",
 				type : "url"
 			    },
 			    gloria : {
-				ui_opts : {editable: false},
-				name : "GLORIA FITS database",
+				ui_opts : {editable: false, sliding : false, slided : false},
+				name : "GLORIA images",
 				type : "template",
 				template_name : "image_db_browser"
+			    },
+			    sbig : {
+				name : "Camera control",
+				ui_opts : {editable: false, sliding : false, slided : false}
 			    }
 			}
 			
 		    },
-
-		    dims : { 
-			type: "template", 
-			template_name : "image_dimensions",
-			ui_opts : { name_classes : ["newline"] }
-		    },
-		    file_size : {
-			ui_opts : {root_classes : ["inline"] },
-			name : "File size (original)",
-			type : "bytesize"
-		    },
-		    size : {
-			ui_opts : {root_classes : ["inline"] },
-			name : "Image size (double) in ArrayBuffer",
-			type : "bytesize"
+		    info : {
+			name : "Image info",
+			ui_opts : {editable: false, sliding : true, slided : false, root_classes : ["flat"], child_classes : ["inline"]},
+			elements : {
+			    
+			    dims : { 
+				type: "template", 
+				template_name : "image_dimensions",
+				ui_opts : { name_classes : ["newline"] }
+			    },
+			    file_size : {
+				ui_opts : {root_classes : ["inline"] },
+				name : "File size (original)",
+				type : "bytesize"
+			    },
+			    size : {
+				ui_opts : {root_classes : ["inline"] },
+				name : "Image size (double) in ArrayBuffer",
+				type : "bytesize"
+			    }
+			}
 		    }
 		}
 	    },
@@ -251,8 +263,8 @@ var xd1_templates={
 					      [1,1,1,1,1]] },
 			    histo : {
 				name : "Histogram", type : "vector",
-				ui_opts : {width: 300, height: 200, margin : {top: 20, right: 20, bottom: 30, left: 30},
-					   root_classes : [], sliding : true , sliding_dir : "h", slided : false
+				ui_opts : {width: 300, height: 200, margin : {top: 10, right: 10, bottom: 30, left: 42},
+					   root_classes : ["full"], item_classes : ["full"], sliding : true , sliding_dir : "h", slided : false
 					  }
 
 			    }
@@ -275,7 +287,6 @@ var xd1_templates={
     },
     
     gl_view_2d :  {
-
 	name : "XD-1",
 	ui_opts: {root_classes : ["newline"], child_classes : ["inline"], name_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "v", slided : true},
 	//ui_opts: {sliding: true, sliding_dir:"h", root_classes : []},
@@ -284,10 +295,7 @@ var xd1_templates={
 	// 	name: "Layers", 
 	elements : {
 	    layer_objects : { 
-		name : "Layers",
-		// ui_opts: {
-		//     sliding: true, sliding_dir:"v", slided : false, root_classes : [], child_view_type : "tabbed"
-		// }
+		name : "Image Layers",
 		elements : {
 		    newlayer : {
 			type : "action",
@@ -295,7 +303,7 @@ var xd1_templates={
 		    }
 		},
 		ui_opts: {
-		    sliding: true, sliding_dir:"v", slided : true, child_view_type : "tabbed", root_classes : [], name_classes : []
+		    sliding: true, sliding_dir:"h", slided : false, child_view_type : "tabbed", root_classes : [], name_classes : []
 		}
 	    },
 
@@ -310,10 +318,10 @@ var xd1_templates={
 		
 	    },
 	    
-	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : true, slided : false} }
-
+	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : true, sliding_dir : "h", slided : false} }
+	    
 	}
-
+	
     }
 };
 
@@ -353,9 +361,9 @@ function layer(xd, id, cb){
 
     var image=layer_opts.elements.image;
     var fits_file=image.elements.source.elements.local_fits;
-    var file_size=image.elements.file_size;
-    var image_size=image.elements.size;
-    var dims=image.elements.dims;
+    var file_size=image.elements.info.elements.file_size;
+    var image_size=image.elements.info.elements.size;
+    var dims=image.elements.info.elements.dims;
     
     var nbins=512;
     var bsize=null; 
@@ -663,11 +671,10 @@ function layer(xd, id, cb){
 
 	var histo=histo_tpl.value=[];
 	var step=histo_tpl.step=(data_bounds[1]-data_bounds[0])/nbins;
-	var start=histo_tpl.start=data_bounds[0]+.5*step;
+	var start=histo_tpl.start=data_bounds[0];//+.5*step;
 
 	bsize=(histo_tpl.cuts.value[1]-histo_tpl.cuts.value[0])/nbins;
-	
-	
+
 	for(var i=0;i<nbins;i++){
 	    histo[i]=0;
 	}
@@ -717,10 +724,17 @@ function layer(xd, id, cb){
 	
 	//x_domain_full=[lay.p_values[0]+.5*bsize,lay.p_values[0]+(nbins-.5)*bsize];
 	histo_tpl.cuts.set_value(lay.ext);
+
+	histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
+	histo_tpl.ui_opts.heigth=histo_tpl.ui.clientHeight;
+
+
 	compute_histogram(nbins, lay.ext);
 	auto_cuts();
 	//if(bsize==null)
-	
+
+	console.log("Histo ui " + JSON.stringify(histo_tpl.ui_opts));
+	histo_tpl.redraw();
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, xd.texture);

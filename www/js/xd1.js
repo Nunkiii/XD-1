@@ -349,7 +349,7 @@ xdone.prototype.xdone_init=function(options){
     };
     
 
-    bar_node.appendChild(create_ui({ type: "short", root_classes : ["flat"] } , glv_opts));
+    bar_node.appendChild(create_ui({ type: "short", root_classes : [] } , glv_opts));
 
 
     //var layer_tabs=new tab_widget();
