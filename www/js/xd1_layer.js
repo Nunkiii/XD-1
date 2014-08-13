@@ -153,14 +153,17 @@ var xd1_templates={
 
     gl_image_layer : {
 	name :  "GL Image layer",
-	type : "bool",
-	value : true,
-
 	ui_opts : { root_classes : ["inline"], child_classes : ["inline"], name_classes : ["inline"], item_classes : ["inline"], 
 		    //child_view_type : "tabbed", 
 		    type : "edit", sliding: false, sliding_dir : "v" }, 
 	
 	elements : {
+	    enable : {
+		name : "Enable this layer",
+		type : "bool",
+		value : true,
+		ui_opts : {editable : true}
+	    },
 	    image : {
 
 		ui_opts : {  
@@ -255,12 +258,18 @@ var xd1_templates={
 						root_classes : ["full","newline"]
 						
 					       },
+				     // value : [[0,0,0,1,0],
+				     // 	      [0.8,0.2,0.8,1.0,0.2],
+				     // 	      [0.9,0.9,0.2,1.0,0.2],
+				     // 	      [0.9,0.9,0.2,1.0,0.5],
+				     // 	      [0.9,0.2,0.2,1.0,0.5],
+				     // 	      [1,1,1,1,1]] },
+
+
 				     value : [[0,0,0,1,0],
-					      [0.8,0.2,0.8,1.0,0.2],
-					      [0.9,0.9,0.2,1.0,0.2],
-					      [0.9,0.9,0.2,1.0,0.5],
-					      [0.9,0.2,0.2,1.0,0.5],
+					      [1.0,0.0,1.0,1.0,0.5],
 					      [1,1,1,1,1]] },
+
 			    histo : {
 				name : "Histogram", type : "vector",
 				ui_opts : {width: 300, height: 200, margin : {top: 10, right: 10, bottom: 30, left: 42},
@@ -275,7 +284,7 @@ var xd1_templates={
 	    },
 	    geometry : {
 
-		name : "Geometry",
+		name : "Layer geometry",
 		type : "template",
 		template_name : "geometry",
 		ui_opts : {  root_classes : ["inline"], child_classes : ["inline"], 
@@ -294,16 +303,21 @@ var xd1_templates={
 	//     layers : { 
 	// 	name: "Layers", 
 	elements : {
-	    layer_objects : { 
+	    layers : {
 		name : "Image Layers",
-		elements : {
+		ui_opts: {
+		    sliding: true, sliding_dir:"h", slided : true, root_classes : [], name_classes : []
+		},
+	    	elements : {
 		    newlayer : {
 			type : "action",
 			name : "Add new layer"
+		    },
+		    layer_objects : { 
+			ui_opts: {
+			    child_view_type : "tabbed", root_classes : [], name_classes : []
+			}
 		    }
-		},
-		ui_opts: {
-		    sliding: true, sliding_dir:"h", slided : false, child_view_type : "tabbed", root_classes : [], name_classes : []
 		}
 	    },
 
@@ -311,14 +325,21 @@ var xd1_templates={
 	    //	    },
 	    
 	    geometry : {
-		name : "Geometry",
+		name : "Global geometry",
 		type : "template",
 		template_name : "geometry",
 		
 		
 	    },
-	    
-	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : true, sliding_dir : "h", slided : false} }
+	    demo : {
+		name : "Multi-WL Cat's eye",
+		ui_opts : {editable: false, sliding : false, slided : false},
+		elements : {
+		    start : { name : "Start demo", type : "action"}
+		}
+	    },
+
+	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : true, sliding_dir : "v", slided : false} }
 	    
 	}
 	
@@ -361,6 +382,7 @@ function layer(xd, id, cb){
 
     var image=layer_opts.elements.image;
     var fits_file=image.elements.source.elements.local_fits;
+
     var file_size=image.elements.info.elements.file_size;
     var image_size=image.elements.info.elements.size;
     var dims=image.elements.info.elements.dims;
@@ -369,12 +391,19 @@ function layer(xd, id, cb){
     var bsize=null; 
 
     histo_tpl.selection_change=function(new_cuts){
+
+	console.log("Histo selection change!"); 
 	cuts.set_value(new_cuts);
 	cuts.onchange();
     }
 
-    layer_opts.onchange = function(){
-	console.log("Change !!!");
+    histo_tpl.on_range_change=function(new_cuts){
+	console.log("Range change !, recomp histo");
+	compute_histogram(nbins, new_cuts);
+    }
+
+    layer_opts.elements.enable.onchange = function(){
+	//console.log("Change !!!");
 	xd.layer_enabled[lay.id]=this.value;
 	var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
 	gl.uniform4iv(le_loc, xd.layer_enabled);
@@ -450,7 +479,6 @@ function layer(xd, id, cb){
 		var extent = dataunit.getExtent(arr);
 		
 		layer_opts.ui_name.innerHTML=fits_file.ui.files[0].name;
-
 		file_size.value=fits_file.ui.files[0].size;
 
 		//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
@@ -462,11 +490,7 @@ function layer(xd, id, cb){
 		console.log("Frame read : D=("+lay.width+","+lay.height+")  externt " + extent[0] + "," + extent[1]);
 		//image_info.innerHTML="Dims : ("+lay.width+", "+lay.height+")";
 		
-		console.log("Setting " + w);
-		dims.value[0]=w;
-		dims.value[1]=h;
-		
-		dims.set_value();
+		dims.set_value([w,h]);
 		
 		lay.arr=arr;
 		lay.ext=extent;
@@ -474,7 +498,6 @@ function layer(xd, id, cb){
 		setup_bbig(w,h);
 		
 		image_size.ui_name.innerHTML="pixel byte size " + arr.length*1.0/w/h + " PixType " + typeof(arr[0]);
-
 		image_size.set_value(arr.length*4);
 
 		var id=lay.id;
@@ -508,15 +531,69 @@ function layer(xd, id, cb){
 
     }
 
-    var canvas_info  = document.getElementById('canvas_info');
+    lay.setup_dgram_layer=function(header, fvp){
 
+	console.log("Setting layer data " + JSON.stringify(header));
+	cmap.set_value(header.colormap);
+
+	var w=lay.width=header.width;
+	var h=lay.height=header.height;
+	
+	var extent = [1e20,-1e20];
+	for (var i=0;i<fvp.length;i++){
+	    if(fvp[i]>extent[1])extent[1]=fvp[i];
+	    if(fvp[i]<extent[0])extent[0]=fvp[i];
+	}
+	// Get the minimum and maximum pixels
+	
+	layer_opts.ui_name.innerHTML=header.name;
+	file_size.set_value(header.sz);
+
+	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
+	
+	bounds.set_value(extent);
+	console.log("Frame read : D=("+lay.width+","+lay.height+")  externt " + extent[0] + "," + extent[1]);
+	//image_info.innerHTML="Dims : ("+lay.width+", "+lay.height+")";
+		
+	dims.set_value([w,h]);
+		
+	lay.arr=fvp;
+	lay.ext=extent;
+	
+	setup_bbig(w,h);
+	
+	image_size.ui_name.innerHTML="pixel byte size " + fvp.length*1.0/w/h + " PixType " + typeof(fvp[0]);
+	image_size.set_value(fvp.length*4);
+	
+	var id=lay.id;
+	
+	console.log("Filling big array with layer  " + id + " : " + w + ", " + h + " global dims " + w + ", "+h);
+		
+	var rangeLocation = gl.getUniformLocation(xd.program, "u_layer_range");
+	xd.p_layer_range[2*id]=lay.width*1.0/xd.w;
+	xd.p_layer_range[2*id+1]=lay.height*1.0/xd.h;
+	
+	gl.uniform2fv(rangeLocation, xd.p_layer_range);
+	var fv=xd.fv;
+	
+	for(var i=0;i<h;i++){
+	    for(var j=0;j<w;j++){
+		fv[4*(i*xd.w+j)+id]=1.0*fvp[i*w+j];
+	    }
+	}
+	
+	setup_layer_data();
+
+    }
+    
+    var canvas_info  = document.getElementById('canvas_info');
+    
     //    var x_domain_full=null; //[low+.5*bsize,low+(nbins-.5)*bsize];
 
     function auto_cuts(){
-
-
+	
 	var histo=histo_tpl.value;
-	var max=0,maxid=0, total=0, frac=.95, cf=0;
+	var max=0,maxid=0, total=0, frac=.99, cf=0;
 
 	console.log("cuts.... ND=" + histo.length);
 
@@ -526,15 +603,19 @@ function layer(xd, id, cb){
 	    total+=v;
 	}
 	
-	console.log("cuts.... total " + total + " maxid " + maxid + " max " + max);
-
-	for(var i=0;i<histo.length;i++){
+	var i;
+	for(i=0;i<histo.length;i++){
 	    cf+=histo[i];
 	    if(cf*1.0/total>=frac) break;
 	}
 	
-	if(maxid-2>=0) maxid-=3;
-	cuts.set_value([histo_tpl.start+histo_tpl.step*maxid,histo_tpl.start+histo_tpl.step*i]);
+	if(maxid>0) maxid-=1;
+	var autocouts=[histo_tpl.start+histo_tpl.step*maxid,histo_tpl.start+histo_tpl.step*i];
+
+	console.log("cuts.... total " + total + " maxid " + maxid + " max " + max + " -> cuts " + JSON.stringify(autocouts));
+	
+
+	cuts.set_value(autocouts);
 	cuts.onchange();
 	console.log("cuts....done");
     }
@@ -721,9 +802,11 @@ function layer(xd, id, cb){
 	
 	lay.p_values[0]=lay.ext[0];
 	lay.p_values[1]=lay.ext[1];
-	
+
+	histo_tpl.min=lay.ext[0];
+	histo_tpl.max=lay.ext[1];
+	histo_tpl.step=(lay.ext[1]-lay.ext[0])/200.0;
 	//x_domain_full=[lay.p_values[0]+.5*bsize,lay.p_values[0]+(nbins-.5)*bsize];
-	histo_tpl.cuts.set_value(lay.ext);
 
 	histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
 	histo_tpl.ui_opts.heigth=histo_tpl.ui.clientHeight;
@@ -731,6 +814,8 @@ function layer(xd, id, cb){
 
 	compute_histogram(nbins, lay.ext);
 	auto_cuts();
+	histo_tpl.set_range(cuts.value);
+
 	//if(bsize==null)
 
 	console.log("Histo ui " + JSON.stringify(histo_tpl.ui_opts));

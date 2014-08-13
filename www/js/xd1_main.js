@@ -14,25 +14,16 @@ window.onload = function(){
     //="ws://192.168.1.134:9999";
     ="ws://localhost:9999";
 
-    xd1= new xdone();
-    xd1.xdone_init();
 
-    return;
-    
     sadira=new sadira({ server : hostname, widget_prefix : "widgets", server_prefix : "~fullmoon/XD-1"}, function(error){
 	console.log("Error sadira init : " + JSON.stringify(error));
-	xd1= new xdone();
-	
+        xd1= new xdone();
+	xd1.xdone_init();	
 	return;
     }, function(connected){
-	console.log("Connected !");
+	console.log("sadira connected to " + hostname);
 	xd1= new xdone();
+	xd1.xdone_init();
     });
     
-    
-    
-    
-    
-
-    //  window.sadira=new sadira({}, function(error){}, function(connected){
 }

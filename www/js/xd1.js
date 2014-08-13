@@ -319,8 +319,10 @@ xdone.prototype.xdone_init=function(options){
     var ag=glv_opts.elements.geometry.elements.rotation.elements.angle; 
     var rc=glv_opts.elements.geometry.elements.rotation.elements.center;
 
-    var newlayer=glv_opts.elements.layer_objects.elements.newlayer;
-    var layer_objects=glv_opts.elements.layers_objects;
+    var newlayer=glv_opts.elements.layers.elements.newlayer;
+    var layer_objects=glv_opts.elements.layers.elements.layer_objects;
+    var demo_start=glv_opts.elements.demo.elements.start;
+
 
     tr.onchange = function(){
 	// xd.tr[0]=this.value[0];
@@ -349,6 +351,7 @@ xdone.prototype.xdone_init=function(options){
     };
     
 
+    
     bar_node.appendChild(create_ui({ type: "short", root_classes : [] } , glv_opts));
 
 
@@ -377,8 +380,8 @@ xdone.prototype.xdone_init=function(options){
 		
 		//console.log("ch" + typeof(e.container.add_child));
 		//e.container.add_child(e,e.ui_root);
-		layer_opts.container=glv_opts.elements.layer_objects.ui_childs;
-		glv_opts.elements.layer_objects.ui_childs.add_child(layer_opts,l.ui);
+		layer_opts.container=layer_objects.ui_childs;
+		layer_objects.ui_childs.add_child(layer_opts,l.ui);
 		
 		xd.layers[xd.nlayers]=l;
 		xd.layer_enabled[xd.nlayers]=1;
@@ -405,6 +408,125 @@ xdone.prototype.xdone_init=function(options){
 	}else alert("Max 4 layers!");
 	
     };
+
+
+    demo_start.onclick=function(){
+	
+	var img_id=0;
+        var d= sadira.dialogs.create_dialog({ handler : "fits.test_get_data"});
+	
+	//var image_data;
+	//d.lay_id=this.id;
+	
+	d.srz_request=function(dgram, result_cb){
+	
+	    console.log("SRZ Request !");
+    
+	    // if(bbig==null){
+		
+	    var sz=dgram.header.sz;
+	    var	w=dgram.header.width;
+	    var h=dgram.header.height;
+		
+	    // 	bbig=new ArrayBuffer(4*sz);
+	    // 	fv = new Float32Array(bbig);
+	    // 	for(var i=0;i<fv.length/4;i++){
+	    // 	    fv[4*i]=0.0;
+	    // 	    fv[4*i+1]=0.0;
+	    // 	    fv[4*i+2]=0.0;
+	    // 	    fv[4*i+3]=1.0;
+	    // 	}
+	    // }
+	    
+	  
+	    console.log("Ready to receive "+sz +" bytes. Image ["+dgram.header.name+"] size will be : " + w + ", " + h + "<br/>");
+	    
+	    //lay.layer_name=dgram.header.name;
+
+  
+	    var b=new ArrayBuffer(sz);
+	    var fvp = new Float32Array(b);
+	    //console.log("AB: N= "+ fv.length +" =? "+sz/4+" first elms : " + fv[0] + ", " + fv[1] );
+	    var sr=new srz_mem(b);
+	    
+	    
+	    sr.on_chunk=function(dgram){
+
+		//console.log("Fetching data : "+(Math.floor(100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data)))+" %");
+	    		    
+	    }
+	    
+	    sr.on_done=function(){
+		if(xd.nlayers<xd.maxlayers){
+		    
+		    var lay=new layer(xd, xd.nlayers,function(error, l){
+			
+			sr.lay_id=l.lay_id;
+
+			if(error){
+			    console.log("Error ! " + error);
+			    return;
+			}
+			
+			var layer_opts = l.layer_opts; 
+			
+			layer_opts.container=layer_objects.ui_childs;
+			layer_objects.ui_childs.add_child(layer_opts,l.ui);
+			
+			xd.layers[xd.nlayers]=l;
+			xd.layer_enabled[xd.nlayers]=1;
+			var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
+			gl.uniform4iv(le_loc, layer_enabled);
+			
+			xd.nlayers++;
+			xd.fullscreen(false);
+			
+			
+			l.setup_dgram_layer(dgram.header, fvp);
+		    });
+		    
+		    
+
+		    // var lid=sr.lay_id;
+		    
+		    // for(var i=0;i<fvp.length;i++){
+		    // 	fv[4*i+lid]=fvp[i];
+		    // 	// fv[4*i+1]=0;
+		    // 	// fv[4*i+2]=0;
+		    // 	// fv[4*i+3]=0;
+		    // 	// console.log("v="+fvp[i]);
+		    // }
+		}
+	    }
+	    
+	    
+	    result_cb(null, sr);
+	    console.log("srz request completed");
+	};
+	
+	d.connect(function(error, init_dgram){
+	    if(error){
+		console.log("Init data error= " + error + " init datagram = <pre> " + JSON.stringify(init_dgram,null,4)+" </pre><br/>");
+	    }
+	    else{
+		
+		//lay.name.innerHTML+="Dialog handshake OK <br/>";
+		for(img_id=0;img_id<4;img_id++)
+		    d.send_datagram({type : "get_data", imgid : img_id},null,function(error){
+			if(error){
+			    dinfo.innerHTML+="ERROR"+error+" <br/>";
+			}else{
+			    console.log("OK");
+			}
+			
+		    });
+	    }
+	    
+	});
+    }
+    
+
+
 
     // xdm.add_item("About XD-1", function(e){});    
     // attach_menu(glv_opts, mb);
