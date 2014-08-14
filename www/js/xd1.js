@@ -199,7 +199,7 @@ var def_parameters=[
      0, //Ty
      1.0, //Scale
      0, //Rot
-     1.0, //Luminosity
+     .85, //Luminosity
      0
     ],
     [0, //low cut
@@ -208,7 +208,7 @@ var def_parameters=[
      0, //Ty
      1.0, //Scale
      0, //Rot
-     1.0, //Luminosity
+     .85, //Luminosity
      0
     ],
     [0, //low cut
@@ -217,7 +217,7 @@ var def_parameters=[
      0, //Ty
      1.0, //Scale
      0, //Rot
-     1.0, //Luminosity
+     .85, //Luminosity
      0
     ],
     [0, //low cut
@@ -226,7 +226,7 @@ var def_parameters=[
      0, //Ty
      1.0, //Scale
      0, //Rot
-     1.0, //Luminosity
+     .85, //Luminosity
      0
     ]
 ];
@@ -304,9 +304,8 @@ xdone.prototype.xdone_init=function(options){
     this.selected_layer=null;
     
     var xdone_node  = xd.xdone_node=document.getElementById("xdone");
-    var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; //select(xdone_node,"#gfx_bar");
-//    var bottom_node=cc("div", xdone_node); bottom_node.id="bottom";
-//    var cuts_node=cc("div", bottom_node); cuts_node.id="cuts";
+
+    var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; 
     var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";
     var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
     
@@ -320,8 +319,8 @@ xdone.prototype.xdone_init=function(options){
     var rc=glv_opts.elements.geometry.elements.rotation.elements.center;
 
     var newlayer=glv_opts.elements.layers.elements.newlayer;
-    var layer_objects=glv_opts.elements.layers.elements.layer_objects;
-    var demo_start=glv_opts.elements.demo.elements.start;
+    var layer_objects=glv_opts.elements.layers;//.elements.layer_objects;
+    var demo_start=glv_opts.elements.demo;//.elements.start;
 
 
     tr.onchange = function(){
@@ -460,7 +459,7 @@ xdone.prototype.xdone_init=function(options){
 		if(xd.nlayers<xd.maxlayers){
 		    
 		    var lay=new layer(xd, xd.nlayers,function(error, l){
-			
+			l.p_values[6]=.25;
 			sr.lay_id=l.lay_id;
 
 			if(error){
@@ -820,7 +819,7 @@ xdone.prototype.render=function () {
 
 
 xdone.prototype.fullscreen=function(on){
-    
+
     //var bo=select(document, "#drawing");    
     //this.resize_canvas(.clientWidth,bo.clientHeight);
 
@@ -834,20 +833,24 @@ xdone.prototype.fullscreen=function(on){
     var la=select(document, "header");    
     //var bo=select(document, "#bottom");    
     var xline=glx_canvas;
-    var margin=[0,70];
+    var margin=[20,30];
 
     if(on==false){
 	//console.log("GF height = " + footer.clientHeight);
-	xd.resize_canvas( dr.clientWidth-20, //-la.clientWidth-10,
-			  window.innerHeight
-			 //-gfx_bar.clientHeight
-			 //-footer.clientHeight
-			 //-la.clientHeight
-			 -margin[1]);
-
+	xd.resize_canvas( 
+	    window.innerWidth//-gfx_bar.clientWidth
+	    // dr.clientWidth
+		-margin[0], //-la.clientWidth-10,
+	    //dr.clientHeight
+	    window.innerHeight
+		-gfx_bar.clientHeight
+		-footer.clientHeight
+	    //-la.clientHeight
+		-margin[1]);
+	
 	//	xline.width=bo.clientWidth-la.clientWidth-10;
 	
-	gfx_bar.style.height=(window.innerHeight-margin[1])+"px";
+	//gfx_bar.style.height=(window.innerHeight-margin[1])+"px";
 	
 	xd.infs=false;
 	xd.render();

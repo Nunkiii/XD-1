@@ -59,7 +59,7 @@ var xd1_templates={
     },
 
     colormap_edit : {
-	name : "Color segment edit",
+//	name : "Color segment edit",
 	ui_opts : { root_classes : "full"},
 	elements : {
 	    range : {name : "Range", type : "labelled_vector", value : [0,1], value_labels : ["Start","End"], min : "0", max : "1", step : ".01",ui_opts : {root_classes : [], editable : true, type : "short"} },	    
@@ -106,12 +106,12 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "inline", "number_fixed_size"], child_classes : [],  editable : true, sliding : true, sliding_dir : "v", slided : false}
+		ui_opts: {root_classes : [ "inline", "number_fixed_size"], child_classes : [],  editable : true, sliding : true, sliding_dir : "v", slided : true}
 	    },
 
 	    rotation : {
 		name : "Rotation",
-		ui_opts: {sliding: true, sliding_dir:"v", slided : false, root_classes : ["inline"]},
+		ui_opts: {sliding: true, sliding_dir:"v", slided : true, root_classes : ["inline"]},
 		elements : {
 		    angle : {
 			name : "Angle (rad)",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, ui_opts : { editable : true }
@@ -153,62 +153,62 @@ var xd1_templates={
 
     gl_image_layer : {
 	name :  "GL Image layer",
-	ui_opts : { root_classes : ["inline"], child_classes : ["inline"], name_classes : ["inline"], item_classes : ["inline"], 
+	ui_opts : { root_classes : ["inline"], //child_classes : ["inline"], name_classes : ["inline"], item_classes : ["inline"], 
 		    //child_view_type : "tabbed", 
-		    type : "edit", sliding: false, sliding_dir : "v" }, 
+		    type : "short", sliding: true, slided : false, sliding_dir : "v", child_view_type : "bar" }, 
 	
 	elements : {
 	    enable : {
 		name : "Enable this layer",
 		type : "bool",
 		value : true,
-		ui_opts : {editable : true}
+		ui_opts : {editable : true, label : true, type : "edit"}
 	    },
 	    image : {
 
 		ui_opts : {  
-			    sliding : true , sliding_dir : "h", slided : false
+			    sliding : true , sliding_dir : "h", slided : false, child_classes : ["newline"]
 			  },
-		name : "FITS Image",
+		name : "FITS Image source",
 		elements :{
 
 		    source : {
 			name : "Data source",
-			ui_opts : { child_view_type : "tabbed", sliding : true, slided : true}, 
+			ui_opts : { child_view_type : "bar", sliding : true, slided : true, root_classes : ["newline"]}, 
 			elements : {
 			    
 			    local_fits : {
-				ui_opts : {editable: true, sliding : false, slided : false},
+				ui_opts : {editable: true, sliding : true, slided : true},
 				name : "Local FITS file",
 				type : "local_file"
 			    },
 			    url_fits : {
-				ui_opts : {editable: true, sliding : false, slided : false},
+				ui_opts : {editable: true, sliding : true, slided : false},
 				name : "FITS URL",
 				type : "url"
 			    },
 			    gloria : {
-				ui_opts : {editable: false, sliding : false, slided : false},
+				ui_opts : {editable: false, sliding : true, slided : false},
 				name : "GLORIA images",
 				type : "template",
 				template_name : "image_db_browser"
 			    },
 			    sbig : {
 				name : "Camera control",
-				ui_opts : {editable: false, sliding : false, slided : false}
+				ui_opts : {editable: false, sliding : true, slided : false}
 			    }
 			}
 			
 		    },
 		    info : {
 			name : "Image info",
-			ui_opts : {editable: false, sliding : true, slided : false, root_classes : ["flat"], child_classes : ["inline"]},
+			ui_opts : {editable: false, sliding : true, slided : false, root_classes : [], child_classes : ["inline"]},
 			elements : {
 			    
 			    dims : { 
 				type: "template", 
 				template_name : "image_dimensions",
-				ui_opts : { name_classes : ["newline"] }
+				ui_opts : { name_classes : ["inline"] }
 			    },
 			    file_size : {
 				ui_opts : {root_classes : ["inline"] },
@@ -219,64 +219,66 @@ var xd1_templates={
 				ui_opts : {root_classes : ["inline"] },
 				name : "Image size (double) in ArrayBuffer",
 				type : "bytesize"
+			    },
+			    bounds : {
+				type : "labelled_vector",
+				name : "Data value bounds",
+				value : [0,0],
+				value_labels : ["Min","Max"],
+				min : "-100000", 
+				max : "100000", 
+				ui_opts : { editable : false, sliding : false , sliding_dir : "h", slided : true, root_classes : ["inline"] }
+				//ui_opts: {}
 			    }
+
 			}
 		    }
 		}
 	    },
 	    general : {
 		name : "Colours",
-		ui_opts : { type: "edit", root_classes : ["inline"], child_classes : ["inline"], 
-			    sliding : true , sliding_dir : "h", slided : true
-			  //  child_view_type : "tabbed" 
+		ui_opts : { type: "short", root_classes : ["full", "newline"], 
+			    sliding : true , sliding_dir : "v", slided : false,
+			    child_view_type : "div" 
 			  },
 		//ui_opts : {child_classes : ["column"]},
 		elements : {
-		    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : "1.0", 
-			    ui_opts : {input_type : "range", editable: true ,  root_classes : []} },
+		    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
+			    ui_opts : {input_type : "range", editable: true , type : "edit",  root_classes : ["inline"]} },
 		    
 		    // histo : {
 		    // 	name : "Colors and cuts",
 		    // 	ui_opts : { root_classes : ["inline"], child_classes : "inline", sliding : true , sliding_dir : "h", slided : false },
 		    // 	elements : {
-			    bounds : {
-				type : "labelled_vector",
-				name : "Data bounds",
-				value : [0,0],
-				value_labels : ["Min","Max"],
-				min : "-100000", 
-				max : "100000", 
-				ui_opts : { editable : false, sliding : true , sliding_dir : "h", slided : false }
-				//ui_opts: {root_classes : ["inline"]}
-			    },
-			    
-			    
-			    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
-				     ui_opts: { sliding : true , sliding_dir : "h", slided : false}},
-			    cmap : { name : "Colormap", type : "colormap", 
-				     ui_opts : {editable : true, sliding : true , sliding_dir : "h", slided : false,
-						root_classes : ["full","newline"]
-						
-					       },
-				     // value : [[0,0,0,1,0],
-				     // 	      [0.8,0.2,0.8,1.0,0.2],
-				     // 	      [0.9,0.9,0.2,1.0,0.2],
-				     // 	      [0.9,0.9,0.2,1.0,0.5],
-				     // 	      [0.9,0.2,0.2,1.0,0.5],
-				     // 	      [1,1,1,1,1]] },
-
-
-				     value : [[0,0,0,1,0],
-					      [1.0,0.0,1.0,1.0,0.5],
-					      [1,1,1,1,1]] },
-
-			    histo : {
-				name : "Histogram", type : "vector",
-				ui_opts : {width: 300, height: 200, margin : {top: 10, right: 10, bottom: 30, left: 42},
-					   root_classes : ["full"], item_classes : ["full"], sliding : true , sliding_dir : "h", slided : true
-					  }
-
-			    }
+		    
+		    
+		    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
+			     ui_opts: { sliding : true , sliding_dir : "h", slided : true, root_classes : ["inline"]}},
+		    cmap : { name : "Colormap", type : "colormap", 
+			     ui_opts : {editable : true, sliding : true , sliding_dir : "h", slided : true,
+					root_classes : ["inline","full"], item_classes : ["full"]
+					
+				       },
+			     // value : [[0,0,0,1,0],
+			     // 	      [0.8,0.2,0.8,1.0,0.2],
+			     // 	      [0.9,0.9,0.2,1.0,0.2],
+			     // 	      [0.9,0.9,0.2,1.0,0.5],
+			     // 	      [0.9,0.2,0.2,1.0,0.5],
+			     // 	      [1,1,1,1,1]] },
+			     
+			     
+			     value : [[0,0,0,1,0],
+				      [1.0,0.0,1.0,1.0,0.5],
+				      [1,1,1,1,1]] 
+			   },
+		    
+		    histo : {
+			name : "Histogram", type : "vector",
+			ui_opts : {width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 50},
+				   root_classes : ["inline","full"], item_classes : ["full"], sliding : true , sliding_dir : "h", slided : false
+				  }
+			
+		    }
 		    
 		    // 	}
 		    // }
@@ -297,7 +299,7 @@ var xd1_templates={
     
     gl_view_2d :  {
 	name : "XD-1",
-	ui_opts: {root_classes : ["newline"], child_classes : ["inline"], name_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "v", slided : true},
+	ui_opts: {root_classes : ["newline"], child_classes : [],  editable : false, sliding : true, sliding_dir : "v", slided : true, child_view_type : "bar"},
 	//ui_opts: {sliding: true, sliding_dir:"h", root_classes : []},
 	// elements : {
 	//     layers : { 
@@ -306,21 +308,25 @@ var xd1_templates={
 	    layers : {
 		name : "Image Layers",
 		ui_opts: {
-		    sliding: true, sliding_dir:"h", slided : true, root_classes : [], name_classes : []
+		    sliding: true, sliding_dir:"h", slided : true, root_classes : ["inline"], child_classes : ["newline"],child_view_type : "bar"
 		},
 	    	elements : {
 		    newlayer : {
 			type : "action",
-			name : "Add new layer"
-		    },
+			name : "Add new layer",
+			ui_opts: {
+			    root_classes : ["inline"], name_classes : [], label : true
+			}
+
+		    }/*,
 		    layer_objects : { 
 			ui_opts: {
-			    child_view_type : "tabbed", root_classes : [], name_classes : []
+			    child_view_type : "bar", root_classes : ["inline"], child_classes : ["newline"]
 			}
-		    }
+		    }*/
 		}
 	    },
-
+	    
 	    //	}
 	    //	    },
 	    
@@ -328,18 +334,18 @@ var xd1_templates={
 		name : "Global geometry",
 		type : "template",
 		template_name : "geometry",
-		
-		
-	    },
-	    demo : {
-		name : "Multi-WL Cat's eye",
-		ui_opts : {editable: false, sliding : false, slided : false},
-		elements : {
-		    start : { name : "Start demo", type : "action"}
+		ui_opts: {
+		    sliding: true, child_view_type : "div"
 		}
 	    },
+	    demo : {
+		name : "Multi-WL Cat's eye demo",
+		type : "action",
+		ui_opts : {editable: false, sliding : false, slided : false, label : true}
 
-	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : true, sliding_dir : "v", slided : false} }
+	    },
+
+	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : true, sliding_dir : "v", slided : false, root_classes : ["inline"]} }
 	    
 	}
 	
@@ -370,7 +376,6 @@ function layer(xd, id, cb){
     var depth=1;//layer_opts.depth+1;
     console.log("Hello");
 
-    var bounds=layer_opts.elements.general.elements.bounds; 
     var cuts=layer_opts.elements.general.elements.cuts; 
     var histo_tpl=layer_opts.elements.general.elements.histo; 
     var cmap=this.cmap=layer_opts.elements.general.elements.cmap; 
@@ -381,14 +386,24 @@ function layer(xd, id, cb){
     var rc=layer_opts.elements.geometry.elements.rotation.elements.center;
 
     var image=layer_opts.elements.image;
-    var fits_file=image.elements.source.elements.local_fits;
 
+    var fits_file=image.elements.source.elements.local_fits;
     var file_size=image.elements.info.elements.file_size;
     var image_size=image.elements.info.elements.size;
     var dims=image.elements.info.elements.dims;
+    var bounds=image.elements.info.elements.bounds; 
     
     var nbins=512;
     var bsize=null; 
+
+    histo_tpl.on_slide=function(slided){
+	console.log("Histo slide ! " + slided);
+	if(slided){
+	    //histo_tpl.ui_opts.width=
+	    //histo_tpl.redraw(); 
+	    compute_histogram(nbins, cuts.value);
+	}
+    }
 
     histo_tpl.selection_change=function(new_cuts){
 
@@ -398,7 +413,7 @@ function layer(xd, id, cb){
     }
 
     histo_tpl.on_range_change=function(new_cuts){
-	console.log("Range change !, recomp histo");
+	//console.log("Range change !, recomp histo");
 	compute_histogram(nbins, new_cuts);
     }
 
@@ -413,7 +428,7 @@ function layer(xd, id, cb){
     cuts.onchange = function(){
 	lay.p_values[0]=this.value[0];
 	lay.p_values[1]=this.value[1];
-	console.log("Cuts changed to " + JSON.stringify(this.value));
+	//console.log("Cuts changed to " + JSON.stringify(this.value));
 	update_pvalues();
     };
     
@@ -478,7 +493,7 @@ function layer(xd, id, cb){
 		// Get the minimum and maximum pixels
 		var extent = dataunit.getExtent(arr);
 		
-		layer_opts.ui_name.innerHTML=fits_file.ui.files[0].name;
+		layer_opts.set_title(fits_file.ui.files[0].name);
 		file_size.value=fits_file.ui.files[0].size;
 
 		//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
@@ -497,7 +512,7 @@ function layer(xd, id, cb){
 		
 		setup_bbig(w,h);
 		
-		image_size.ui_name.innerHTML="pixel byte size " + arr.length*1.0/w/h + " PixType " + typeof(arr[0]);
+		image_size.set_title("pixel byte size " + arr.length*1.0/w/h + " PixType " + typeof(arr[0]));
 		image_size.set_value(arr.length*4);
 
 		var id=lay.id;
@@ -546,7 +561,7 @@ function layer(xd, id, cb){
 	}
 	// Get the minimum and maximum pixels
 	
-	layer_opts.ui_name.innerHTML=header.name;
+	layer_opts.set_title(header.name);
 	file_size.set_value(header.sz);
 
 	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
@@ -562,7 +577,7 @@ function layer(xd, id, cb){
 	
 	setup_bbig(w,h);
 	
-	image_size.ui_name.innerHTML="pixel byte size " + fvp.length*1.0/w/h + " PixType " + typeof(fvp[0]);
+	image_size.set_title("pixel byte size " + fvp.length*1.0/w/h + " PixType " + typeof(fvp[0]));
 	image_size.set_value(fvp.length*4);
 	
 	var id=lay.id;
@@ -593,9 +608,9 @@ function layer(xd, id, cb){
     function auto_cuts(){
 	
 	var histo=histo_tpl.value;
-	var max=0,maxid=0, total=0, frac=.99, cf=0;
+	var max=0,maxid=0, total=0, frac=.95, cf=0;
 
-	console.log("cuts.... ND=" + histo.length);
+	//console.log("cuts.... ND=" + histo.length);
 
 	for(var i=0;i<histo.length;i++){
 	    var v=histo[i];
@@ -609,7 +624,7 @@ function layer(xd, id, cb){
 	    if(cf*1.0/total>=frac) break;
 	}
 	
-	if(maxid>0) maxid-=1;
+	//if(maxid>0) maxid-=1;
 	var autocouts=[histo_tpl.start+histo_tpl.step*maxid,histo_tpl.start+histo_tpl.step*i];
 
 	console.log("cuts.... total " + total + " maxid " + maxid + " max " + max + " -> cuts " + JSON.stringify(autocouts));

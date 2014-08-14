@@ -2,143 +2,39 @@ body{
   color: white;
   background-color: black;
   font-family: Sans-Serif;
+  margin:0px;
+  padding: 0px;
+}
+
+#xdone{
+  height: 100%; 
+  width: 100%;
 }
 
 
- 
-/*    nav.layer_head{ */
-/*     list-style-type:none; */
-/*    } */
-/*     nav.layer_head>li{ */
-/*      display: inline-block; */
-/*      padding: .3em; */
-/*      background-color: #66a; */
-/*      color: white; */
-/*      margin-right: .3em; */
-/*      cursor: pointer; */
-/*      border-radius : 1em 1em 0em 0em; */
-/*    } */
-/*     nav.layer_head>li:hover{ */
-/*      background-color: #33b; */
-/*    } */
-
-
-/*    /\* source sections *\/ */
-   
-/*     nav.source_head{ */
-/*     list-style-type:none; */
-/*    } */
-
-/*     nav.source_head>li{ */
-/*      display: inline-block; */
-/*      padding: .3em; */
-/*      background-color: #6a6; */
-/*      color: white; */
-/*      margin-right: .3em; */
-/*      cursor: pointer; */
-/*      border-radius : 1em 1em 0em 0em; */
-/*    } */
-/*     nav.source_head>li:hover{ */
-/*      background-color: #3b3; */
-/*    } */
-
-/*    .source_section{ */
-/*      border: 1px solid springgreen; */
-     
-/* } */
-
-
-
-/* input[type="color"]{ */
-/*   width: 2em; */
-/* } */
-/* input[type="number"]{ */
-/*   padding: .2em; */
-/* } */
-
-
-/* footer{ */
-/*   text-align: right; */
-/*   font-size: 0.7em; */
-/*   vertical-align: middle; */
-/*   line-height: 1em; */
-/*   border : 1px solid #444; */
-/*   border-radius: .3em; */
-/*   padding-top: .3em; */
-/*   padding-bottom: .3em; */
-  
-/* } */
-
-
-/* h1{ */
-  
-/*   display: inline-block; */
-/*   font-size: 1.5em; */
-/*   color: #eee; */
-/*   /\*  text-shadow: 3px 0px 10px rgba(255, 255, 255, 1.0); *\/ */
-/* } */
-    
-
-/* table{ */
-/*   border-collapse: collapse; */
-  
-/* } */
-   
-/* td{ */
-/*   align : center; */
-/* } */
-
-/* .color_handle{ */
-/*   /\*      background-image: url('poignee.png');*\/ */
-/*   background-color: black; */
-/* } */
-
-/* .color_handle:hover{ */
-/*   cursor: col-resize; */
-/* } */
-   
-/* ul.colormap_topmenu{ */
-/*   list-style-type: none; */
-/* } */
-
-/* ul.colormap_topmenu li{ */
-/*   display: inline; */
-/* } */
-
-/* ul.colormap_items{ */
-/*   list-style-type: none; */
-/*   padding: 0px; */
-/* } */
-
-/* ul.colormap_items li{ */
-/*      display: inline-block; */
-/* } */
-
-/* .colormap_items { */
-/*   font-weight: bold;     */
-/*   margin: 0px; */
-/*   padding: 0px;  */
-/* } */
-
-/* ul.colul{ */
-/*   list-style-type: none; */
-/*   padding: 0px;  */
-/* } */
-
-/* ul.colul li{ */
-/*   display: table-cell; */
-/* } */
-
 #gfx{
-  width: 65%;
   display: inline-block;
-  /*  color: white; */
   vertical-align: top;
-  border:1px solid #333;
+  border:0px solid #333;
   border-radius: .5em;
-  margin-left: 1em;
+}
 
-  
+#gfx_bar{
+  background-image: url("../ico/hal9000.jpg"); 
+  background-repeat: no-repeat;
+  background-position: left top;
+  background-size: 1.8em; 
+
+  min-height: 2em;
+  width: 100%;
+  display: inline-block;
+  max-height: 40em;
+  overflow-y : auto;
+}
+
+.db > .dbname{
+  margin-left: 1em;
+  min-height: 1.5em;
 }
 
 .layer{
@@ -155,25 +51,6 @@ body{
   margin:0px;
 }
 
-/* tr>td { */
-/*   border: 0px solid #333; */
-/*   text-align: left; */
-/*   padding: .2em; */
-/* } */
-
-
-#gfx_bar{
-  display: inline-block;
-  max-width: 30%;
-  border-radius: .5em;
-  overflow-y : auto;
-
-}
-
-#gfx_bar>strong{
-}
-
-
 #canvas_info{
   display: inline-block;
 }
@@ -189,83 +66,30 @@ body{
   border:1px solid #eee;
   padding: .1em;
   border-radius:.5em;
-   }
-
-   #drawing{
-      width: 70%;
-      height: auto;
-  }
-
-   #svglayer{
-     display : inline-block;
-   }
-
-   #glscreen{
-     background-color: black;
-     display : inline-block;
-     cursor: crosshair;
-   }
-
-  #glxline{
-     display : block;
-     cursor: crosshair;
-     width: 100%;
-     height: 50px;
-
-   }
- 
-
-
-
-/* /\* layer navigation *\/ */
-
-/* .layer_nav{ */
-/*     font-size: .8em; */
-/*     list-style-type: none; */
-/*     display: block; */
-/*    vertical-align: bottom; */
-/* } */
-
-/* .layer_view{ */
-/*       display: inline-block; */
-/*    } */
-   
-/*    .layer_nav > li{ */
-/*      text-align:center; */
-/*      display: inline-block; */
-/*      padding: .5em; */
-/*      background: rgba(180,20,244,0.6); */
-/*      margin-right: 0.2em; */
-/*      border-radius : 1em 1em 0em 0em; */
-/*      cursor: pointer; */
-/*      width: 5em; */
-/*      height:3em; */
-/*    } */
-   
-/*    .layer_pointer_info{ */
-/*    } */
-   
-
-/* .layer_nav > li:hover{ */
-/*     background: rgba(240,18,44,0.8); */
-/* } */
-
-#bottom{
- display: inline-block;
-  clear: both;
 }
 
-#cuts{
-  display: inline-block;
-  vertical-align: top;
+#drawing{
+  
 }
 
-#xdone{
-/*  background-image: url("../ico/discovery1.png"); */
-  background-repeat: no-repeat;
-  background-position: left top;
-        
+#svglayer{
+  display : inline-block;
 }
+
+#glscreen{
+  background-color: black;
+  display : block;
+  cursor: crosshair;
+}
+
+#glxline{
+  display : block;
+  cursor: crosshair;
+  width: 100%;
+  height: 50px;
+  
+}
+
 
 /* .root > .menu > li{ */
 /*   padding: 0px; */
