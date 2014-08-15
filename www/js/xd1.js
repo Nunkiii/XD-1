@@ -833,24 +833,27 @@ xdone.prototype.fullscreen=function(on){
     var la=select(document, "header");    
     //var bo=select(document, "#bottom");    
     var xline=glx_canvas;
-    var margin=[20,30];
+    var margin=[50,30];
 
+    
     if(on==false){
 	//console.log("GF height = " + footer.clientHeight);
+	//gfx_bar.style.width=(.3*window.innerWidth)+"px";
+
 	xd.resize_canvas( 
-	    window.innerWidth//-gfx_bar.clientWidth
+	    window.innerWidth-gfx_bar.clientWidth
 	    // dr.clientWidth
 		-margin[0], //-la.clientWidth-10,
 	    //dr.clientHeight
 	    window.innerHeight
-		-gfx_bar.clientHeight
-		-footer.clientHeight
+		//-gfx_bar.clientHeight
+		//-footer.clientHeight
 	    //-la.clientHeight
 		-margin[1]);
 	
 	//	xline.width=bo.clientWidth-la.clientWidth-10;
 	
-	//gfx_bar.style.height=(window.innerHeight-margin[1])+"px";
+	gfx_bar.style.height=(window.innerHeight-margin[1])+"px";
 	
 	xd.infs=false;
 	xd.render();

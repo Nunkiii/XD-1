@@ -1,14 +1,15 @@
 body{
-  color: white;
-  background-color: black;
+  color: black;
+  background-color: white;
   font-family: Sans-Serif;
+  font-size: .8em;
   margin:0px;
   padding: 0px;
 }
 
 #xdone{
-  height: 100%; 
   width: 100%;
+  heigth: 100%;
 }
 
 
@@ -24,12 +25,13 @@ body{
   background-repeat: no-repeat;
   background-position: left top;
   background-size: 1.8em; 
-
-  min-height: 2em;
-  width: 100%;
   display: inline-block;
-  max-height: 40em;
+  vertical-align: top;
+  /*clear: both;*/
+  white-space: wrap;
   overflow-y : auto;
+  width: 45em;
+  max-width: 45em;
 }
 
 .db > .dbname{

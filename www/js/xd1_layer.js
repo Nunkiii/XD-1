@@ -67,7 +67,7 @@ var xd1_templates={
 	    
 	    blend : { 
 		name: "Blend boundaries", 
-		ui_opts : {root_classes : ["newline"]},
+		ui_opts : {root_classes : ["inline"]},
 		elements : {
 		    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
 		    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
@@ -75,7 +75,7 @@ var xd1_templates={
 	    },
 	    colors : {
 		name : "Colors",
-		ui_opts : {root_classes : ["newline"]},
+		ui_opts : {root_classes : ["inline"]},
 		elements : {
 
 		    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
@@ -153,9 +153,9 @@ var xd1_templates={
 
     gl_image_layer : {
 	name :  "GL Image layer",
-	ui_opts : { root_classes : ["inline"], //child_classes : ["inline"], name_classes : ["inline"], item_classes : ["inline"], 
+	ui_opts : { root_classes : ["inline"], child_classes : ["newline"], //name_classes : ["inline"], item_classes : ["inline"], 
 		    //child_view_type : "tabbed", 
-		    type : "short", sliding: true, slided : false, sliding_dir : "v", child_view_type : "bar" }, 
+		    type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar" }, 
 	
 	elements : {
 	    enable : {
@@ -167,35 +167,35 @@ var xd1_templates={
 	    image : {
 
 		ui_opts : {  
-			    sliding : true , sliding_dir : "h", slided : false, child_classes : ["newline"]
+			    sliding : true , sliding_dir : "h", slided : false, child_classes : ["newline"], child_view_type : "bar"
 			  },
 		name : "FITS Image source",
 		elements :{
 
 		    source : {
 			name : "Data source",
-			ui_opts : { child_view_type : "bar", sliding : true, slided : true, root_classes : ["newline"]}, 
+			ui_opts : { child_view_type : "tabbed", sliding : true, slided : true, root_classes : ["newline"]}, 
 			elements : {
-			    
 			    local_fits : {
-				ui_opts : {editable: true, sliding : true, slided : true},
+				ui_opts : {editable: true, sliding : false, slided : true},
 				name : "Local FITS file",
-				type : "local_file"
+				type : "local_file",
+				value : "No file selected"
 			    },
 			    url_fits : {
-				ui_opts : {editable: true, sliding : true, slided : false},
+				ui_opts : {editable: true, sliding : false, slided : false},
 				name : "FITS URL",
 				type : "url"
 			    },
 			    gloria : {
-				ui_opts : {editable: false, sliding : true, slided : false},
+				ui_opts : {editable: false, sliding : false, slided : false},
 				name : "GLORIA images",
 				type : "template",
 				template_name : "image_db_browser"
 			    },
 			    sbig : {
 				name : "Camera control",
-				ui_opts : {editable: false, sliding : true, slided : false}
+				ui_opts : {editable: false, sliding : false, slided : false}
 			    }
 			}
 			
@@ -235,10 +235,21 @@ var xd1_templates={
 		    }
 		}
 	    },
+	    geometry : {
+
+		name : "Layer geometry",
+		type : "template",
+		template_name : "geometry",
+		ui_opts : {  root_classes : ["inline"], child_classes : ["inline"], 
+			    sliding : true , sliding_dir : "h", slided : false
+			    //  child_view_type : "tabbed" 
+			  }
+	    },
+
 	    general : {
 		name : "Colours",
 		ui_opts : { type: "short", root_classes : ["full", "newline"], 
-			    sliding : true , sliding_dir : "v", slided : false,
+			    sliding : true , sliding_dir : "v", slided : true,
 			    child_view_type : "div" 
 			  },
 		//ui_opts : {child_classes : ["column"]},
@@ -256,7 +267,7 @@ var xd1_templates={
 			     ui_opts: { sliding : true , sliding_dir : "h", slided : true, root_classes : ["inline"]}},
 		    cmap : { name : "Colormap", type : "colormap", 
 			     ui_opts : {editable : true, sliding : true , sliding_dir : "h", slided : true,
-					root_classes : ["inline","full"], item_classes : ["full"]
+					root_classes : ["newline"], item_classes : []
 					
 				       },
 			     // value : [[0,0,0,1,0],
@@ -273,33 +284,31 @@ var xd1_templates={
 			   },
 		    
 		    histo : {
-			name : "Histogram", type : "vector",
+			name : "Histogram", 
+			type : "vector",
 			ui_opts : {width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 50},
-				   root_classes : ["inline","full"], item_classes : ["full"], sliding : true , sliding_dir : "h", slided : false
-				  }
-			
+				   root_classes : ["inline"], item_classes : [], sliding : true , sliding_dir : "v", slided : true
+				  },
+			elements :{
+			    selection : {
+				type : "labelled_vector",
+				name : "Selection",
+				value_labels : ["Begin","End"],
+				value : [0, 0],
+				ui_opts: {root_classes : ["inline"], child_classes : ["inline"], item_classes : [], editable : false, sliding: false},
+			    },
+			    zoom : { name: "Zoom in", type : "action", ui_opts:{root_classes:["zoom","inline"], sliding : false}},  
+			    unzoom : { name : "Unzoom", type : "action", ui_opts:{root_classes:["unzoom","inline"]}}
+			}
 		    }
-		    
-		    // 	}
-		    // }
 		}
-	    },
-	    geometry : {
-
-		name : "Layer geometry",
-		type : "template",
-		template_name : "geometry",
-		ui_opts : {  root_classes : ["inline"], child_classes : ["inline"], 
-			    sliding : true , sliding_dir : "h", slided : false
-			    //  child_view_type : "tabbed" 
-			  }
 	    }
 	}
     },
     
     gl_view_2d :  {
 	name : "XD-1",
-	ui_opts: {root_classes : ["newline"], child_classes : [],  editable : false, sliding : true, sliding_dir : "v", slided : true, child_view_type : "bar"},
+	ui_opts: {root_classes : ["newline"], item_classes : ["inline"], child_classes : ["newline","full"],  editable : false, sliding : true, sliding_dir : "h", slided : true, child_view_type : "bar"},
 	//ui_opts: {sliding: true, sliding_dir:"h", root_classes : []},
 	// elements : {
 	//     layers : { 
@@ -308,7 +317,7 @@ var xd1_templates={
 	    layers : {
 		name : "Image Layers",
 		ui_opts: {
-		    sliding: true, sliding_dir:"h", slided : true, root_classes : ["inline"], child_classes : ["newline"],child_view_type : "bar"
+		    sliding: true, sliding_dir:"h", slided : true, root_classes : ["inline"], child_classes : ["newline"],child_view_type : "tabbed"
 		},
 	    	elements : {
 		    newlayer : {
@@ -769,7 +778,7 @@ function layer(xd, id, cb){
 	var step=histo_tpl.step=(data_bounds[1]-data_bounds[0])/nbins;
 	var start=histo_tpl.start=data_bounds[0];//+.5*step;
 
-	bsize=(histo_tpl.cuts.value[1]-histo_tpl.cuts.value[0])/nbins;
+	bsize=(histo_tpl.elements.selection.value[1]-histo_tpl.elements.selection.value[0])/nbins;
 
 	for(var i=0;i<nbins;i++){
 	    histo[i]=0;
@@ -823,8 +832,8 @@ function layer(xd, id, cb){
 	histo_tpl.step=(lay.ext[1]-lay.ext[0])/200.0;
 	//x_domain_full=[lay.p_values[0]+.5*bsize,lay.p_values[0]+(nbins-.5)*bsize];
 
-	histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
-	histo_tpl.ui_opts.heigth=histo_tpl.ui.clientHeight;
+	//histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
+	//histo_tpl.ui_opts.heigth=histo_tpl.ui.clientHeight;
 
 
 	compute_histogram(nbins, lay.ext);
