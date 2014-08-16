@@ -167,14 +167,14 @@ var xd1_templates={
 	    image : {
 
 		ui_opts : {  
-			    sliding : true , sliding_dir : "h", slided : false, child_classes : ["newline"], child_view_type : "bar"
+			    sliding : true , sliding_dir : "h", slided : true, child_classes : ["newline"], child_view_type : "bar"
 			  },
 		name : "FITS Image source",
 		elements :{
 
 		    source : {
 			name : "Data source",
-			ui_opts : { child_view_type : "tabbed", sliding : true, slided : true, root_classes : ["newline"]}, 
+			ui_opts : { child_view_type : "tabbed", sliding : true, slided : true, root_classes : []}, 
 			elements : {
 			    local_fits : {
 				ui_opts : {editable: true, sliding : false, slided : true},
@@ -249,7 +249,7 @@ var xd1_templates={
 	    general : {
 		name : "Colours",
 		ui_opts : { type: "short", root_classes : ["full", "newline"], 
-			    sliding : true , sliding_dir : "v", slided : true,
+			    sliding : true , sliding_dir : "v", slided : false,
 			    child_view_type : "div" 
 			  },
 		//ui_opts : {child_classes : ["column"]},
@@ -266,7 +266,7 @@ var xd1_templates={
 		    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
 			     ui_opts: { sliding : true , sliding_dir : "h", slided : true, root_classes : ["inline"]}},
 		    cmap : { name : "Colormap", type : "colormap", 
-			     ui_opts : {editable : true, sliding : true , sliding_dir : "h", slided : true,
+			     ui_opts : {editable : true, sliding : true , sliding_dir : "h", slided : false,
 					root_classes : ["newline"], item_classes : []
 					
 				       },
@@ -287,7 +287,7 @@ var xd1_templates={
 			name : "Histogram", 
 			type : "vector",
 			ui_opts : {width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 50},
-				   root_classes : ["inline"], item_classes : [], sliding : true , sliding_dir : "v", slided : true
+				   root_classes : ["inline"], item_classes : ["newline"], sliding : true , sliding_dir : "v", slided : false
 				  },
 			elements :{
 			    selection : {
