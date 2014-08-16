@@ -397,6 +397,8 @@ function layer(xd, id, cb){
     var image=layer_opts.elements.image;
 
     var fits_file=image.elements.source.elements.local_fits;
+    var gloria=image.elements.source.elements.gloria;
+
     var file_size=image.elements.info.elements.file_size;
     var image_size=image.elements.info.elements.size;
     var dims=image.elements.info.elements.dims;
@@ -404,6 +406,7 @@ function layer(xd, id, cb){
     
     var nbins=512;
     var bsize=null; 
+    var length;
 
     histo_tpl.on_slide=function(slided){
 	console.log("Histo slide ! " + slided);
@@ -472,15 +475,11 @@ function layer(xd, id, cb){
 	
     }
 
-    fits_file.onchange=function(evt){
+    lay.load_fits_data=function(data_source){
 
 	var FITS = astro.FITS;
-	// Define a callback function for when the FITS file is received
 	
-	var FITS=astro.FITS;
-	var file = evt.target.files[0]; // FileList object
-
-	var fits = new FITS(file, function(){
+	var fits = new FITS(data_source, function(){
 	    // Get the first header-dataunit containing a dataunit
 	    var hdu = this.getHDU();
 	    // Get the first header
@@ -550,21 +549,39 @@ function layer(xd, id, cb){
 		
 		
 	    }, opts);
-
 	});
+    }
+    
+    fits_file.onchange=function(evt){
+	var file = evt.target.files[0]; // FileList object
+	lay.load_fits_data(file);
 
     }
 
-    lay.setup_dgram_layer=function(header, fvp){
+    lay.setup_dgram_layer=function(header, fvpin){
 
-	console.log("Setting layer data " + JSON.stringify(header));
-	cmap.set_value(header.colormap);
+	var fvp;
+
+	if(header.colormap)
+	    cmap.set_value(header.colormap);
+	
+	if(fvpin.length){
+	    fvp=fvpin;
+	    length=fvp.length;
+	}else{
+	    fvp = new Float32Array(fvpin);
+	    length = fvp.byteLength;
+	}
 
 	var w=lay.width=header.width;
 	var h=lay.height=header.height;
 	
 	var extent = [1e20,-1e20];
-	for (var i=0;i<fvp.length;i++){
+
+	console.log("Setting layer data " + JSON.stringify(header) + " bytes : " + length + "data exts " + extent[0] + "," + extent[1]);
+
+	for (var i=0;i<length;i++){
+	    if(i%500==0)console.log("fvp " + i + " : " + fvp[i]);
 	    if(fvp[i]>extent[1])extent[1]=fvp[i];
 	    if(fvp[i]<extent[0])extent[0]=fvp[i];
 	}
@@ -576,7 +593,7 @@ function layer(xd, id, cb){
 	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
 	
 	bounds.set_value(extent);
-	console.log("Frame read : D=("+lay.width+","+lay.height+")  externt " + extent[0] + "," + extent[1]);
+	console.log("Frame read : D=("+lay.width+","+lay.height+")  data exts " + extent[0] + "," + extent[1]);
 	//image_info.innerHTML="Dims : ("+lay.width+", "+lay.height+")";
 		
 	dims.set_value([w,h]);
@@ -586,8 +603,8 @@ function layer(xd, id, cb){
 	
 	setup_bbig(w,h);
 	
-	image_size.set_title("pixel byte size " + fvp.length*1.0/w/h + " PixType " + typeof(fvp[0]));
-	image_size.set_value(fvp.length*4);
+	image_size.set_title("pixel byte size " + length*1.0/w/h + " PixType " + typeof(fvp[0]));
+	image_size.set_value(length*4);
 	
 	var id=lay.id;
 	
@@ -772,7 +789,7 @@ function layer(xd, id, cb){
     function compute_histogram(nbins, data_bounds){
 	
 	var data=lay.arr;
-	var dl=data.length;
+	var dl=length;
 
 	var histo=histo_tpl.value=[];
 	var step=histo_tpl.step=(data_bounds[1]-data_bounds[0])/nbins;
@@ -866,6 +883,7 @@ function layer(xd, id, cb){
     }
 
     this.ui=create_ui({type:"short" }, layer_opts, depth);
+    gloria.lay=lay;
     
     cb(null,this);
 
