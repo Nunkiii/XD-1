@@ -16,6 +16,11 @@ body{
 #xdone{
   position: relative;
   height: 100%;
+   background-image: url("../ico/discovery1.jpg"); 
+   background-repeat: no-repeat; 
+   background-position: 10em -2em; 
+  background-size: 30em;
+
 }
 
 #gfx_bar,#gfx{
@@ -25,11 +30,14 @@ body{
   vertical-align: top;
   resize:none;
   overflow: auto;
+  opacity: 1.0;
 }
 
 #gfx_bar{
 /*  max-width: 35em;*/
   overflow-y : auto;
+/*   background-size: 1.5em; */
+
 }
 
 #drawing{
@@ -39,7 +47,7 @@ body{
 
 #divider { 
   position: absolute;
-  width: 2px;
+  width: 3px;
   margin-left: -2px;
   top: 0;
   bottom: 0;
