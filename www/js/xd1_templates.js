@@ -89,7 +89,7 @@ var xd1_templates={
     geometry : {
 	
 	name : "Geometry",
-	ui_opts: {root_classes : ["inline"],name_classes : ["inline"], child_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "h", slided : false},
+	ui_opts: {root_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "h", slided : true},
 	//ui_opts: {root_classes : [], child_classes : [], sliding : true, sliding_dir : "h", slided : true},
 	elements : {
 	    translation : {
@@ -100,7 +100,7 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "inline", "number_fixed_size"], child_classes : [],  editable : true, sliding : true, sliding_dir : "h", slided : true}
+		ui_opts: {root_classes : [ "inline", "number_fixed_size"], editable : true, sliding : true, sliding_dir : "h", slided : true}
 	    },
 
 	    rotation : {
