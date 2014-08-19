@@ -231,8 +231,60 @@ var def_parameters=[
     ]
 ];
 
+function multilayer_gldata(){
+
+}
+
+template_ui_builders.glscreen=function(ui_opts, gls){
+
+    gls.w=0;
+    gls.h=0;
+    gls.bbig=null;
+
+    var ui=gls.canvas = ce("canvas"); ui.id="glscreen";
+    var gl=gls.gl= ui.getContext('experimental-webgl');
+
+    //xd.ctx    = xd.canvas.getContext('2d');
+    
+    var mouseon = false;
+    var mouse_start={};
+    var t_start=[];
+
+    new_event(gls,"resize");
+    new_event(gls,"translate");
+    new_event(gls,"zoom");
+
+    // canvas.onmousemove = function(e){
+    ui.addEventListener("mousemove", function(e){
+	var screen_pix=[];
+	if(e.offsetX) {
+	    screen_pix=[e.offsetX, 
+			e.offsetY
+		       ];
+	}
+	else if(e.layerX) {
+	    screen_pix=[e.layerX, 
+			e.layerY
+		       ];
+	}
+
+	screen_pix[0]+=.5;
+	screen_pix[1]=ui.height -screen_pix[1] -.5;
+
+	pointer_info.innerHTML="Screen : (" +screen_pix[0]+"," +screen_pix[1] +") "; 
+	
+	for(var l=0;l<xd.nlayers;l++)
+	    xd.layers[l].update_pointer_info(screen_pix);
+	
+	//var ipx=layers[0].get_image_pixel(screen_pix);
+	//pointer_info.innerHTML+="Image : (" + Math.floor(ipx[0]*10)/10+"," +Math.floor(ipx[1]*10)/10 +") "; 
+
+	return false;
+    });
 
 
+    
+}
 
 function xdone() {
 
@@ -241,19 +293,23 @@ function xdone() {
 
     var xd=this;    
 
-    this.gl=null;
-    this.canvas=null;
+
+
     this.program=null;
+
     this.sz=0; 
+
+    this.canvas=null;
+    this.gl=null;
     this.w=0;
     this.h=0;
     this.bbig=null;
+
     this.fv=null;
     this.nlayers=0;
     this.maxlayers=4;
     this.layers=[];
     this.texture=null;
-
     this.cmap_texture=null;
     this.cmap_texdata=null;
     this.cmap_frac=null;
@@ -291,7 +347,7 @@ xdone.prototype.xdone_init=function(options){
     var xd=this;
 
     //console.log("sr " + server_root);
-    
+/*    
     function getMousePos(canvas, evt) {
 	var rect = canvas.getBoundingClientRect();
 	return {
@@ -299,7 +355,7 @@ xdone.prototype.xdone_init=function(options){
 	    y: evt.clientY - rect.top
 	};
     }
-    
+  */  
     this.selected_layer=null;
     
     var xdone_node  = xd.xdone_node=document.getElementById("xdone");
@@ -317,7 +373,11 @@ xdone.prototype.xdone_init=function(options){
 
     canvas_info.className="canvas_info";
 
-    
+    var glscreen=tmaster.build_template("glscreen"); 
+    var glscreen_node = create_ui({ type: "short", root_classes : [] }, glscreen,0 );
+    drawing_node.appendChild(glscreen_node);
+
+
     xd.canvas = cc("canvas", drawing_node); xd.canvas.id="glscreen";// select(xdone_node,'#glscreen');
 
 
@@ -395,10 +455,7 @@ xdone.prototype.xdone_init=function(options){
 	xd.render();
     };
     
-
-    
     bar_node.appendChild(create_ui({ type: "short", root_classes : [] } , glv_opts));
-
 
     //var layer_tabs=new tab_widget();
     //cuts_node.appendChild(layer_tabs.div);
@@ -587,6 +644,7 @@ xdone.prototype.xdone_init=function(options){
     
     // this.layer_view.className="layer_view";
     // this.layer_nav.className="layer_nav";
+
     xd.gl= xd.canvas.getContext('experimental-webgl');
 
     //xd.ctx    = xd.canvas.getContext('2d');
@@ -641,14 +699,18 @@ xdone.prototype.xdone_init=function(options){
 
 
     xd.update_layer_ranges=function(){
+	var w=xd.canvas.clientWidth;
+	var h=xd.canvas.clientHeight;
 
 	for(var l=0;l<xd.nlayers;l++){
 	    var lay=xd.layers[l];
 	    if(typeof lay!='undefined'){
-		xd.p_layer_range[2*l]=lay.width*1.0/xd.w;
-		xd.p_layer_range[2*l+1]=lay.height*1.0/xd.h;		
+		xd.p_layer_range[2*lay.id]=lay.width*1.0/xd.w;
+		xd.p_layer_range[2*lay.id+1]=lay.height*1.0/xd.h;		
 	    }
 	}
+	console.log("setting new range " + JSON.stringify(xd.p_layer_range));
+	
     	var rangeLocation = gl.getUniformLocation(xd.program, "u_layer_range");	
 	gl.uniform2fv(rangeLocation, xd.p_layer_range);
     }
@@ -757,7 +819,7 @@ xdone.prototype.xdone_init=function(options){
     
     var floatTextures = xd.gl.getExtension('OES_texture_float');
     if (!floatTextures) {
-	alert('No floating point texture support !\n\n :< \n\nTry with another video device &| drivers!');
+	alert('WebGL is working, but it does not provide floating point texture on your system !\n\n :< \n\nTry with another video device &| drivers!');
 	return;
     }
     
@@ -818,7 +880,7 @@ xdone.prototype.xdone_init=function(options){
     xhr_query(server_root+"xd1.glsl", function (error, shader_src) {
 
 	if(error!=null){
-	    console.log("Error " + error);
+	    console.log("Error downloading shader " + error);
 	    return;
 	}
 
@@ -863,7 +925,12 @@ xdone.prototype.xdone_init=function(options){
 	xd.canvas.focus();
     });
 
-    
+ 
+    glscreen.listen("resize", function(w,h){
+	var loc = gl.getUniformLocation(xd.program, "u_screen");
+	gl.uniform2f(loc, w,h );
+    });
+   
 }
 
 xdone.prototype.resize_canvas=function(nw,nh){
