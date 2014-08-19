@@ -1,40 +1,76 @@
-body{
-  color: white;
-  background-color: black;
-
-  font-family: Sans-Serif;
-  margin:0px;
-  padding: 0px;
+html, body { 
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
+
+body{
+      color: white;
+      background-color: black;
+      font-family: Sans-Serif;
+      margin:0px;
+      padding: 0px;
+      }
+
 
 #xdone{
-  width: 100%;
-  heigth: 100%;
+  position: relative;
+  height: 100%;
 }
 
-
-#gfx{
-  display: inline-block;
+#gfx_bar,#gfx{
+  width: 50%;
+  height: 100%;
+  float: left;
   vertical-align: top;
-  border:0px solid #333;
-  border-radius: .5em;
+  resize:none;
+  overflow: auto;
 }
 
 #gfx_bar{
-/*
-  background-image: url("../ico/67p.jpg"); 
-  background-repeat: no-repeat;
-  background-position: left top;
-  background-size: 10.8em; 
-*/
-  display: inline-block;
-  vertical-align: top;
-  /*clear: both;*/
-  white-space: wrap;
+/*  max-width: 35em;*/
   overflow-y : auto;
-  width: 45em;
-  max-width: 45em;
 }
+
+#drawing{
+          height: 100%;
+          width: 100%;
+}
+
+#divider { 
+  position: absolute;
+  width: 2px;
+  margin-left: -2px;
+  top: 0;
+  bottom: 0;
+  background: #bbb;
+  border: 1px outset #bbb;
+  border-top: 0;
+  border-bottom: 0;
+  cursor: col-resize;
+}
+
+html.dragging * { 
+  cursor: col-resize !important;
+}
+
+
+/* #gfx{ */
+/*   display: inline-block; */
+/*   vertical-align: top; */
+/*   border:0px solid #333; */
+/*   border-radius: .5em; */
+/* } */
+
+/* #glscreen{ */
+/*   position: absolute; */
+/*   left: 35em; */
+/*   top:0px; */
+/*   display: block; */
+/*   background-color: black; */
+/*   cursor: crosshair; */
+/* } */
+
 
 /*
 .layer{
@@ -68,28 +104,13 @@ body{
   border-radius:.5em;
 }
 
-#drawing{
-  
-}
 
 #svglayer{
   display : inline-block;
 }
 */
 
-#glscreen{
-  background-color: black;
-  display : block;
-  cursor: crosshair;
-}
 
-#glxline{
-  display : block;
-  cursor: crosshair;
-  width: 100%;
-  height: 50px;
-  
-}
 
 
 /* .root > .menu > li{ */

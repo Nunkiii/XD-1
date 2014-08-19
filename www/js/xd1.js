@@ -281,7 +281,6 @@ function xdone() {
 //    xd.xdone_init();
 }
 
-
 xdone.prototype.xdone_init=function(options){
     
     var server_root="";
@@ -308,6 +307,53 @@ xdone.prototype.xdone_init=function(options){
     var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; 
     var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";
     var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
+    var divider = cc('div', xdone_node);
+    divider.id = 'divider';
+
+
+    var info_node =  cc("div", gfx_node); info_node.id="drawing_info";
+    var canvas_info  = cc("div",info_node); canvas_info.id="canvas_info";  
+    var pointer_info  = cc("div",info_node); pointer_info.id="pointer_info";  //select(xdone_node,'#pointer_info');
+
+    canvas_info.className="canvas_info";
+
+    
+    xd.canvas = cc("canvas", drawing_node); xd.canvas.id="glscreen";// select(xdone_node,'#glscreen');
+
+
+    var leftPercent = 50;
+    
+    function updateDivision() {
+	divider.style.left = leftPercent + '%';
+	bar_node.style.width = leftPercent + '%';
+	gfx_node.style.width = (100 - leftPercent) + '%';
+    }
+    
+    updateDivision();
+    
+    divider.addEventListener('mousedown', function(e) {
+	e.preventDefault();
+	var lastX = e.pageX;
+	document.documentElement.className += ' dragging';
+	document.documentElement.addEventListener('mousemove', moveHandler, true);
+	document.documentElement.addEventListener('mouseup', upHandler, true);
+	function moveHandler(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var deltaX = e.pageX - lastX;
+            lastX = e.pageX;
+            leftPercent += deltaX / parseFloat(document.defaultView.getComputedStyle(xdone_node).width) * 100;
+            updateDivision();
+	}
+	function upHandler(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            document.documentElement.className = document.documentElement.className.replace(/\bdragging\b/, '');
+            document.documentElement.removeEventListener('mousemove', moveHandler, true);
+            document.documentElement.removeEventListener('mouseup', upHandler, true);
+	    console.log("Done move..."); xd.fullscreen(false);
+	}
+    }, false);
     
     
     var glv_opts = this.glv_opts=tmaster.build_template("gl_view_2d"); 
@@ -530,9 +576,6 @@ xdone.prototype.xdone_init=function(options){
     // xdm.add_item("About XD-1", function(e){});    
     // attach_menu(glv_opts, mb);
 
-    var info_node =  cc("div", gfx_node); info_node.id="drawing_info";
-    var canvas_info  = cc("div",info_node); canvas_info.id="canvas_info";  
-    var pointer_info  = cc("div",info_node); pointer_info.id="pointer_info";  //select(xdone_node,'#pointer_info');
 
 //    var cmap_el=select(xdone_node,'#cuts');
 //    var canvas_info  = select(xdone_node,'#canvas_info');
@@ -544,11 +587,7 @@ xdone.prototype.xdone_init=function(options){
     
     // this.layer_view.className="layer_view";
     // this.layer_nav.className="layer_nav";
-    canvas_info.className="canvas_info";
-
-    
-    xd.canvas        = cc("canvas", drawing_node); xd.canvas.id="glscreen";// select(xdone_node,'#glscreen');
-    xd.gl            = xd.canvas.getContext('experimental-webgl');
+    xd.gl= xd.canvas.getContext('experimental-webgl');
 
     //xd.ctx    = xd.canvas.getContext('2d');
     
@@ -600,7 +639,19 @@ xdone.prototype.xdone_init=function(options){
 	return false;
     });
 
-    
+
+    xd.update_layer_ranges=function(){
+
+	for(var l=0;l<xd.nlayers;l++){
+	    var lay=xd.layers[l];
+	    if(typeof lay!='undefined'){
+		xd.p_layer_range[2*l]=lay.width*1.0/xd.w;
+		xd.p_layer_range[2*l+1]=lay.height*1.0/xd.h;		
+	    }
+	}
+    	var rangeLocation = gl.getUniformLocation(xd.program, "u_layer_range");	
+	gl.uniform2fv(rangeLocation, xd.p_layer_range);
+    }
     
     
     function update_zoom(){
@@ -631,6 +682,67 @@ xdone.prototype.xdone_init=function(options){
 
 
     addWheelListener( xd.canvas, mouse_wheel);
+
+        xd.fullscreen=function(on){
+	
+	//var bo=select(document, "#drawing");    
+	//this.resize_canvas(.clientWidth,bo.clientHeight);
+	
+	
+	var xd=this;
+	var gfx_bar=select(xd.xdone_node,"#gfx_bar");
+	
+	var footer=select(document, "footer");    
+	var di=select(document, "#drawing_info");    
+	var dr=select(document, "#gfx");    
+	var la=select(document, "header");    
+	//var bo=select(document, "#bottom");    
+	var xline=glx_canvas;
+	var margin=[50,30];
+	
+	
+	if(on==false){ 
+	    //console.log("GF height = " + footer.clientHeight);
+	    //gfx_bar.style.width=(.3*window.innerWidth)+"px";
+	    
+	    xd.resize_canvas(
+		drawing_node.clientWidth, drawing_node.clientHeight 
+		// dr.clientWidth, dr.clientHeight 
+		//   window.innerWidth-gfx_bar.clientWidth
+		// dr.clientWidth
+//		-margin[0], //-la.clientWidth-10,
+		//dr.clientHeight
+	  //  window.innerHeight
+		//-gfx_bar.clientHeight
+		//-footer.clientHeight
+		//-la.clientHeight
+		//	-margin[1]
+			);
+	    
+	//	xline.width=bo.clientWidth-la.clientWidth-10;
+	    
+	    //	gfx_bar.style.height=(window.innerHeight-margin[1])+"px";
+	    
+	    xd.infs=false;
+	    xd.render();
+	    //render_line();
+	    return;
+	}
+	
+	//var bd=[document.body.clientWidth,document.body.clientHeight];
+	var bd=[window.innerWidth,window.innerHeight];
+	var drawing_info=select(xd.xdone_node,"#drawing_info");
+	gfx_bar.style.width=bd[0];
+	
+	console.log("doc body  d = " + bd[0] + ","+bd[1]);
+	
+	xd.resize_canvas(bd[0]-30, //document.width is obsolete
+			 bd[1]-30-gfx_bar.style.height - drawing_info.style.height); //document.height is obsolete
+	
+	xd.infs=true;
+	xd.render();
+    }
+
 
     
     gl=xd.gl;
@@ -814,66 +926,11 @@ xdone.prototype.render=function () {
 
       img.src = url;
     */
-
+    
+    
 }
 
 
-xdone.prototype.fullscreen=function(on){
-
-    //var bo=select(document, "#drawing");    
-    //this.resize_canvas(.clientWidth,bo.clientHeight);
-
-
-    var xd=this;
-    var gfx_bar=select(xd.xdone_node,"#gfx_bar");
-    
-    var footer=select(document, "footer");    
-    var di=select(document, "#drawing_info");    
-    var dr=select(document, "#gfx");    
-    var la=select(document, "header");    
-    //var bo=select(document, "#bottom");    
-    var xline=glx_canvas;
-    var margin=[50,30];
-
-    
-    if(on==false){
-	//console.log("GF height = " + footer.clientHeight);
-	//gfx_bar.style.width=(.3*window.innerWidth)+"px";
-
-	xd.resize_canvas( 
-	    window.innerWidth-gfx_bar.clientWidth
-	    // dr.clientWidth
-		-margin[0], //-la.clientWidth-10,
-	    //dr.clientHeight
-	    window.innerHeight
-		//-gfx_bar.clientHeight
-		//-footer.clientHeight
-	    //-la.clientHeight
-		-margin[1]);
-	
-	//	xline.width=bo.clientWidth-la.clientWidth-10;
-	
-	gfx_bar.style.height=(window.innerHeight-margin[1])+"px";
-	
-	xd.infs=false;
-	xd.render();
-	//render_line();
-	return;
-    }
-    
-    //var bd=[document.body.clientWidth,document.body.clientHeight];
-    var bd=[window.innerWidth,window.innerHeight];
-    var drawing_info=select(xd.xdone_node,"#drawing_info");
-    gfx_bar.style.width=bd[0];
-    
-    console.log("doc body  d = " + bd[0] + ","+bd[1]);
-    
-    xd.resize_canvas(bd[0]-30, //document.width is obsolete
-		     bd[1]-30-gfx_bar.style.height - drawing_info.style.height); //document.height is obsolete
-    
-    xd.infs=true;
-    xd.render();
-}
 
 
 
