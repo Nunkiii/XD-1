@@ -415,8 +415,8 @@ function layer(xd, id, cb){
 		//We need to resize the GL Buffer...
 		console.log("Resizing bbig buffer");
 		
-		var w=xd.w=up2(w);
-		var h=xd.h=up2(h);
+		var w=up2(w);
+		var h=up2(h);
 		
 		//Copy the actual content into the bigger buffer
 		
