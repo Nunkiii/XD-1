@@ -24,21 +24,24 @@ uniform sampler2D u_cmap_colors;//Float texture containing 4 colour vectors rows
 uniform vec2 u_resolution; //The actual size of the big texture (dimensions = powers of 2)
 uniform vec2 u_screen; //The size of the GL canvas in pixels
 
+//This subroutine was needed to avoid too deep if constructions not supported by some nvidia drivers.
 
-void get_color(in float c, in int l, in float lpos, in float upv, in int nc, inout vec4 cmap_col){
+void get_color(in float c, in float lpos, in float upv, in int nc, inout vec4 cmap_col){
 
   //Computing this layer's contribution to the pixel color using the colormap data stored in two float textures.
-  float frl=0.0,frr; vec4 rc; vec4 lc; 
 
-    
+  float frl=0.0,dc,frr; vec4 rc; vec4 lc; 
+
+  //Colormap has (now) a maximum of 128 colors.
   for(int i=0;i<128;i++){ 
-      //      if(i==u_ncolors[l]){ break;}
-      if(i==nc){ break;}
+
+      if(i==nc) break;
+      
       frr = texture2D(u_cmap_fracs, vec2((float(i)+.5)/128.0, lpos)).r; //Fractional positions of the colours inside the colormap.
       rc = texture2D(u_cmap_colors, vec2((float(i)+.5)/128.0, lpos)); //The actual colormap colors.
 
       if(frr>c){
-	float dc=frr-frl;
+	dc=frr-frl;
 	rc=(c-frl)/dc*rc;
 	lc=(frr-c)/dc*lc;
 	//cmap_col+=(lc+rc)*u_pvals[2*l+1][2];
@@ -49,10 +52,12 @@ void get_color(in float c, in int l, in float lpos, in float upv, in int nc, ino
     }//end for (colours)
 }
 
-void main() { //Beginning of program
+void main() { //Beginning of shader program called to retrieve the colour of each screen pixel.
   
   vec4 cmap_col=vec4(0.0,0.0,0.0,1.0); //This is the final colour for this pixel, we set it initially to opaque black.
-  mat2 rmg =mat2(cos(u_angle),sin(u_angle),-sin(u_angle),cos(u_angle));//Set up the global view rotation matrix
+  mat2 rmg =mat2(cos(u_angle),sin(u_angle),-sin(u_angle),cos(u_angle)),rm;//Set up the global view rotation matrix
+  float lpos,lzoom,alpha,c,lumi;
+  vec2 trl,p;
   
   for(int l=0; l<4; l++){ //Loop on the 4 layers (the rgba components of the 'big' data texture)
     
@@ -60,14 +65,45 @@ void main() { //Beginning of program
     
     //Computing this layer's pixel corresponding to the position of the screen pixel.
     
-    float lpos=(float(l)+.5)/4.0;
-    float alpha=u_pvals[2*l+1][1];//this layer's angle
-    mat2 rm =mat2(cos(alpha),sin(alpha),-sin(alpha),cos(alpha));//this layer's rotation matrix
-    vec2 trl=vec2(u_pvals[2*l][2],u_pvals[2*l][3]);//this layer's translation (x,y) vector
-    float lzoom=u_pvals[2*l+1][0]; //This layer's zoom level
+    lpos=(float(l)+.5)/4.0;
+    lzoom=u_pvals[2*l+1][0]; //This layer's zoom level
+    alpha=u_pvals[2*l+1][1];//this layer's angle
+    trl=vec2(u_pvals[2*l][2],u_pvals[2*l][3]);//this layer's translation (x,y) vector
+    rm =mat2(cos(alpha),sin(alpha),-sin(alpha),cos(alpha));//this layer's rotation matrix
+
+    //Applying geometrical transformations
+
+    p =rmg*((gl_FragCoord.xy-u_screen/2.0)/u_zoom+u_tr-u_rotc)+u_rotc;
+    p = p/lzoom+trl-u_rotcenters[l];
+    p = (rm*p+u_rotcenters[l])/u_resolution+u_layer_range[l]/2.0;
+
+    //The point is outside the image?
+    if(p[0]<0.0 || p[0]>=u_layer_range[l][0] || p[1]<0.0 || p[1]>=u_layer_range[l][1]) continue; 
+    
+    //This is the actual pixel intensity for this layer's pixel.
+    c=(texture2D(u_image, p)[l]-u_pvals[2*l][0])/(u_pvals[2*l][1]-u_pvals[2*l][0]);
+    lumi=u_pvals[2*l+1][2];
+    //Value lower than low cut value ?
+    if(c<=0.0){cmap_col+=lumi*texture2D(u_cmap_colors, vec2(0.5/128.0, lpos)); continue;} 
+    //Value higher than high cut value ?
+    if(c>=1.0){cmap_col+=lumi*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/128.0, lpos));continue;} 
+    //Computing color from colormap if value lies in the ]0,1[ range.
+    get_color(c,lpos,lumi, u_ncolors[l], cmap_col);
+
+
+  }//end for (layers)
+  //cmap_col[3]=1.0;
+  for(int i=0;i<4;i++)if( cmap_col[i]>1.0)cmap_col[i]=1.0; //if the color is too bright, set to max.
+  gl_FragColor = cmap_col; //setting final fragment color
+} //end main
+
+
+
+    /*    //Long explicit version:
+
     vec2 screen_center = u_screen/2.0; //Screen center
     vec2 image_tex_center = u_layer_range[l]/2.0; //The center of this layer image within the "whole" texture.
-    
+
     vec2 p =(gl_FragCoord.xy-screen_center);
     
     p = p/u_zoom+u_tr-u_rotc;
@@ -75,22 +111,68 @@ void main() { //Beginning of program
     p = p/lzoom+trl-u_rotcenters[l];
     p = rm*p+u_rotcenters[l];
     p = p/u_resolution+image_tex_center;
+    */
+
+    /*
+    vec4 pix=gl_FragCoord;
     
+    p =rmg*((gl_FragCoord.xy-u_screen/2.0)/u_zoom+u_tr-u_rotc)+u_rotc;
+    p = p/lzoom+trl-u_rotcenters[l];
+    p = (rm*p+u_rotcenters[l])/u_resolution+u_layer_range[l]/2.0;
+
     //The point is outside the image?
     if(p[0]<0.0 || p[0]>=u_layer_range[l][0] || p[1]<0.0 || p[1]>=u_layer_range[l][1]) continue; 
-    
+
     //This is the actual pixel intensity for this layer's pixel.
     float c=(texture2D(u_image, p)[l]-u_pvals[2*l][0])/(u_pvals[2*l][1]-u_pvals[2*l][0]);
+
+
+    vec2 cornp[4]; 
+    vec2 pxs=1.0/u_resolution;///lzoom/u_zoom;
+    vec2 px=pxs;    
+    vec2 py=pxs; 
+    px[1]=0.0; 
+    py[0]=0.0;
+
+    cornp[0]=vec2(p-px);
+    cornp[1]=vec2(p+px);
+    cornp[2]=vec2(p-py);
+    cornp[3]=vec2(p+py);
+
+    vec4 corn;
+    for(int i=0;i<4;i++){
+      //cornp[i]=abs(cornp[i]);
+      corn[i]=(texture2D(u_image, cornp[i])[l]-u_pvals[2*l][0])/(u_pvals[2*l][1]-u_pvals[2*l][0]);
+      
+    }
     
     //Value lower than low cut value ?
-    if(c<=0.0){cmap_col+=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2(0.5/128.0, lpos)); continue;} 
+    //if(c<=0.0){cmap_col+=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2(0.5/128.0, lpos)); continue;} 
     //Value higher than high cut value ?
-    if(c>=1.0){cmap_col+=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/128.0, lpos));continue;} 
-    
-    get_color(c,l,lpos,u_pvals[2*l+1][2], u_ncolors[l], cmap_col);
+    //if(c>=1.0){cmap_col+=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/128.0, lpos));continue;} 
 
-  }//end for (layers)
-  cmap_col[3]=.5;
-  for(int i=0;i<3;i++)if( cmap_col[i]>1.0)cmap_col[i]=1.0; //if the color is too bright, set to max.
-  gl_FragColor = cmap_col; //setting final fragment color
-} //end main
+    //get_color(c,l,lpos,u_pvals[2*l+1][2], u_ncolors[l], cmap_col);
+
+    vec4 corncol[4];
+    float ltot; 
+    float d[4],v;
+    ltot=0.0;
+    for(int i=0;i<4;i++){
+      //      corncol[i]=vec4(0.0,0.0,0.0,1.0);
+      //Value lower than low cut value ?
+      //      if(corn[i]<=0.0){corncol[i]=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2(0.5/128.0, lpos)); continue;} 
+      //Value higher than high cut value ?
+      //      if(corn[i]>=1.0){corncol[i]=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/128.0, lpos));continue;} 
+      //get_color(corn[i],l,lpos,u_pvals[2*l+1][2], u_ncolors[l], corncol[i]);
+      cornp[i]=cornp[i]-p; 
+      d[i]=length(cornp[i]);
+      ltot+=d[i];
+    }
+    v=0.0;
+    for(int i=0;i<4;i++){
+      v+=d[i]/ltot*corn[i];
+      //      cmap_col+=d[i]*corncol[i];
+    }
+
+    get_color(v,l,lpos,u_pvals[2*l+1][2], u_ncolors[l], cmap_col);
+    */
