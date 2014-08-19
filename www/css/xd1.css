@@ -43,12 +43,15 @@ body{
   margin-left: -2px;
   top: 0;
   bottom: 0;
-  background: #bbb;
+  background: #2a4;
   border: 1px outset #bbb;
   border-top: 0;
   border-bottom: 0;
   cursor: col-resize;
 }
+#divider:hover { 
+  background: #9fe;
+                 }
 
 html.dragging * { 
   cursor: col-resize !important;
