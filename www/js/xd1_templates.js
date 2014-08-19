@@ -100,12 +100,12 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "inline", "number_fixed_size"], child_classes : [],  editable : true, sliding : true, sliding_dir : "v", slided : true}
+		ui_opts: {root_classes : [ "inline", "number_fixed_size"], child_classes : [],  editable : true, sliding : true, sliding_dir : "h", slided : true}
 	    },
 
 	    rotation : {
 		name : "Rotation",
-		ui_opts: {sliding: true, sliding_dir:"v", slided : true, root_classes : ["inline"]},
+		ui_opts: {sliding: true, sliding_dir:"h", slided : true, root_classes : ["inline"]},
 		elements : {
 		    angle : {
 			name : "Angle (rad)",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, ui_opts : { editable : true }
@@ -127,7 +127,7 @@ var xd1_templates={
 	    },
 	    
 	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		     ui_opts : { editable : true, root_classes : []} 
+		     ui_opts : { editable : true, root_classes : ["inline"]} 
 		   }
 	    
 	}
@@ -244,7 +244,7 @@ var xd1_templates={
 		name : "Data colors and cuts",
 		ui_opts : { type: "short", root_classes : ["full", "newline"], 
 			    sliding : true , sliding_dir : "v", slided : false,
-			    child_view_type : "div" 
+			    child_view_type : "bar" 
 			  },
 		//ui_opts : {child_classes : ["column"]},
 		elements : {
@@ -261,7 +261,7 @@ var xd1_templates={
 			     ui_opts: { sliding : true , sliding_dir : "h", slided : true, root_classes : ["inline"]}},
 		    cmap : { name : "Colormap", type : "colormap", 
 			     ui_opts : {editable : true, sliding : true , sliding_dir : "h", slided : false,
-					root_classes : ["newline"], item_classes : []
+					root_classes : ["inline"], item_classes : []
 					
 				       },
 			     // value : [[0,0,0,1,0],
@@ -302,7 +302,7 @@ var xd1_templates={
     
     gl_view_2d :  {
 	name : "XD-1",
-	ui_opts: {root_classes : ["newline"], item_classes : ["inline"], child_classes : ["newline","full"],  editable : false, sliding : true, sliding_dir : "h", slided : true, child_view_type : "bar"},
+	ui_opts: {root_classes : ["inline"], item_classes : ["inline"], child_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "h", slided : true, child_view_type : "bar"},
 	//ui_opts: {sliding: true, sliding_dir:"h", root_classes : []},
 	// elements : {
 	//     layers : { 
@@ -311,7 +311,7 @@ var xd1_templates={
 	    layers : {
 		name : "Image Layers",
 		ui_opts: {
-		    sliding: true, sliding_dir:"h", slided : true, root_classes : ["inline"], child_classes : ["newline"],child_view_type : "tabbed"
+		    sliding: true, sliding_dir:"h", slided : true, root_classes : ["inline"], child_classes : ["inline"],child_view_type : "tabbed"
 		},
 	    	elements : {
 		    newlayer : {
@@ -352,6 +352,10 @@ var xd1_templates={
 	    
 	}
 	
+    },
+    
+    glscreen : {
+	type : "glscreen"
     }
 };
 
