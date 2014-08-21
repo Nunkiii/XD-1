@@ -20,11 +20,11 @@
   <script src="sadira/js/dialog.js"></script> 
   <script src="sadira/js/sadira.js"></script> 
   <script src="sadira/js/colormap.js"></script>
+  <script src="sadira/js/glscreen.js"></script>
 
   <script src="sadira/js/menu.js"></script>
 
   <script src="js/community/gl-matrix.js"></script>
-  <script src="js/community/webgl-utils.js"></script>
   <script src="js/community/fits.js"></script>
 
   <script src="js/xd1_templates.js"></script>
@@ -36,10 +36,10 @@
   <style type="text/css"> @import url("css/xd1.css"); </style> 
 
   <script id="shader-fs" type="x-shader/x-fragment">
-   
+
    precision mediump float;
    void main(void) {
-        gl_FragColor = vec4(0.8, 1.0, 1.0, 1.0);
+     gl_FragColor = vec4(0.8, 1.0, 1.0, 1.0);
    }
    
   </script>
@@ -55,24 +55,12 @@
 
   </script>
 
-  <title>XD-1 WebGL FITS Viewer </title>
+  <title>XD-1, an experimental WebGL FITS Viewer </title>
 
 </head>
 
 <body>
   <div id="bg"> </div>
   <div id="xdone"> </div>
-
-  <!-- <footer> -->
-  <!--   Reload in fullscreen and adjust page size. The source code is available at <a href="https://github.com/Nunkiii/XD-1"> Github repository </a> -->
-  <!--   Written by Pierre Sprimont, 2014, INAF/IASF-Bologna, Italy.     -->
-  <!-- </footer> -->
 </body>
-
-
-<!-- <footer> -->
-<!-- Pierre Sprimont<br/> INAF/IASF-Bologna, Italy  -->
-<!-- </footer> -->
-
-<!-- </body> -->
 
