@@ -355,7 +355,7 @@ var xd1_templates={
     },
     
     glscreen : {
-	type : "glscreen"
+	type : "glscreen", ui_opts : {root_classes : ["nodeco"] }
     }
 };
 

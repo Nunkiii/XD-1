@@ -1,6 +1,9 @@
 /*
   
-  XD1  - LAYER CLASS
+  XD-1  - LAYER CLASS
+
+  Qk/Sadira project
+  Pierre Sprimont, INAF/IASF, Bologna, 2014
   
 */
 
@@ -604,14 +607,14 @@ layer.prototype.get_image_pixel= function(screen_pixel) {
 
     var xd=this.xd;
     var ipix=[
-	(screen_pixel[0]-this.g_screen_center[0])/xd.zoom+xd.tr[0]-xd.rotcenter[0],
-	(screen_pixel[1]-this.g_screen_center[1])/xd.zoom+xd.tr[1]-xd.rotcenter[1]
+	(screen_pixel[0]-this.g_screen_center[0])/xd.zm.value+xd.tr.value[0]-xd.rc.value[0],
+	(screen_pixel[1]-this.g_screen_center[1])/xd.zm.value+xd.tr.value[1]-xd.rc.value[1]
     ];
     
     ipix= numeric.dot(this.g_rmg,ipix);
     
-    ipix[0]=((ipix[0]+xd.rotcenter[0])/this.g_lzoom+this.g_trl[0]-this.g_rotc[0]);
-    ipix[1]=((ipix[1]+xd.rotcenter[1])/this.g_lzoom+this.g_trl[1]-this.g_rotc[1]);
+    ipix[0]=((ipix[0]+xd.rc.value[0])/this.g_lzoom+this.g_trl[0]-this.g_rotc[0]);
+    ipix[1]=((ipix[1]+xd.rc.value[1])/this.g_lzoom+this.g_trl[1]-this.g_rotc[1]);
 
     ipix= numeric.dot(this.g_rm,ipix);
 
