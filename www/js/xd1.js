@@ -40,14 +40,15 @@ xdone.prototype.xdone_init=function(options, cb){
     var xd=this;    
     var server_root="";
     var xdone_node;
-    xd.options=options;
 
     if(typeof options != "undefined"){
+	xd.options=options;
 	if(typeof options.server_root != "undefined") server_root=options.server_root;
-	xdone_node  = xd.xdone_node=options.html_node;
+	if(typeof options.html_node != 'undefined') xdone_node  = xd.xdone_node=options.html_node;
     }
 
-    //var xdone_node  = xd.xdone_node=document.getElementById("xdone");
+    if(typeof xdone_node=='undefined')
+	xdone_node  = xd.xdone_node=document.getElementById("xdone");
 
     var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; 
     var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";

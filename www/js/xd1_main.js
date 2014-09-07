@@ -1,18 +1,23 @@
 
 var sadira;
+var xd1;
 
-window.onload = function(){
+window.addEventListener("load", function(){
+
+
+    if(typeof xd1 != 'undefined') return;
+
     //var shad_script=document.getElementById("shader-xd1");
-    
-//    alert(JSON.stringify(document.URL));
-//    alert(JSON.stringify(window.location.pathname));
+    //alert(JSON.stringify(document.URL));
+    //alert(JSON.stringify(window.location.pathname));
 
     
-    var xd1;
+
     var hostname
     //="ws://192.168.176.103:9999";
     //="ws://192.168.1.134:9999";
-    ="ws://localhost:9999";
+	//="ws://localhost:9999";
+    ="ws://sadira.iasfbo.inaf.it:9999";
 
     var xdone_node  = document.getElementById("xdone");
     var xd1_tpl = tmaster.build_template("gl_view_2d"); 
@@ -169,4 +174,5 @@ window.onload = function(){
 	xd1_setup();
     });
     
-}
+});
+
