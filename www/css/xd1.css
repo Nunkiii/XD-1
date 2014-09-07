@@ -45,6 +45,11 @@ body{
 
 }
 
+#gfx{ 
+      cursor: crosshair; 
+} 
+
+
 #drawing{
           height: 100%;
           width: 100%;

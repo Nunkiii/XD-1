@@ -5,57 +5,6 @@
   
 */
 
-//Simplest vertex shader for the unique "static" screen box : all geometry is done in the fragment shader.
-
-var vertex_shader_src="attribute vec4 vPosition; void main() {gl_Position = vPosition;}";
-
-
-var def_colormaps=[
-    [[0,0,0,1,0],[0.8,0.2,0.8,1.0,0.5],[1,1,1,1,1]],
-    [[0,0,0,1,0],[0.2,0.8,0.1,1.0,0.5],[1,1,1,1,1]],
-    [[0,0,0,1,0],[0.1,0.2,0.8,1.0,0.5],[1,1,1,1,1]],
-    [[0,0,0,1,0],[0.1,0.8,0.2,1.0,0.5],[1,1,1,1,1]]
-];
-
-
-var def_parameters=[
-    [0, //low cut
-     5.0, //high cut
-     0, //Tx
-     0, //Ty
-     1.0, //Scale
-     0, //Rot
-     .85, //Luminosity
-     0
-    ],
-    [0, //low cut
-     20.0, //high cut
-     0, //Tx
-     0, //Ty
-     1.0, //Scale
-     0, //Rot
-     .85, //Luminosity
-     0
-    ],
-    [0, //low cut
-     5.0, //high cut
-     0, //Tx
-     0, //Ty
-     1.0, //Scale
-     0, //Rot
-     .85, //Luminosity
-     0
-    ],
-    [0, //low cut
-     2.0, //high cut
-     0, //Tx
-     0, //Ty
-     1.0, //Scale
-     0, //Rot
-     .85, //Luminosity
-     0
-    ]
-];
 
 function xdone() {
     this.title="XD-1";
@@ -82,21 +31,23 @@ function xdone() {
     this.layer_enabled=[];
     this.ctx=null;
     this.p_layer_range=[];
-
-
     this.infs=true;
     this.selected_layer=null;
 }
 
-xdone.prototype.xdone_init=function(options){
-    
+xdone.prototype.xdone_init=function(options, cb){
+
+    var xd=this;    
     var server_root="";
-    
+    var xdone_node;
+    xd.options=options;
+
     if(typeof options != "undefined"){
-	if(typeof options.server_root != "Undefined") server_root=options.server_root;
+	if(typeof options.server_root != "undefined") server_root=options.server_root;
+	xdone_node  = xd.xdone_node=options.html_node;
     }
-    var xd=this;
-    var xdone_node  = xd.xdone_node=document.getElementById("xdone");
+
+    //var xdone_node  = xd.xdone_node=document.getElementById("xdone");
 
     var bar_node  = cc("header", xdone_node); bar_node.id="gfx_bar"; 
     var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";
@@ -151,28 +102,30 @@ xdone.prototype.xdone_init=function(options){
     }, false);
     
     
-    var glv_opts = this.glv_opts=tmaster.build_template("gl_view_2d"); 
-    bar_node.appendChild(create_ui({ type: "short", root_classes : [] } , glv_opts));
+    //var glv_opts = this.glv_opts=tmaster.build_template("gl_view_2d"); 
+    //bar_node.appendChild(create_ui({ type: "short", root_classes : [] } , glv_opts));
+    
+    var glv_opts = options.tpl;
+    bar_node.appendChild(create_ui({ type: "short", root_classes : [] } ,glv_opts));
 
     glscreen.webgl_start({}, function(error, gl){
 	
 	if(error){
 	    alert(error);
+	    cb(error);
 	    return;
 	}
 
 	console.log("Webgl started ok!");
 
 	xd.gl=gl;
+
+	var geo=glv_opts.elements.geometry.elements;
 	
-	var tr=xd.tr=glv_opts.elements.geometry.elements.translation;
-	var zm=xd.zm=glv_opts.elements.geometry.elements.zoom; 
-	var ag=xd.ag=glv_opts.elements.geometry.elements.rotation.elements.angle; 
-	var rc=xd.rc=glv_opts.elements.geometry.elements.rotation.elements.center;
-	
-	var newlayer=glv_opts.elements.layers.elements.newlayer;
-	var layer_objects=glv_opts.elements.layers;//.elements.layer_objects;
-	var demo_start=glv_opts.elements.demo;//.elements.start;
+	var tr=xd.tr=geo.translation;
+	var zm=xd.zm=geo.zoom; 
+	var ag=xd.ag=geo.rotation.elements.angle; 
+	var rc=xd.rc=geo.rotation.elements.center;
 	
 	
 	tr.onchange = function(){
@@ -193,122 +146,8 @@ xdone.prototype.xdone_init=function(options){
 	    gl.uniform2fv(rotcenter_loc, rc.value);
 	    xd.render();
 	};
-	
-	
-	newlayer.onclick=function(){
-	    if(xd.nlayers<xd.maxlayers){
-		
-		var lay=new layer(xd, xd.nlayers,function(error, l){
-		    
-		    if(error){
-		    console.log("Error ! " + error);
-			return;
-		    }
-		    
-		    var layer_opts = l.layer_opts; 
 
-		    layer_opts.container=layer_objects.ui_childs;
-		    layer_objects.ui_childs.add_child(layer_opts,l.ui);
-		    
-		    xd.layers[xd.nlayers]=l;
-		    xd.layer_enabled[xd.nlayers]=1;
-		    var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
-		    gl.uniform4iv(le_loc, xd.layer_enabled);
-		    
-		    xd.nlayers++;
-		    xd.fullscreen(false);
-		    
-		});
-		
-	    }else alert("Max 4 layers!");
-	    
-	};
-	
-	
-	demo_start.onclick=function(){
-	    
-	    var img_id=0;
-            var d= sadira.dialogs.create_dialog({ handler : "fits.test_get_data"});
-	    
-	    d.srz_request=function(dgram, result_cb){
-		
-		console.log("SRZ Request !");
-		
-		var sz=dgram.header.sz;
-		var	w=dgram.header.width;
-		var h=dgram.header.height;
-	    
-		console.log("Ready to receive "+sz +" bytes. Image ["+dgram.header.name+"] size will be : " + w + ", " + h + "<br/>");
-		
-		//lay.layer_name=dgram.header.name;
-		
-		var b=new ArrayBuffer(sz);
-		var fvp = new Float32Array(b);
-		//console.log("AB: N= "+ fv.length +" =? "+sz/4+" first elms : " + fv[0] + ", " + fv[1] );
-		var sr=new srz_mem(b);
-		
-	    
-		sr.on_chunk=function(dgram){
-		    //console.log("Fetching data : "+(Math.floor(100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data)))+" %");
-		}
-		
-		sr.on_done=function(){
-		    if(xd.nlayers<xd.maxlayers){
-			
-			var lay=new layer(xd, xd.nlayers,function(error, l){
-			    l.p_values[6]=.25;
-			    sr.lay_id=l.lay_id;
-			    
-			    if(error){
-				console.log("Error ! " + error);
-				return;
-			    }
-			    
-			    var layer_opts = l.layer_opts; 
-			
-			    layer_opts.container=layer_objects.ui_childs;
-			    layer_objects.ui_childs.add_child(layer_opts,l.ui);
-			    
-			    xd.layers[xd.nlayers]=l;
-			    xd.layer_enabled[xd.nlayers]=1;
-			    var le_loc=gl.getUniformLocation(xd.program, "u_layer_enabled");
-			    gl.uniform4iv(le_loc, xd.layer_enabled);
-			
-			    xd.nlayers++;
-			    xd.fullscreen(false);
-			    
-			    
-			    l.setup_dgram_layer(dgram.header, fvp);
-			});
-			
-		    }
-		}
-		
-		
-		result_cb(null, sr);
-		console.log("srz request completed");
-	    };
-	    
-	    d.connect(function(error, init_dgram){
-		if(error){
-		    console.log("Init data error= " + error + " init datagram = <pre> " + JSON.stringify(init_dgram,null,4)+" </pre><br/>");
-		}
-		else{
-		    
-		    //lay.name.innerHTML+="Dialog handshake OK <br/>";
-		    for(img_id=0;img_id<4;img_id++)
-			d.send_datagram({type : "get_data", imgid : img_id},null,function(error){
-			    if(error){
-				dinfo.innerHTML+="ERROR"+error+" <br/>";
-			    }else{
-				console.log("OK");
-			    }
-			    
-			});
-		}
-		
-	    });
-	}
+
 	
 	xd.update_layer_ranges=function(){
 	    var w=glscreen_node.clientWidth;
@@ -438,6 +277,7 @@ xdone.prototype.xdone_init=function(options){
 	    
 	    if(error!=null){
 		console.log("Error (Bug?) downloading shader " + error);
+		cb(error);
 		return;
 	    }
 	    
@@ -461,6 +301,9 @@ xdone.prototype.xdone_init=function(options){
 	    
 	    var program = xd.program=gl.createProgram();
 	    var xd1_fragment_shader = create_shader(gl, shader_src);    
+
+	    //Simplest vertex shader for the unique "static" screen box : all geometry is done in the fragment shader.
+	    var vertex_shader_src="attribute vec4 vPosition; void main() {gl_Position = vPosition;}";
 	    
 	    vertexShader = gl.createShader(gl.VERTEX_SHADER);
 	    gl.shaderSource(vertexShader, vertex_shader_src);
@@ -491,6 +334,7 @@ xdone.prototype.xdone_init=function(options){
 	    
 	    xd.fullscreen(false);
 	    glscreen_node.focus();
+	    cb(null,xd);
 	});
 	
 	

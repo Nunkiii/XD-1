@@ -7,6 +7,151 @@
   
 */
 
+var gl_bbig = function (w,h) {
+
+    function allocate_bbig(w,h){
+	console.log("Allocating bbig");
+	this.w=up2(w);
+	this.h=up2(h);
+	
+	this.b=new ArrayBuffer(4*4*w*h);
+	this.fv= new Float32Array(b);
+    }
+    
+    function up2(x){
+	var p2=1;
+	while(p2 < x) p2*=2; 
+	return p2;
+    }
+  
+    this.setup_bbig=function (neww, newh){
+
+	if(typeof neww == 'undefined' || 
+	   typeof newh == 'undefined' )
+	    return;
+	
+	console.log("Setup bbig for image size " + neww + ", " + newh);
+	
+	if(this.b!=null){ //A buffer is already allocated 
+
+	    if(this.w>=neww && this.h>=newh){
+		//Ok, the already allocated GL buffer is big enough to hold the 4-image layers data.
+		console.log("Allocated buffer is already big enough : " + xd.w + ", " + xd.h);
+		
+	    }else{ //Allocating a bigger poweroftwo buffer ...
+		
+		var oldw=this.w;
+		var oldh=this.h;
+
+		//We need first to resize the GL Buffer...
+		//Copy the old buffer data before allocating : 
+		var oldb;
+		memcpy(oldb, this.b);
+		var oldfv=new Float32Array(oldb);
+
+		this.allocate_bbig(neww,newh);
+		
+		console.log("Best pow2 size for a bbig buffer bigger than " 
+			    + neww + " x "+newh + " is : " 
+			    + this.w + " x "+ this.h + ". Was :  " 
+			    + oldw + " x " + oldh + ".");
+
+		//Copy the old buffer content into the corner of the newly allocated bigger buffer
+		
+		var fv= this.fv;
+		//var fv=newbbig.fv;
+		// var n=4*w*h;
+		//for(var c=0;c<n;c++)newfv[c] = fv[c];
+		
+		for(var l=0;l<oldh;l++){
+		    for(var c=0;c<4*oldw;c++){
+			fv[4*l*w+c] = oldfv[4*l*oldw+c];
+		    }
+		}
+	
+		//delete xd.bbig;
+		//delete xd.fv;
+		
+		//xd.fv=newfv;
+		//xd.bbig=newbbig;
+		//xd.w=w;
+		//xd.h=h;
+		
+		//this=new_bbig;
+
+		console.log("Resizing bbig buffer done");
+	    }
+
+	}else{
+	    allocate_bbig(w,h);
+	    /*
+	      for(var i=0;i<this.fv.length;i++){
+		fv[i]=0.0;
+		}
+	    */
+
+	    // canvas_info.innerHTML="GL texture ("+ w + ", " + h + ")";
+	    //xd.bbig=create_bbig_buffer(w,h);
+	    //xd.fv=xd.bbig.fv;
+	}
+	
+	this.trigger("resize");
+
+	return this;
+	
+
+	var resolutionLocation = gl.getUniformLocation(xd.program, "u_resolution");
+	gl.uniform2f(resolutionLocation, xd.w, xd.h);
+	xd.update_layer_ranges();
+
+    }
+
+    this.bbig=null;
+    new_event(this,"resize");
+    return this.setup_bbig(w,h);
+
+
+};
+
+var def_parameters=[
+    [0, //low cut
+     5.0, //high cut
+     0, //Tx
+     0, //Ty
+     1.0, //Scale
+     0, //Rot
+     .85, //Luminosity
+     0
+    ],
+    [0, //low cut
+     20.0, //high cut
+     0, //Tx
+     0, //Ty
+     1.0, //Scale
+     0, //Rot
+     .85, //Luminosity
+     0
+    ],
+    [0, //low cut
+     5.0, //high cut
+     0, //Tx
+     0, //Ty
+     1.0, //Scale
+     0, //Rot
+     .85, //Luminosity
+     0
+    ],
+    [0, //low cut
+     2.0, //high cut
+     0, //Tx
+     0, //Ty
+     1.0, //Scale
+     0, //Rot
+     .85, //Luminosity
+     0
+    ]
+];
+
 
 function layer(xd, id, cb){
 
@@ -397,14 +542,12 @@ function layer(xd, id, cb){
 	console.log("Setup bbig for image size " + w + ", " + h);
 
 	function up2(x){var p2=1;while(p2 < x) p2*=2; return p2;}
+
 	function create_bbig_buffer(w,h){
 	    var b=new ArrayBuffer(4*4*w*h);
 	    var fv=b.fv = new Float32Array(b);
-	    for(var i=0;i<fv.length;i+=4){
+	    for(var i=0;i<fv.length;i++){
 		fv[i]=0.0;
-		fv[i+1]=0.0;
-		fv[i+2]=0.0;
-		fv[i+3]=0.0;
 	    }
 	    return b;
 	}
@@ -465,9 +608,6 @@ function layer(xd, id, cb){
     }
     
     function init_fits_source() {
-	
-	
-	
     }
 
     //dinfo.innerHTML+="Requesting image binary data...<br/>";
@@ -508,10 +648,6 @@ function layer(xd, id, cb){
 	//console.log("Histo : " + JSON.stringify(lay.histo));
 	
     }  
-
-
-
-
     
     function update_pvalues(){
 	var pv_loc=gl.getUniformLocation(xd.program, "u_pvals");

@@ -89,7 +89,7 @@ var xd1_templates={
     geometry : {
 	
 	name : "Geometry",
-	ui_opts: {root_classes : ["inline"],  editable : false, sliding : true, sliding_dir : "h", slided : true},
+	ui_opts: {root_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true},
 	//ui_opts: {root_classes : [], child_classes : [], sliding : true, sliding_dir : "h", slided : true},
 	elements : {
 	    translation : {
@@ -100,15 +100,16 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "inline", "number_fixed_size"], editable : true, sliding : true, sliding_dir : "h", slided : true}
+		ui_opts: {root_classes : [ "inline", "number_fixed_size"], editable : true, sliding : false, sliding_dir : "h", slided : true}
 	    },
 
 	    rotation : {
 		name : "Rotation",
-		ui_opts: {sliding: true, sliding_dir:"h", slided : true, root_classes : ["inline"]},
+		ui_opts: {sliding: false, sliding_dir:"h", slided : true, root_classes : ["inline"]},
 		elements : {
 		    angle : {
-			name : "Angle (rad)",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, ui_opts : { editable : true }
+			name : "Angle (rad)",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, 
+			ui_opts : { editable : true,root_classes : [ "inline"] }
 		    },
 
 		    center : {
@@ -120,14 +121,14 @@ var xd1_templates={
 			max : "8192", 
 			step: "1",
 			ui_opts: {
-			    //root_classes : [ "inline"], editable : true, 
+			    root_classes : [ "inline"],
 			    editable: true, sliding : true, sliding_dir : "h", slided: false }
 		    }
 		}
 	    },
 	    
 	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		     ui_opts : { editable : true, root_classes : ["inline"]} 
+		     ui_opts : { editable : true, root_classes : ["inline"], sliding : false, sliding_dir : "h", slided : true} 
 		   }
 	    
 	}
@@ -163,7 +164,7 @@ var xd1_templates={
 		ui_opts : {  
 			    sliding : true , sliding_dir : "h", slided : true, child_classes : ["newline"], child_view_type : "bar"
 			  },
-		name : "FITS Image source",
+		name : "Layer configuration",
 		elements :{
 
 		    source : {
@@ -241,10 +242,10 @@ var xd1_templates={
 	    },
 
 	    general : {
-		name : "Data colors and cuts",
-		ui_opts : { type: "short", root_classes : ["full", "newline"], 
-			    sliding : true , sliding_dir : "v", slided : false,
-			    child_view_type : "bar" 
+		name : "Colors/Levels",
+		ui_opts : { type: "short", root_classes : ["inline"], 
+			    sliding : true , sliding_dir : "v", slided : true,
+			    child_view_type : "div" 
 			  },
 		//ui_opts : {child_classes : ["column"]},
 		elements : {
@@ -352,7 +353,9 @@ var xd1_templates={
 	    
 	}
 	
-    },
+    }
+    
+    ,
     
     glscreen : {
 	type : "glscreen", ui_opts : {root_classes : ["nodeco"] }
