@@ -343,10 +343,20 @@ var xd1_templates={
 		}
 	    },
 	    demo : {
-		name : "Multi-WL Cat's eye demo",
-		type : "action",
-		ui_opts : {editable: false, sliding : false, slided : false, label : true}
-
+		name : "Multi-Wavelength demos",
+		ui_opts : {editable: false, sliding : true, slided : false},
+		elements : {
+		    catseye : {
+			name : "Hubble Cat's Eye Nebula (4 filters)",
+			type : "action",
+			ui_opts : { root_classes : ["inline"]}
+		    },
+		    M42 : {
+			name : "Hubble M42 Nebula (2 filters)",
+			type : "action",
+			ui_opts : { root_classes : ["inline"]}
+		    }
+		}
 	    },
 
 	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : true, sliding_dir : "v", slided : false, root_classes : ["inline"]} }

@@ -16,7 +16,7 @@ window.addEventListener("load", function(){
     var hostname
     //="ws://192.168.176.103:9999";
     //="ws://192.168.1.134:9999";
-	//="ws://localhost:9999";
+//	="ws://localhost:9999";
     ="ws://sadira.iasfbo.inaf.it:9999";
 
     var xdone_node  = document.getElementById("xdone");
@@ -44,7 +44,9 @@ window.addEventListener("load", function(){
 
 	    var newlayer=xd1_tpl.elements.layers.elements.newlayer;
 	    var layer_objects=xd1_tpl.elements.layers;//.elements.layer_objects;
-	    var demo_start=xd1_tpl.elements.demo;//.elements.start;
+
+	    var catseye_start=xd1_tpl.elements.demo.elements.catseye;
+	    var m42_start=xd1_tpl.elements.demo.elements.M42;
 	    
 	    newlayer.onclick=function(){
 		if(xd1.nlayers<xd1.maxlayers){
@@ -75,11 +77,9 @@ window.addEventListener("load", function(){
 		
 	    };
 	    
-	    
-	    demo_start.onclick=function(){
-		
+	    function load_mwl_demo(what,nf){
 		var img_id=0;
-		var d= sadira.dialogs.create_dialog({ handler : "fits.test_get_data"});
+		var d= sadira.dialogs.create_dialog({ handler : "fits.test_get_data", what : what});
 		
 		d.srz_request=function(dgram, result_cb){
 		    
@@ -137,7 +137,7 @@ window.addEventListener("load", function(){
 			}
 		    }
 		    
-		
+		    
 		    result_cb(null, sr);
 		    console.log("srz request completed");
 		};
@@ -149,7 +149,7 @@ window.addEventListener("load", function(){
 		    else{
 			
 			//lay.name.innerHTML+="Dialog handshake OK <br/>";
-			for(img_id=0;img_id<4;img_id++)
+			for(img_id=0;img_id<nf;img_id++)
 			    d.send_datagram({type : "get_data", imgid : img_id},null,function(error){
 				if(error){
 				    dinfo.innerHTML+="ERROR"+error+" <br/>";
@@ -162,7 +162,18 @@ window.addEventListener("load", function(){
 		    
 		});
 	    }
+	    
+	    
+	    m42_start.onclick=function(){
+		load_mwl_demo("M42",2);
+	    }
+	    
+	    catseye_start.onclick=function(){
+		load_mwl_demo("catseye",4);
+	    }
 	});
+	
+	
     }
     
     sadira=new sadira({ server : hostname, widget_prefix : "widgets", server_prefix : "~fullmoon/XD-1"}, function(error){
