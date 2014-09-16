@@ -4,7 +4,6 @@ var xd1;
 
 window.addEventListener("load", function(){
 
-
     if(typeof xd1 != 'undefined') return;
 
     //var shad_script=document.getElementById("shader-xd1");

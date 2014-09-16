@@ -185,6 +185,7 @@ function layer(xd, id, cb){
 
     var fits_file=image.elements.source.elements.local_fits;
     var gloria=image.elements.source.elements.gloria;
+    var sbig=image.elements.source.elements.sbig;
 
     var file_size=image.elements.info.elements.file_size;
     var image_size=image.elements.info.elements.size;
@@ -261,6 +262,8 @@ function layer(xd, id, cb){
 	xd.render();
 	
     }
+
+
 
     lay.load_fits_data=function(data_source){
 
@@ -712,6 +715,10 @@ function layer(xd, id, cb){
     this.ui=create_ui({type:"short" }, layer_opts, depth);
     gloria.lay=lay;
     
+
+    init_cam_source(sbig.ui_root);
+
+
     cb(null,this);
 
 }
