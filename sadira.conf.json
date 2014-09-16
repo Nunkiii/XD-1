@@ -1,6 +1,34 @@
 {
-	"https_port": null,
-	"dialogs" : ["/home/fullmoon/prog/dev/XD-1/dialogs/sbig.dialog"],
-    	"websocket" : true,
-	"webrtc" : true
+    "http_port": 9999,
+    "websocket" : true,
+    "webrtc" : false,
+    "handlers" : [ 
+	{
+	    "file" : "../node-gloria-dbms/handlers/gloria_get_handlers.js",
+	    "opts" : {
+		"sql_server_opts" : {
+		    "host"     : "localhost",
+		    "user"     : "gloriausr",
+		    "password" : "GLORIA2011",
+		    "database" : "gloriadb"
+		}
+	    }
+	},{
+	    "file" : "../node-gloria-dbms/handlers/gloria_handlers.js",
+	    "opts" : {
+		"sql_server_opts" : {
+		    "host"     : "localhost",
+		    "user"     : "gloriausr",
+		    "password" : "GLORIA2011",
+		    "database" : "gloriadb"
+		}
+	    }
+	}
+    ],
+    
+    "dialogs"  : [
+	{"file" : "../sadira/dialogs/fits.js"},
+	{"file" : "/dialogs/sbig.dialog"}
+    ]
+
 }

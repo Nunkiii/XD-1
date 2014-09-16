@@ -425,7 +425,7 @@ function layer(xd, id, cb){
     
     //    var x_domain_full=null; //[low+.5*bsize,low+(nbins-.5)*bsize];
 
-    function auto_cuts(){
+    function auto_cuts22(){
 	
 	var histo=histo_tpl.value;
 	var max=0,maxid=0, total=0, frac=.95, cf=0;
@@ -454,6 +454,34 @@ function layer(xd, id, cb){
 	cuts.onchange();
 	console.log("cuts....done");
     }
+
+
+    function auto_cuts(){
+	var ns=2000;
+	var ab=new ArrayBuffer(4*ns);
+	var fa=new Float32Array(ab);
+	var lo=0.05, hi=0.99;
+
+	var ll=lay.arr.length;
+	for (var i=0;i<fa.length;i++){
+	    var pix=Math.floor(Math.random()*ll);
+	    fa[i]=lay.arr[pix];
+	}
+	var sort=radixsort();
+	var sfa = sort(fa);
+
+	var newcuts=[sfa[Math.floor(lo*ns)], sfa[Math.floor(hi*ns)]];
+
+//	for (var i=0;i<sfa.length/20;i++)
+//	    console.log( i + " : " + sfa[i]);
+
+	console.log("Number of items : " + fa.length, " NB = " + ab.byteLength + " npix="+ll + " cuts + " + JSON.stringify(newcuts));
+
+	cuts.set_value(newcuts);
+	cuts.onchange();
+
+    }
+    
 
     function reset_histogram(){
 
