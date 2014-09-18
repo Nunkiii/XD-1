@@ -13,7 +13,6 @@ var gl_bbig = function (w,h) {
 	console.log("Allocating bbig");
 	this.w=up2(w);
 	this.h=up2(h);
-	
 	this.b=new ArrayBuffer(4*4*w*h);
 	this.fv= new Float32Array(b);
     }
@@ -172,7 +171,7 @@ function layer(xd, id, cb){
     var depth=1;//layer_opts.depth+1;
     console.log("Hello");
 
-    var cuts=layer_opts.elements.general.elements.cuts; 
+    var cuts=this.cuts=layer_opts.elements.general.elements.cuts; 
     var histo_tpl=layer_opts.elements.general.elements.histo; 
     var cmap=this.cmap=layer_opts.elements.general.elements.cmap; 
     var lum=layer_opts.elements.general.elements.lum; 
@@ -263,8 +262,6 @@ function layer(xd, id, cb){
 	
     }
 
-
-
     lay.load_fits_data=function(data_source){
 
 	var FITS = astro.FITS;
@@ -315,10 +312,8 @@ function layer(xd, id, cb){
 
 		var id=lay.id;
 		
-		console.log("Filling big array with layer  " + id + " : " + w + ", " + h + " global dims " + w + ", "+h);
-		
-		
 		/*
+		  console.log("Filling big array with layer  " + id + " : " + w + ", " + h + " global dims " + w + ", "+h);
 		  var rangeLocation = gl.getUniformLocation(xd.program, "u_layer_range");
 		  xd.p_layer_range[2*id]=lay.width*1.0/xd.w;
 		  xd.p_layer_range[2*id+1]=lay.height*1.0/xd.h;		
@@ -335,8 +330,6 @@ function layer(xd, id, cb){
 		//lay.opts=opts;
 		//console.log("Opts: " + JSON.stringify(lay.opts));
 		setup_layer_data();
-		
-		
 //		result_cb(null, { w : lay.width, h : lay.height, arr : arr, ext : extent});
 		
 		
@@ -421,7 +414,7 @@ function layer(xd, id, cb){
 
     }
     
-    var canvas_info  = document.getElementById('canvas_info');
+    //var canvas_info  = document.getElementById('canvas_info');
     
     //    var x_domain_full=null; //[low+.5*bsize,low+(nbins-.5)*bsize];
 
@@ -627,7 +620,7 @@ function layer(xd, id, cb){
 	    var w=xd.w=up2(w);
 	    var h=xd.h=up2(h);
 
-	    canvas_info.innerHTML="GL texture ("+ w + ", " + h + ")";
+	    //canvas_info.innerHTML="GL texture ("+ w + ", " + h + ")";
 	    xd.bbig=create_bbig_buffer(w,h);
 	    xd.fv=xd.bbig.fv;
 	}
@@ -687,7 +680,7 @@ function layer(xd, id, cb){
 	gl.uniform4fv(pv_loc, xd.p_vals);
 	if(zm.ui)
 	    zm.ui.step=zm.ui.value/10.0;
-	//lay.update_geometry();
+	lay.update_geometry();
 	xd.render();
     }
 
@@ -751,56 +744,162 @@ function layer(xd, id, cb){
 
 }
 
+layer.prototype.get_screen_pos= function (ipix){
+    var l=this,xd=this.xd;
+    var spos=[ipix[0]-l.width/2.0, ipix[1]-l.height/2.0];
+    var screen_dims=[xd.canvas.clientWidth, xd.canvas.clientHeight];
+    var screen_center=[screen_dims[0]/2.0, screen_dims[1]/2.0];
+    
+    spos= numeric.dot(l.g_rmi,spos);
+    
+    spos[0]=(spos[0]-l.g_trl[0]);
+    spos[1]=(spos[1]+l.g_trl[1]);
+    
+    spos[0]=spos[0]*l.g_lzoom;
+    spos[1]=spos[1]*l.g_lzoom;
+    
+    spos= numeric.dot(xd.g_rmgi,spos);
+    
+    spos[0]=(spos[0]-xd.tr.value[0]);
+    spos[1]=(spos[1]+xd.tr.value[1]);
+    
+    spos[0]=spos[0]*xd.zm.value;
+    spos[1]=spos[1]*xd.zm.value;
+    
+    spos[0]+=screen_center[0];
+    spos[1]+=screen_center[1];
+    return spos;
+}
+    
+layer.prototype.is_in_screen=function (spos){
+    return (spos[0]<0||spos[0]>=screen_dims[0]||spos[1]<0||spos[1]>=screen_dims[1]) ? false : true; 
+}
+
 layer.prototype.update_geometry=  function (){
+
     var xd=this.xd;
 
-    var alpha_l=-1.0*this.p_values[5];
-    var alpha=-1.0*xd.angle;
-
+    var alpha_l=1.0*this.p_values[5];
+    
     this.g_lzoom=1.0*this.p_values[4]; //*xd.zoom;
-
     this.g_trl=[1.0*this.p_values[2],1.0*this.p_values[3]]; //xd.tr[]
-    this.g_rm=[[Math.cos(alpha_l),Math.sin(alpha_l)],
-	       [-1.0*Math.sin(alpha_l),Math.cos(alpha_l)]];
-    this.g_rmg=[[Math.cos(alpha),Math.sin(alpha)],
-		[-1.0*Math.sin(alpha),1.0*Math.cos(alpha)]];
-    this.g_screen_center=[xd.canvas.width/2.0, xd.canvas.height/2.0];
+    this.g_rm=[[Math.cos(alpha_l),Math.sin(alpha_l)],[-1.0*Math.sin(alpha_l),Math.cos(alpha_l)]];
+    this.g_rmi=[[this.g_rm[0][0],-this.g_rm[0][1]],[-this.g_rm[1][0],this.g_rm[1][1]]];    
+    this.g_screen_center=[xd.canvas.clientWidth/2.0, xd.canvas.clientHeight/2.0];
     this.g_rotc=[1.0*xd.p_rotcenters[2*this.id],1.0*xd.p_rotcenters[2*this.id+1]];
     this.g_texc=[this.width/xd.w/2.0, this.height/xd.h/2.0];
-
-
-    //console.log("ROTC = " + JSON.stringify(this.g_rotc) + "TEXC " + JSON.stringify(this.g_texc)+ "TR " + JSON.stringify(this.g_trl) + " scale " + this.g_lzoom);
     
+//    console.log("ROTC = " + JSON.stringify(this.g_rotc) + "TEXC " + JSON.stringify(this.g_texc)+ "TR " + JSON.stringify(this.g_trl) + " scale " + this.g_lzoom + " screen center " + JSON.stringify(this.g_screen_center + " global rot " + JSON.stringify(this.g_rmg)));
+
+
+    this.draw_frame();
+
+
+}
+
+layer.prototype.draw_frame=function(){
+
+    var l=this, xd=this.xd; //xd.layers[0];
+//    if(!l) return;
+    var lcorners=[ [0,0], [0,l.height], [l.width, l.height], [l.width, 0] ];
+    var lcenter=[l.width/2.0,l.heigth/2.0];
+    
+    
+    var tcorners=[];
+    for(var c=0;c<lcorners.length;c++) tcorners[c]=l.get_screen_pos(lcorners[c]);
+    var tcenter=l.get_screen_pos(lcenter);
+    var cursor_dims=[50,30];
+
+    var ctx2d=xd.ctx2d;
+    ctx2d.beginPath();
+    ctx2d.moveTo(tcorners[0][0],tcorners[0][1]);
+    ctx2d.lineTo(tcorners[1][0],tcorners[1][1]);
+    ctx2d.lineTo(tcorners[2][0],tcorners[2][1]);
+    ctx2d.lineTo(tcorners[3][0],tcorners[3][1]);
+    ctx2d.lineTo(tcorners[0][0],tcorners[0][1]);
+    //	    ctx2d.fillStyle = 'yellow';
+    //	    ctx2d.fill();
+    ctx2d.lineWidth = 2;
+    ctx2d.strokeStyle = 'yellow';
+    ctx2d.stroke();
+    ctx2d.closePath();
+}
+
+layer.prototype.sample_image_1d= function(start,end,size) {
+    var v=[end[0]-start[0],end[1]-start[1]];
+    var l=Math.sqrt(v[0]*v[0]+v[1]*v[1]);
+    if(typeof size==='undefined') size=Math.floor(l);
+
+    var d=[v[0]/l,v[1]/l];
+    var dl=l/(size-1.0);
+    //console.log("sample N= " + size+" D="+JSON.stringify(d) + " l= " + l + " dl=" + dl);
+
+    var c=this.arr;
+    var dims=[this.width,this.height];
+    var b=new ArrayBuffer(4*size);
+    var fb= new Float32Array(b);
+    var x=[];
+    for(var step=0;step<size;step++){
+	x[0]=start[0]+d[0]*step*dl;
+	x[1]=start[1]+d[1]*step*dl;
+
+	if (x[0]<0||x[0]>=dims[0]||x[1]<0||x[1]>=dims[1]) fb[step]=0.0;
+	else
+	    fb[step]=c[Math.floor(x[1])*dims[0]+Math.floor(x[0])];
+
+    }
+    
+    return fb;
 }
 
 layer.prototype.get_image_pixel= function(screen_pixel) {
     if(typeof this.g_trl=="undefined") return [0,0];
 
+
     var xd=this.xd;
+
     var ipix=[
 	(screen_pixel[0]-this.g_screen_center[0])/xd.zm.value+xd.tr.value[0]-xd.rc.value[0],
-	(screen_pixel[1]-this.g_screen_center[1])/xd.zm.value+xd.tr.value[1]-xd.rc.value[1]
+	(screen_pixel[1]-this.g_screen_center[1])/xd.zm.value-xd.tr.value[1]-xd.rc.value[1]
     ];
-    
-    ipix= numeric.dot(this.g_rmg,ipix);
-    
+
+    ipix= numeric.dot(xd.g_rmg,ipix);
+
     ipix[0]=((ipix[0]+xd.rc.value[0])/this.g_lzoom+this.g_trl[0]-this.g_rotc[0]);
-    ipix[1]=((ipix[1]+xd.rc.value[1])/this.g_lzoom+this.g_trl[1]-this.g_rotc[1]);
+    ipix[1]=((ipix[1]+xd.rc.value[1])/this.g_lzoom-this.g_trl[1]-this.g_rotc[1]);
 
     ipix= numeric.dot(this.g_rm,ipix);
+
+/*
+    p =rmg*((gl_FragCoord.xy-u_screen/2.0)/u_zoom+u_tr-u_rotc)+u_rotc;
+    p = p/lzoom+trl-u_rotcenters[l];
+    p = (rm*p+u_rotcenters[l])/u_resolution+u_layer_range[l]/2.0;
+*/
+
+    //var ures=[xd.canvas.clientWidth, xd.canvas.clientHeight];
 
 //    ipix[0]=(((ipix[0]+this.g_rotc[0])/xd.w+.5)*this.width);
 //    ipix[1]=(((ipix[1]+this.g_rotc[1])/xd.h+.5)*this.height);
 
+    //ipix[0]=(ipix[0]+this.g_rotc[0]);///ures[0]/2+xd.p_layer_range[0]/2.0;
+    //ipix[1]=(ipix[1]+this.g_rotc[1]);///ures[1]/2+xd.p_layer_range[1]/2.0;
+
     ipix[0]=(ipix[0]+this.g_rotc[0])+this.width/2.0;///xd.w+this.g_texc[0];
-    ipix[1]=(ipix[1]+this.g_rotc[1])+this.height/2.0;///xd.h+this.g_texc[1];
-//    console.log("P="+JSON.stringify(ipix));
+    ipix[1]=this.height/2.0-(ipix[1]+this.g_rotc[1]);///xd.h+this.g_texc[1];
+
+    //ipix[0]=ipix[0]*this.width;
+    //ipix[1]=ipix[1]*this.height;
+
+    //console.log("P4="+JSON.stringify(ipix));
     return ipix;
 }
 
-layer.prototype.update_pointer_info=function(screen_pixel){
+layer.prototype.update_pointer_info=function(screen_pixel, cinfo_tpl){
 
-    if(typeof this.arr=='undefined') return;
+    
+    if(typeof this.arr === 'undefined') return;
+
+    //this.update_geometry();
 
     var ipix=this.get_image_pixel(screen_pixel);
     
@@ -808,16 +907,63 @@ layer.prototype.update_pointer_info=function(screen_pixel){
 	this.pointer_info.innerHTML="outside<br/>image";
 	return;
     }
-
+    
     ipix[0]=Math.floor(ipix[0]);
     ipix[1]=Math.floor(ipix[1]);
 
     var pos=ipix[1]*this.width+ ipix[0];
     var pixel_value = this.arr[pos];
 
-    this.pointer_info.innerHTML="("+ipix[0]+","+ipix[1]+")<br/>" + Math.floor(pixel_value*1000)/1000.0;
+    cinfo_tpl.elements.imgpos.set_value(ipix);
+    cinfo_tpl.elements.pixval.set_value(Math.floor(pixel_value*1000)/1000.0);
+    
+    var cursor_dir=[0,1];
+    var line_height=50;
+    var cursor_pos=[0,0];
+    var screen_dims=[this.xd.canvas.clientWidth,this.xd.canvas.clientHeight];
+    var liney=screen_pixel[1];
+    var start=this.get_image_pixel([0,liney]);
+    var end=this.get_image_pixel([screen_dims[0],liney]);
+    //console.log("asked for " + screen_dims[0] + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
+    var line_data=this.sample_image_1d(start,end, screen_dims[0]);
+    //console.log(" got " + line_data.length + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
+    var ctx2d=this.xd.ctx2d;
+    //var tcenter=e.cursor;
+    var cuts=this.cuts.value;
+
+    this.draw_frame();
+
+    ctx2d.beginPath();
+    ctx2d.moveTo(0,screen_dims[1]);
+    for(var p=0;p<line_data.length;p++)
+	//ctx2d.lineTo(p,line_data[p]/1000.0);
+	ctx2d.lineTo(p,screen_dims[1]-(line_data[p]-cuts[0])/(cuts[1]-cuts[0])*line_height);
+    
+    ctx2d.lineWidth = 2;
+    ctx2d.strokeStyle = 'orange';
+    ctx2d.stroke();
+    ctx2d.closePath();
+    
+    var start=this.get_image_pixel([screen_pixel[0],0]);
+    var end=this.get_image_pixel([screen_pixel[0],screen_dims[1]]);
+    //console.log("asked for " + screen_dims[0] + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
+    var line_data=this.sample_image_1d(start,end, screen_dims[1]);
+
+    ctx2d.beginPath();
+    ctx2d.moveTo(0,0);
+    for(var p=0;p<line_data.length;p++)
+	//ctx2d.lineTo(p,line_data[p]/1000.0);
+	ctx2d.lineTo((line_data[p]-cuts[0])/(cuts[1]-cuts[0])*line_height,p);
+    
+    ctx2d.lineWidth = 2;
+    ctx2d.strokeStyle = 'blue';
+    ctx2d.stroke();
+    ctx2d.closePath();
+
+    //this.pointer_info.innerHTML="("+ipix[0]+","+ipix[1]+")<br/>" + Math.floor(pixel_value*1000)/1000.0;
+
     //POS " +pos + " L= " + this.arr.length + 
     //	" D : " + this.width + "," + this.height ;
-    
+    //console.log("("+ipix[0]+","+ipix[1]+")<br/>" + Math.floor(pixel_value*1000)/1000.0);
 }
 

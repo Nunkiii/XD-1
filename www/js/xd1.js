@@ -29,7 +29,7 @@ function xdone() {
     this.ncolors=0;
     this.pvals=[];
     this.layer_enabled=[];
-    this.ctx=null;
+//    this.ctx=null;
     this.p_layer_range=[];
     this.infs=true;
     this.selected_layer=null;
@@ -58,15 +58,18 @@ xdone.prototype.xdone_init=function(options, cb){
     divider.id = 'divider';
 
     var info_node =  cc("div", bar_node); info_node.id="drawing_info";
-    var canvas_info  = cc("div",info_node); canvas_info.id="canvas_info";  
-    var pointer_info  = cc("div",info_node); pointer_info.id="pointer_info";  //select(xdone_node,'#pointer_info');
-
-    canvas_info.className="canvas_info";
+    //var canvas_info  = cc("div",info_node); canvas_info.id="canvas_info";  
+    //var pointer_info  = cc("div",info_node); pointer_info.id="pointer_info";  //select(xdone_node,'#pointer_info');
+    //canvas_info.className="canvas_info";
 
     var glscreen=tmaster.build_template("glscreen"); 
-    var glscreen_node =xd.canvas= create_ui({ type: "short", root_classes : [] }, glscreen,0 );
+    create_ui({ type: "short", root_classes : [] }, glscreen,0 );
+    
+    xd.canvas=glscreen.canvas;
+    
+    var ctx2d=xd.ctx2d=glscreen.canvas2d.getContext("2d");
 
-    drawing_node.appendChild(glscreen_node);
+    drawing_node.appendChild(glscreen.ui);
 
     var leftPercent = 50;
     
@@ -107,6 +110,18 @@ xdone.prototype.xdone_init=function(options, cb){
     //bar_node.appendChild(create_ui({ type: "short", root_classes : [] } , glv_opts));
     
     var glv_opts = options.tpl;
+
+    var cursor_info_tpl=tmaster.build_template("cursor_info"); 
+    var layer_ci=[];
+    var cil = cursor_info_tpl.elements.layers.elements={};
+    for(var l=0;l<4;l++)
+	layer_ci[l]=cil["layer_"+l]=tmaster.build_template("cursor_layer_info"); 
+
+    glv_opts.elements.cursor_info=cursor_info_tpl;
+    var options_tpl=tmaster.build_template("options"); 
+    glv_opts.elements.options=options_tpl;
+    //var cursor_info=create_ui({ type: "short", root_classes : [] }, cursor_info_tpl,0 );
+
     bar_node.appendChild(create_ui({ type: "short", root_classes : [] } ,glv_opts));
 
     glscreen.webgl_start({}, function(error, gl){
@@ -127,7 +142,7 @@ xdone.prototype.xdone_init=function(options, cb){
 	var zm=xd.zm=geo.zoom; 
 	var ag=xd.ag=geo.rotation.elements.angle; 
 	var rc=xd.rc=geo.rotation.elements.center;
-	
+
 	
 	tr.onchange = function(){
 	    gl.uniform2fv(tr_loc, this.value);
@@ -139,7 +154,7 @@ xdone.prototype.xdone_init=function(options, cb){
 	};
 
 	ag.onchange=function(){
-	    gl.uniform1f(angle_loc, ag.value);
+	    update_angle();
 	    xd.render();
 	};
 	
@@ -151,8 +166,8 @@ xdone.prototype.xdone_init=function(options, cb){
 
 	
 	xd.update_layer_ranges=function(){
-	    var w=glscreen_node.clientWidth;
-	    var h=glscreen_node.clientHeight;
+	    var w=glscreen.canvas.clientWidth;
+	    var h=glscreen.canvas.clientHeight;
 	    
 	    for(var l=0;l<xd.nlayers;l++){
 		var lay=xd.layers[l];
@@ -167,6 +182,13 @@ xdone.prototype.xdone_init=function(options, cb){
 	    gl.uniform2fv(rangeLocation, xd.p_layer_range);
 	}
 	
+
+	function update_angle(){
+	    var alpha=1.0*xd.ag.value;
+	    gl.uniform1f(angle_loc, alpha);
+	    xd.g_rmg=[[Math.cos(alpha),Math.sin(alpha)],[-1.0*Math.sin(alpha),1.0*Math.cos(alpha)]];
+	    xd.g_rmgi=[[xd.g_rmg[0][0],-xd.g_rmg[0][1]],[-xd.g_rmg[1][0],xd.g_rmg[1][1]]];
+	}
 	
 	function update_zoom(){
 	    xd.gl.uniform1f(zoom_loc, zm.value);
@@ -176,14 +198,40 @@ xdone.prototype.xdone_init=function(options, cb){
 	    
 	}
 
-
 	glscreen.listen("cursor_move", function(e){
+	    
+	    var screen_pos=[e.cursor[0]+.5,glscreen.canvas.clientHeight-e.cursor[1]-.5];
+	    var cursor_size=[40, 20]; //pixels...
 
-	    var screen_pos=[e.cursor[0]+.5,glscreen_node.clientHeight-e.cursor[1]-.5];
-	    pointer_info.innerHTML="Screen : (" +screen_pos[0]+"," +screen_pos[1] +") "; 
-
+	    //pointer_info.innerHTML="Screen : (" +screen_pos[0]+"," +screen_pos[1] +") "; 
+	    cursor_info_tpl.elements.screen.set_value(screen_pos);
+	    //console.log("clear " + glscreen.canvas.clientWidth + " " + glscreen.canvas.clientHeight);
+	    ctx2d.clearRect(0,0,glscreen.canvas.clientWidth, glscreen.canvas.clientHeight);
+	    
 	    for(var l=0;l<xd.nlayers;l++)
-		xd.layers[l].update_pointer_info(e.cursor);
+		xd.layers[l].update_pointer_info(e.cursor, layer_ci[l]);
+
+	    //var ctx2d=this.xd.ctx2d;
+	    /*
+	    var tcenter=e.cursor;
+	    
+	    ctx2d.beginPath();
+	    ctx2d.moveTo(tcenter[0]-cursor_size[0],tcenter[1]);
+	    ctx2d.lineTo(tcenter[0]+cursor_size[0],tcenter[1]);
+	    ctx2d.lineWidth = 2;
+	    ctx2d.strokeStyle = 'red';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	    
+
+	    ctx2d.beginPath();
+	    ctx2d.moveTo(tcenter[0],tcenter[1]-cursor_size[1]);
+	    ctx2d.lineTo(tcenter[0],tcenter[1]+cursor_size[1]);
+	    ctx2d.lineWidth = 2;
+	    ctx2d.strokeStyle = 'red';
+	    ctx2d.stroke();
+	    ctx2d.closePath();
+	    */
 	});
 	
 	
@@ -232,16 +280,28 @@ xdone.prototype.xdone_init=function(options, cb){
 	    
 	    gl.clearColor(1.0, 1.0, 0.0, 1.0);
 	    gl.clear(gl.COLOR_BUFFER_BIT);
+
+	    ctx2d.clearRect(0,0,xd.canvas.clientWidth,xd.canvas.clientHeight);
 	    
 	    gl.enableVertexAttribArray(positionLocation);
 	    gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
 	    
 	    gl.drawArrays(gl.TRIANGLES, 0, 6);
 	    
+
 	    for(var l=0;l<xd.nlayers;l++)
 		if(xd.layer_enabled[l])
 		    xd.layers[l].update_geometry();
-	    
+
+
+	    //ctx2d.fillStyle = "#FF0000";
+	    //ctx2d.fillRect(0,0,150,75);
+	    /*
+	    p =rmg*((gl_FragCoord.xy-u_screen/2.0)/u_zoom+u_tr-u_rotc)+u_rotc;
+	    p = p/lzoom+trl-u_rotcenters[l];
+	    p = (rm*p+u_rotcenters[l])/u_resolution+u_layer_range[l]/2.0;
+	    */
+
 	}
 	
 	xd.fullscreen=function(on){
@@ -324,17 +384,18 @@ xdone.prototype.xdone_init=function(options, cb){
 	    rotcenter_loc=gl.getUniformLocation(program, "u_rotc");
 	    
 	    gl.uniform4iv(le_loc, layer_enabled);
-	    gl.uniform2f(resolutionLocation, glscreen_node.width, glscreen_node.height);
+	    gl.uniform2f(resolutionLocation, glscreen.canvas.clientWidth, glscreen.canvas.clientHeight);
 	    gl.uniform1f(zoom_loc, zm.value );
-	    gl.uniform1f(angle_loc, ag.value);
+	   // gl.uniform1f(angle_loc, ag.value);
 	    gl.uniform2fv(tr_loc, tr.value);
 	    gl.uniform2fv(rotcenter_loc, rc.value);
 	    
-	    
+	    update_angle();
+
 	    create_vertex_buffer();
 	    
 	    xd.fullscreen(false);
-	    glscreen_node.focus();
+	    glscreen.canvas.focus();
 	    cb(null,xd);
 	});
 	

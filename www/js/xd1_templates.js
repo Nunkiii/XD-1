@@ -84,8 +84,61 @@ var xd1_templates={
 	
     },
     
-    binary_resource_location : {},
+    cursor_info : {
+	name : "Cursor",
+	ui_opts : {sliding : true, slided : false},
+	elements : {
+	    screen : {
+		type: "labelled_vector",
+		name : "Screen pixel",
+		value_labels : ["X","Y"],
+		value : [0,0]
+	    },
+	    astro : {
+		type: "labelled_vector",
+		name : "Equatorial coordinates",
+		value_labels : ["Ra","Dec"],
+		value : [0,0]
+	    },
+	    layers : {
+	    }
+	    
+	}
+    },
     
+    cursor_layer_info : {
+	name : "Info",
+	elements : {
+	    imgpos : {
+		type: "labelled_vector",
+		name : "Image pixel",
+		value_labels : ["X","Y"],
+		value : [0,0]
+	    },
+	    pixval : {
+		name : "Pixel value",
+		type : "double"
+	    }
+	}
+    },
+
+    options : {
+	name : "Viewer options",
+	ui_opts : {sliding : true, slided : false, child_view_type : "div"},
+	elements : {
+	    image_axes : {
+		name : "Show image axes", type : "bool", value : false, ui_opts : { type : "edit" }
+	    },
+	    x_plot : {
+		name : "Show X plot", type : "bool", value : false, ui_opts : { type : "edit"}
+	    },
+	    y_plot : {
+		name : "Show Y plot", type : "bool", value : false, ui_opts : { type : "edit"}
+	    }
+
+	}
+    },
+
     geometry : {
 	
 	name : "Geometry",
