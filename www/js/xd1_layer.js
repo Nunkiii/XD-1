@@ -823,6 +823,15 @@ layer.prototype.draw_frame=function(){
     ctx2d.strokeStyle = 'yellow';
     ctx2d.stroke();
     ctx2d.closePath();
+
+    ctx2d.font = "12px sans-serif";//"italic 200 36px/2 Unknown Font, sans-serif";
+    ctx2d.strokeStyle = "yellow"; // set stroke color to blue
+    ctx2d.fillStyle = "white";  // set fill color to red
+    ctx2d.lineWidth = "1";  //  set stroke width to 3pmx
+
+    ctx2d.strokeText("Layer " + l.id, tcorners[0][0],tcorners[0][1]-10);
+    ctx2d.fillText("Layer " + l.id, tcorners[0][0],tcorners[0][1]-10);
+
 }
 
 layer.prototype.sample_image_1d= function(start,end,size) {
@@ -898,7 +907,7 @@ layer.prototype.update_pointer_info=function(screen_pixel, cinfo_tpl){
 
     
     if(typeof this.arr === 'undefined') return;
-
+    
     //this.update_geometry();
 
     var ipix=this.get_image_pixel(screen_pixel);
@@ -922,44 +931,51 @@ layer.prototype.update_pointer_info=function(screen_pixel, cinfo_tpl){
     var cursor_pos=[0,0];
     var screen_dims=[this.xd.canvas.clientWidth,this.xd.canvas.clientHeight];
     var liney=screen_pixel[1];
-    var start=this.get_image_pixel([0,liney]);
-    var end=this.get_image_pixel([screen_dims[0],liney]);
-    //console.log("asked for " + screen_dims[0] + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
-    var line_data=this.sample_image_1d(start,end, screen_dims[0]);
-    //console.log(" got " + line_data.length + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
     var ctx2d=this.xd.ctx2d;
     //var tcenter=e.cursor;
     var cuts=this.cuts.value;
 
+
     this.draw_frame();
 
-    ctx2d.beginPath();
-    ctx2d.moveTo(0,screen_dims[1]);
-    for(var p=0;p<line_data.length;p++)
-	//ctx2d.lineTo(p,line_data[p]/1000.0);
-	ctx2d.lineTo(p,screen_dims[1]-(line_data[p]-cuts[0])/(cuts[1]-cuts[0])*line_height);
-    
-    ctx2d.lineWidth = 2;
-    ctx2d.strokeStyle = 'orange';
-    ctx2d.stroke();
-    ctx2d.closePath();
-    
-    var start=this.get_image_pixel([screen_pixel[0],0]);
-    var end=this.get_image_pixel([screen_pixel[0],screen_dims[1]]);
-    //console.log("asked for " + screen_dims[0] + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
-    var line_data=this.sample_image_1d(start,end, screen_dims[1]);
+    if(this.xd.options.tpl.elements.options.elements.x_plot.value == true){
+	var start=this.get_image_pixel([0,liney]);
+	var end=this.get_image_pixel([screen_dims[0],liney]);
+	//console.log("asked for " + screen_dims[0] + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
+	var line_data=this.sample_image_1d(start,end, screen_dims[0]);
+	//console.log(" got " + line_data.length + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
 
-    ctx2d.beginPath();
-    ctx2d.moveTo(0,0);
-    for(var p=0;p<line_data.length;p++)
-	//ctx2d.lineTo(p,line_data[p]/1000.0);
-	ctx2d.lineTo((line_data[p]-cuts[0])/(cuts[1]-cuts[0])*line_height,p);
+	ctx2d.beginPath();
+	ctx2d.moveTo(0,screen_dims[1]);
+	for(var p=0;p<line_data.length;p++)
+	    //ctx2d.lineTo(p,line_data[p]/1000.0);
+	    ctx2d.lineTo(p,screen_dims[1]-(line_data[p]-cuts[0])/(cuts[1]-cuts[0])*line_height);
+	
+	ctx2d.lineWidth = 2;
+	ctx2d.strokeStyle = 'orange';
+	ctx2d.stroke();
+	ctx2d.closePath();
+    }
     
-    ctx2d.lineWidth = 2;
-    ctx2d.strokeStyle = 'blue';
-    ctx2d.stroke();
-    ctx2d.closePath();
+    console.log("yplot ? " + this.xd.options.tpl.elements.options.elements.y_plot.value); 
 
+    if(this.xd.options.tpl.elements.options.elements.y_plot.value == true){
+	var start=this.get_image_pixel([screen_pixel[0],0]);
+	var end=this.get_image_pixel([screen_pixel[0],screen_dims[1]]);
+	//console.log("asked for " + screen_dims[0] + " start " + JSON.stringify(start)+ " end " + JSON.stringify(end));
+	var line_data=this.sample_image_1d(start,end, screen_dims[1]);
+	
+	ctx2d.beginPath();
+	ctx2d.moveTo(0,0);
+	for(var p=0;p<line_data.length;p++)
+	    //ctx2d.lineTo(p,line_data[p]/1000.0);
+	    ctx2d.lineTo((line_data[p]-cuts[0])/(cuts[1]-cuts[0])*line_height,p);
+	
+	ctx2d.lineWidth = 2;
+	ctx2d.strokeStyle = 'blue';
+	ctx2d.stroke();
+	ctx2d.closePath();
+    }
     //this.pointer_info.innerHTML="("+ipix[0]+","+ipix[1]+")<br/>" + Math.floor(pixel_value*1000)/1000.0;
 
     //POS " +pos + " L= " + this.arr.length + 

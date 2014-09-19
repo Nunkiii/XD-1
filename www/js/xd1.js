@@ -122,6 +122,15 @@ xdone.prototype.xdone_init=function(options, cb){
     glv_opts.elements.options=options_tpl;
     //var cursor_info=create_ui({ type: "short", root_classes : [] }, cursor_info_tpl,0 );
 
+/*
+    options_tpl.elements.x_plot.onchange=function(){
+	render();
+    }
+    options_tpl.elements.x_plot.onchange=function(){
+	render();
+    }
+*/
+
     bar_node.appendChild(create_ui({ type: "short", root_classes : [] } ,glv_opts));
 
     glscreen.webgl_start({}, function(error, gl){
@@ -209,7 +218,8 @@ xdone.prototype.xdone_init=function(options, cb){
 	    ctx2d.clearRect(0,0,glscreen.canvas.clientWidth, glscreen.canvas.clientHeight);
 	    
 	    for(var l=0;l<xd.nlayers;l++)
-		xd.layers[l].update_pointer_info(e.cursor, layer_ci[l]);
+		if(xd.layer_enabled[l])
+		    xd.layers[l].update_pointer_info(e.cursor, layer_ci[l]);
 
 	    //var ctx2d=this.xd.ctx2d;
 	    /*
