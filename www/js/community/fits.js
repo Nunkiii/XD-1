@@ -745,6 +745,9 @@
 
     Image.prototype._getFrame = function(buffer, bitpix, bzero, bscale) {
       var arr, bytes, dataType, i, nPixels, swapEndian, tmp, value;
+
+	//console.log("get frame " + bitpix + " bzero = " + bzero + " bscale " + bscale);
+	//bzero=0;
       bytes = Math.abs(bitpix) / 8;
       nPixels = i = buffer.byteLength / bytes;
       dataType = Math.abs(bitpix);
@@ -758,7 +761,8 @@
             };
             break;
           case 16:
-            tmp = new Int16Array(buffer);
+            //tmp = new Int16Array(buffer);
+            tmp = new Uint16Array(buffer);
             swapEndian = function(value) {
               return ((value & 0xFF) << 8) | ((value >> 8) & 0xFF);
             };
@@ -864,7 +868,8 @@
       frameInfo = this.frameOffsets[this.frame];
       buffers = frameInfo.buffers;
       if ((buffers != null ? buffers.length : void 0) === this.nBuffers) {
-        return this._getFrameAsync(buffers, callback, opts);
+
+	  return this._getFrameAsync(buffers, callback, opts);
       } else {
         this.frameOffsets[this.frame].buffers = [];
         begin = frameInfo.begin;
@@ -889,7 +894,8 @@
           frame = e.target.frame;
           buffer = e.target.result;
           _this.frameOffsets[frame].buffers.push(buffer);
-          i += 1;
+            i += 1;
+	    //console.log("Hello " + i + " ==? " + _this.nBuffers);
           if (i === _this.nBuffers) {
             return _this.getFrame(frame, callback, opts);
           } else {
