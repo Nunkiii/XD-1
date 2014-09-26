@@ -58,7 +58,10 @@ void main() { //Beginning of shader program called to retrieve the colour of eac
   mat2 rmg =mat2(cos(u_angle),sin(u_angle),-sin(u_angle),cos(u_angle)),rm;//Set up the global view rotation matrix
   float lpos,lzoom,alpha,c,lumi;
   vec2 trl,p;
-  
+  //gl_FragColor = vec4(1.0,0.0,1.0,1.0); //setting final fragment color
+
+  //  return;
+
   for(int l=0; l<4; l++){ //Loop on the 4 layers (the rgba components of the 'big' data texture)
     
     if(u_layer_enabled[l]!=1)continue;//Continue loop on layers if this layer is not enabled ...
