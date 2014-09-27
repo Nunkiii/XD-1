@@ -5,15 +5,15 @@ You need a combination of device/browser that supports webgl : works on most pc/
 
 ####Demos
 
-The actual version (unstable) 
+The current version (unstable) 
 
-* http://sadira.iasfbo.inaf.it/~pg/XD-1/  
+* http://sadira.iasfbo.inaf.it/XD-1/  
 
 Older demos are here :
 
 * http://ross.iasfbo.inaf.it/~gloria/js9/ 
 * http://ross.iasfbo.inaf.it/~gloria/xd1/  
-* http://sadira.iasfbo.inaf.it/~pg/XD-1-0914/   
+* http://sadira.iasfbo.inaf.it/XD-1-0914/   
 
 
 #####Installation 
