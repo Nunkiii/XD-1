@@ -1,5 +1,5 @@
 {
-    "http_port": 9999,
+    "http_port": 80,
     "websocket" : true,
     "webrtc" : false,
     "handlers" : [ 

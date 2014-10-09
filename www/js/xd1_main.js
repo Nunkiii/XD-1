@@ -12,20 +12,21 @@ window.addEventListener("load", function(){
 
     
 
-    var hostname
+//    var hostname
     //="ws://192.168.176.103:9999";
     //="ws://192.168.1.134:9999";
 //	="ws://localhost:9999";
-    ="ws://sadira.iasfbo.inaf.it:9999";
+//    ="ws://sadira.iasfbo.inaf.it:9999";
 
     console.log("create template .... ");
-    var xd1_tpl = tmaster.build_template("xd1"); 
+    var xd1_tpl = window.xd=tmaster.build_template("xd1"); 
+
     xd1_tpl.xdone_node=document.getElementById("xdone");
     
     
     console.log("create ui .... " + xd1_tpl.xdone_node);
     var xd1_ui= create_ui({},xd1_tpl);
-
+    
     return;
     
     var xd1_tpl = tmaster.build_template("gl_view_2d"); 

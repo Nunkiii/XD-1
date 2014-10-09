@@ -151,6 +151,102 @@ var def_parameters=[
     ]
 ];
 
+template_ui_builders.demo_multilayer=function(ui_opts, demo){
+    
+    function load_mwl_demo(what,nf){
+	
+	var sadira=xd.elements.setup.sadira;
+	
+	var img_id=0;
+	var d= sadira.dialogs.create_dialog({ handler : "fits.test_get_data", what : what});
+	
+	d.srz_request=function(dgram, result_cb){
+	    
+	    console.log("SRZ Request !");
+	    
+	    var sz=dgram.header.sz;
+	    var	w=dgram.header.width;
+	    var h=dgram.header.height;
+	    
+	    console.log("Ready to receive "+sz +" bytes. Image ["+dgram.header.name+"] size will be : " + w + ", " + h + "<br/>");
+	    
+		    //lay.layer_name=dgram.header.name;
+		    
+		    var b=new ArrayBuffer(sz);
+		    var fvp = new Float32Array(b);
+		    //console.log("AB: N= "+ fv.length +" =? "+sz/4+" first elms : " + fv[0] + ", " + fv[1] );
+		    var sr=new srz_mem(b);
+		    
+		    
+		    sr.on_chunk=function(dgram){
+			//console.log("Fetching data : "+(Math.floor(100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data)))+" %");
+		    }
+		    
+		    sr.on_done=function(){
+			if(xd1.nlayers<xd1.maxlayers){
+			    
+			    var l=tmaster.build_template("gl_image_layer"); 
+			    var lay_ui=create_ui({type:"short" }, l, 0);
+			    l.xd1_attach(xd1, xd1.nlayers);
+			    
+			    //var lay=new layer(xd1, xd1.nlayers,function(error, l){
+			    l.p_values[6]=.25;
+			    sr.lay_id=l.lay_id;
+			    
+			    if(error){
+				console.log("Error ! " + error);
+				return;
+			    }
+			    
+			    var layer_opts = l.layer_opts; 
+			    
+			    l.container=layer_objects.ui_childs;
+			    layer_objects.ui_childs.add_child(l,lay_ui);
+			    
+			    var gl=xd1.gl;
+			    
+			    xd1.layers[xd1.nlayers]=l;
+			    xd1.layer_enabled[xd1.nlayers]=1;
+			    var le_loc=gl.getUniformLocation(xd1.program, "u_layer_enabled");
+			    gl.uniform4iv(le_loc, xd1.layer_enabled);
+			    
+			    xd1.nlayers++;
+			    xd1.fullscreen(false);
+			    
+			    
+			    l.setup_dgram_layer(dgram.header, fvp);
+			    //});
+			    
+			}
+		    }
+		    
+		    
+		    result_cb(null, sr);
+		    console.log("srz request completed");
+		};
+		
+		d.connect(function(error, init_dgram){
+		    if(error){
+			console.log("Init data error= " + error + " init datagram = <pre> " + JSON.stringify(init_dgram,null,4)+" </pre><br/>");
+		    }
+		    else{
+			
+			//lay.name.innerHTML+="Dialog handshake OK <br/>";
+			for(img_id=0;img_id<nf;img_id++)
+			    d.send_datagram({type : "get_data", imgid : img_id},null,function(error){
+				if(error){
+				    dinfo.innerHTML+="ERROR"+error+" <br/>";
+				}else{
+				    console.log("OK");
+				}
+				
+			    });
+		    }
+		    
+		});
+    }
+}
+
 template_ui_builders.object_editor=function(ui_opts, edit){
     
     var new_object=edit.elements.new_object;
@@ -189,7 +285,6 @@ template_ui_builders.image=function(ui_opts, image){
     var add_to_display=image.elements.view.elements.add_to_display;
     var add=image.elements.view.elements.add;
   
-    
     new_display.listen("click", function(){
 	xd.create_image_view(image);
     });
@@ -326,7 +421,7 @@ template_ui_builders.image=function(ui_opts, image){
 	image.update_extent();
 
 	
-	console.log("Setting image data " + JSON.stringify(header) + " bytes : " + length + "data exts " + extent[0] + "," + extent[1]);
+	//console.log("Setting image data " + JSON.stringify(header) + " bytes : " + length + "data exts " + extent[0] + "," + extent[1]);
 
 	// var extent = [1e20,-1e20];
 	// for (var i=0;i<length;i++){
@@ -341,7 +436,7 @@ template_ui_builders.image=function(ui_opts, image){
 
 	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
 	meta.set_value(JSON.stringify(header, null, 5));
-	bounds.set_value(extent);
+	//bounds.set_value(extent);
 	//console.log("Frame read : D=("+image.width+","+image.height+")  data exts " + extent[0] + "," + extent[1]);
 	//image_info.innerHTML="Dims : ("+image.width+", "+image.height+")";
 	

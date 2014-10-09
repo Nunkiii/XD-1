@@ -1,31 +1,140 @@
 var xd1_templates={
-
-    sadira : {
-	type : "template",
-	tpl_builder  : "sadira",
-	name : "Sadira link",
-	ui_opts : { child_classes : ["inline"]},
+    
+    mount_control : {
+	type : "mount_control",
+	name : "Mount control",
 	elements : {
-	    url : {
-		type : "Server",
-		type : "url"
-	    },
-	    but : {
-		type: "action",
-		name : "connect"
+	    config : {
+		elements : {
+		    server : {
+			name : "Mount server",
+			type : "template",
+			template_name : "sadira"
+		    },
+		}
 	    },
 	    status : {
-		type : "status",
-		value : "blue",
-		value_labels : { blue : "not connected", green : "connected", red : "error"}
+		name : "Mount status",
+		elements : {
+		    position : {
+			name : "Current position",
+			type : "sky_coords"
+			
+		    }
+		}
+	    },
+	    actions : {
+		name : "Actions",
+		
+		elements : {
+		
+		    goto_radec : {
+			name : "Goto Ra-Dec",
+			elements : {
+			    coords : {
+				name : "Coordinates",
+				type : "sky_coords",
+				value : [0,0]
+			    },
+			    go : {
+				name : "Goto",
+				type : "action"
+			    }
+			}
+		    },
+		    slew : {
+			name : "Slew telescope",
+			elements : {
+			    speed : {
+				name : "Slewing speed",
+				type : "double",
+				value : 0
+			    },
+			    arrow_pad : {
+				name : "Direction",
+				type : "arrow_pad"
+			    },
+			    slew : {
+				name : "Slew",
+				type : "action"
+			    }
+			    
+			    
+			}
+		    }
+		}
+	    }
+	}
+    },
+    
+    sbig_control : {
+	name : "SBIG Camera Control",
+	type : "sbig_control",
+	elements : {
+	    server : {
+		name : "Camera server",
+		type : "template",
+		template_name : "sadira"
+	    },
+	    exposure : {
+		name : "Exposure configuration",
+		elements : {
+		    exptime : { name : "Exposure time (s)", type : "double"},
+		    nexpo : { name : "Number of expos", type : "double"},
+		    binning : { name : "Binning" }
+		}
+	    },
+	    cooling : {
+		name : "Cooling",
+		elements : {
+		    temp : {name : "CCD temperature", value : 0.0, type : "double"},
+		    ambient_temp : {name : "Ambient temperature", value : 0.0, type : "double"},
+		    pow : {name : "Cooling power", value : 0.0, type : "double"},
+		    enable : {name : "Enable cooling", value : false, type : "bool", ui_opts : { type : "edit"} },
+		    setpoint : {name: "Temperature setpoint", value : 0.0, type : "double", ui_opts : { type : "edit"}}
+		}
+	    },
+	    actions : {
+		name : "Actions",
+		elements : {
+		    start_camera : { 
+			name : "Start camera", type : "action"
+		    },
+		    start_exposure : {
+			name : "Start exposure", 
+			type : "action",
+			elements : {
+			    expo_progress : {
+				name : "Exposure",
+				type : "progress"
+			    },
+			    grab_progress : {
+				name : "Exposure",
+				type : "progress"
+			    }
+			}
+			
+		    }
+		}
+	    },
+	    last_image : {
+		name : "Last image",
+		type : "template",
+		template_name: "image",
+		elements : {
+		    view : {
+			name : "Preview",
+			template_name : "gl_multilayer",
+			type : "template"
+		    }
+		}
 	    },
 	    messages : {
-		name : "Messages",
+		name : "Info",
 		type : "text"
 	    }
 	}
     },
-
 
     binary_source : {
 	name : "Source",
@@ -58,13 +167,20 @@ var xd1_templates={
 	value : [0, 0],
 	value_labels : ["Dx", "Dy"]
     },
+
+    sky_coords : {
+	name : "Sky coordinates",
+	type : "labelled_vector",
+	value_labels : ["Ra","Dec"],
+	value : [0,0]
+    },
     
     image_source : {
-	name : "Data source",
-	ui_opts : { child_view_type : "tabbed", sliding : true, slided : true, root_classes : []}, 
+	name : "Load data",
+	ui_opts : { child_view_type : "tabbed", sliding : true, slided : false, root_classes : []}, 
 	elements : {
 	    local_fits : {
-		ui_opts : {editable: false, sliding : false, slided : true, type : "edit"},
+		ui_opts : {editable: false, sliding : false, slided : false, type : "edit"},
 		name : "Local FITS file",
 		type : "local_file",
 		value : "No file selected"
@@ -92,10 +208,10 @@ var xd1_templates={
 	type : "template",
 	tpl_builder : "image",
 	template_name : "binary_object",
-	ui_opts : {child_view_type : "div", close: true },
+	ui_opts : {child_view_type : "bar", close: true },
 	events : ["image_ready"],
 	elements : { 
-	    source : {type : "template", template_name : "image_source", ui_opts: {sliding: true, slided: true}},
+	    source : {type : "template", template_name : "image_source", ui_opts: {sliding: true, slided: false}},
 	    keys : { name : "Metadata", type : "text", elements : {}, ui_opts: {sliding: true, slided: false}},
 	    dims : { type: "template", template_name : "image_dimensions", ui_opts: {sliding: false, slided: false}},
 	    bounds : {
@@ -110,7 +226,7 @@ var xd1_templates={
 	    },
 	    view : {
 		name: "Display",
-		ui_opts: {sliding: false, slided: false},
+		ui_opts: {sliding: false, slided: false, bar : false},
 		elements : {
 		    new_display : {
 			type : "action",
@@ -648,7 +764,73 @@ var xd1_templates={
 		type : "view_manager",
 		ui_opts: {child_view_type : "tabbed", sliding: false},
 		elements : {}
-	    }
+	    },
+	    setup : {
+		name : "Setup",
+		elements : {
+		    sadira : {
+			tip : "DEV",
+			name : "Sadira link",
+			type : "template",
+			template_name : "sadira"
+		    }
+		}
+	    },
+	    telescope_control : {
+		name: "Telescope control",
+		ui_opts : { child_view_type : "tabbed"},
+		elements : {
+		    mount : {
+			name : "Pointing",
+			type : "template",
+			template_name : "mount_control",
+			ui_opts : { sliding : false, slided: false },
+		    },
+		    camera_science : {
+			name : "Science Camera",
+			type: "template",
+			template_name : "sbig_control",
+			ui_opts : { sliding : false, slided: false }
+		    },
+		    camera_guider : {
+			name : "Guider Camera",
+			type: "template",
+			template_name : "sbig_control",
+			ui_opts : { sliding : false, slided: false }
+		    },
+		    filter_wheel : {
+			ui_opts : { sliding : false, slided: false },
+			name : "Filter wheel"
+		    }
+		}
+	    },
+	    demo : {
+		name : "Demos",
+		//ui_opts : {editable: false, sliding : false, slided : false},
+		tip : "Loads fits files from server using websocket in different layers of viewer",
+		elements : {
+		    
+		    catseye : {
+			tip : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
+			name : "Hubble Cat's Eye Nebula (4 filters)",
+			type : "action",
+			ui_opts : { root_classes : ["inline"]}
+		    },
+		    M42 : {
+			tip : "Orion nebula as seen by Hubble, in red and infrared.",
+			name : "Hubble M42 Nebula (2 filters)",
+			type : "action",
+			ui_opts : { root_classes : ["inline"]}
+		    },
+		    loiano : {
+			tip : "Star field taken from Loiano observatory.",
+			name : "Loiano starfield (4 filters)",
+			type : "action",
+			ui_opts : { root_classes : ["inline"]}
+		    }
+		}
+	    },
+
 	}
     },
     
@@ -695,7 +877,7 @@ var xd1_templates={
 
 
 (function(){
-    window.tmaster=new local_templates();
+  //window.tmaster=new local_templates();
     
     tmaster.add_templates(xd1_templates);
     tmaster.add_templates(image_db_browser_templates);

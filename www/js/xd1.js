@@ -10,7 +10,6 @@
 
 template_ui_builders.xd1=function(ui_opts, xd){
     console.log("Hello xd1 cons " + xd.xdone_node );
-    window.xd=xd;
     xd.ui_root.removeChild(xd.ui_name);
     
     var server_root=xd.server_root;
@@ -113,8 +112,11 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     var server_root="";
     var layer_objects=glm.elements.layers;
 
-    glm.drawing_node.appendChild(glscreen.ui);
+    if(typeof glm.drawing_node === 'undefined')
+	glm.drawing_node=glm.ui_root;
 
+    glm.drawing_node.appendChild(glscreen.ui);
+    
     //glm.pvals=[];
     glm.nlayers=0;
     glm.maxlayers=4;
