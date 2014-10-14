@@ -524,7 +524,9 @@ var xd1_templates={
 		type : "bool",
 		value : true,
 		ui_opts : {editable : true, label : true, type : "edit"}
-	    },
+	    }
+
+	    /*,
 	    image : {
 		ui_opts : {  
 		    sliding : true , sliding_dir : "h", slided : false, child_classes : ["newline"], child_view_type : "bar"
@@ -594,7 +596,7 @@ var xd1_templates={
 			}
 		    }
 		}
-	    },
+	    }*/,
 	    geometry : {
 
 		name : "Layer geometry",

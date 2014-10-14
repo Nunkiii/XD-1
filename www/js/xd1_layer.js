@@ -271,7 +271,7 @@ template_ui_builders.object_editor=function(ui_opts, edit){
 }
 
 template_ui_builders.image=function(ui_opts, image){
-    //console.log("Image constructor !");
+    console.log("Image constructor !");
 
     var bin_size=image.elements.size;
     var dims=image.elements.dims;
@@ -285,10 +285,6 @@ template_ui_builders.image=function(ui_opts, image){
     var add_to_display=image.elements.view.elements.add_to_display;
     var add=image.elements.view.elements.add;
   
-    new_display.listen("click", function(){
-	xd.create_image_view(image);
-    });
-
     var dlist=[];
 
     add_to_display.listen("click", function(){
@@ -300,6 +296,11 @@ template_ui_builders.image=function(ui_opts, image){
 	
 	display_list.set_options(dlist);
 	
+    });
+
+
+    new_display.listen("click", function(){
+	xd.create_image_view(image);
     });
 
     add.listen("click", function(){
@@ -476,6 +477,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
     var image=layer.elements.image;
 
+/*
     var fits_file=image.elements.source.elements.local_fits;
     var gloria=image.elements.source.elements.gloria;
     var sbig=image.elements.source.elements.sbig;
@@ -484,6 +486,8 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     var image_size=image.elements.info.elements.size;
     var dims=image.elements.info.elements.dims;
     var bounds=image.elements.info.elements.bounds; 
+*/
+
     var nbins=512;
     var bsize=null; 
     var length;
@@ -557,158 +561,24 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	
     }
 
-    layer.load_fits_data=function(data_source){
 
-	var FITS = astro.FITS;
+    layer.update_geometry=  function (){
 	
-	var fits = new FITS(data_source, function(){
-	    // Get the first header-dataunit containing a dataunit
-	    var hdu = this.getHDU();
-	    // Get the first header
-	    var header = hdu.header;
-	    // Read a card from the header
-	    var bitpix = header.get('BITPIX');
-	    // Get the dataunit object
-	    var dataunit = hdu.data;
-	    console.log("FITS OK "+dataunit);
-	    
-	    var opts={ dataunit : dataunit };
-	    
-	    // Get pixels representing the image and pass callback with options
-	    dataunit.getFrame(0, function(arr, opts){// Get dataunit, width, and height from options
-		var dataunit = opts.dataunit;
-		var w=layer.width = dataunit.width;
-		var h=layer.height = dataunit.height;
-		
-		// Get the minimum and maximum pixels
-		var extent = dataunit.getExtent(arr);
-		
-		layer.set_title(fits_file.ui.files[0].name);
-		file_size.value=fits_file.ui.files[0].size;
-
-		//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
-
-		file_size.set_value();
-		
-
-		bounds.set_value(extent);
-		console.log("Frame read : D=("+layer.width+","+layer.height+")  externt " + extent[0] + "," + extent[1]);
-		//image_info.innerHTML="Dims : ("+layer.width+", "+layer.height+")";
-		
-		dims.set_value([w,h]);
-		
-		layer.arr=arr;
-		layer.ext=extent;
-		
-		setup_bbig(w,h);
-		
-		image_size.set_title("pixel byte size " + arr.length*1.0/w/h + " PixType " + typeof(arr[0]));
-		image_size.set_value(arr.length*4);
-
-		var id=layer.id;
-		
-		/*
-		  console.log("Filling big array with layer  " + id + " : " + w + ", " + h + " global dims " + w + ", "+h);
-		  var rangeLocation = layer.gl.getUniformLocation(glm.program, "u_layer_range");
-		  glm.p_layer_range[2*id]=layer.width*1.0/glm.w;
-		  glm.p_layer_range[2*id+1]=layer.height*1.0/glm.h;		
-		  layer.gl.uniform2fv(rangeLocation, glm.p_layer_range);
-		*/
-		var glm=layer.glm;
-		var fv=glm.fv;
-		
-		for(var i=0;i<h;i++){
-		    for(var j=0;j<w;j++){
-			fv[4*(i*glm.w+j)+id]=1.0*arr[i*w+j];
-		    }
-		}
-		
-		//layer.opts=opts;
-		//console.log("Opts: " + JSON.stringify(layer.opts));
-		setup_layer_data();
-		//		result_cb(null, { w : layer.width, h : layer.height, arr : arr, ext : extent});
-		
-		
-	    }, opts);
-	});
-    }
-    
-    fits_file.onchange=function(evt){
-	var file = evt.target.files[0]; // FileList object
-	layer.load_fits_data(file);
-
+	var glm=this.glm;	
+	var alpha_l=1.0*this.p_values[5];
+	
+	this.g_lzoom=1.0*this.p_values[4]; //*glm.zoom;
+	this.g_trl=[1.0*this.p_values[2],1.0*this.p_values[3]]; //glm.tr[]
+	this.g_rm=[[Math.cos(alpha_l),Math.sin(alpha_l)],[-1.0*Math.sin(alpha_l),Math.cos(alpha_l)]];
+	this.g_rmi=[[this.g_rm[0][0],-this.g_rm[0][1]],[-this.g_rm[1][0],this.g_rm[1][1]]];    
+	this.g_screen_center=[glm.canvas.clientWidth/2.0, glm.canvas.clientHeight/2.0];
+	this.g_rotc=[1.0*glm.p_rotcenters[2*this.id],1.0*glm.p_rotcenters[2*this.id+1]];
+	this.g_texc=[this.width/glm.w/2.0, this.height/glm.h/2.0];
+	
+	//    console.log("ROTC = " + JSON.stringify(this.g_rotc) + "TEXC " + JSON.stringify(this.g_texc)+ "TR " + JSON.stringify(this.g_trl) + " scale " + this.g_lzoom + " screen center " + JSON.stringify(this.g_screen_center + " global rot " + JSON.stringify(this.g_rmg)));
+	this.draw_frame();
     }
 
-    layer.setup_dgram_layer=function(header, fvpin){
-
-	var fvp;
-
-	if(header.colormap)
-	    cmap.set_value(header.colormap);
-	
-	if(fvpin.length){
-	    fvp=fvpin;
-	    length=fvp.length;
-	}else{
-	    fvp = new Float32Array(fvpin);
-	    length = fvp.byteLength;
-	}
-
-	var w=layer.width=header.width;
-	var h=layer.height=header.height;
-	
-	var extent = [1e20,-1e20];
-
-	console.log("Setting layer data " + JSON.stringify(header) + " bytes : " + length + "data exts " + extent[0] + "," + extent[1]);
-
-	for (var i=0;i<length;i++){
-	    //if(i%500==0)console.log("fvp " + i + " : " + fvp[i]);
-	    if(fvp[i]>extent[1])extent[1]=fvp[i];
-	    if(fvp[i]<extent[0])extent[0]=fvp[i];
-	}
-	// Get the minimum and maximum pixels
-	
-	layer.set_title(header.name);
-	file_size.set_value(header.sz);
-
-	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
-	
-	bounds.set_value(extent);
-	console.log("Frame read : D=("+layer.width+","+layer.height+")  data exts " + extent[0] + "," + extent[1]);
-	//image_info.innerHTML="Dims : ("+layer.width+", "+layer.height+")";
-	
-	dims.set_value([w,h]);
-	
-	layer.arr=fvp;
-	layer.ext=extent;
-	
-	setup_bbig(w,h);
-	
-	image_size.set_title("pixel byte size " + length*1.0/w/h + " PixType " + typeof(fvp[0]));
-	image_size.set_value(length*4);
-	
-	var id=layer.id;
-	
-	//console.log("Filling big array with layer  " + id + " : " + w + ", " + h + " global dims " + w + ", "+h);
-	/*
-	  var rangeLocation = layer.gl.getUniformLocation(glm.program, "u_layer_range");
-	  glm.p_layer_range[2*id]=layer.width*1.0/glm.w;
-	  glm.p_layer_range[2*id+1]=layer.height*1.0/glm.h;
-	  layer.gl.uniform2fv(rangeLocation, glm.p_layer_range);
-	*/
-	var glm=layer.glm;
-	var fv=glm.fv;
-	
-	for(var i=0;i<h;i++){
-	    for(var j=0;j<w;j++){
-
-		fv[4*(i*glm.w+j)+id]=1.0*fvp[i*w+j];
-	    }
-	}
-	
-	setup_layer_data();
-
-    }
     
     //var canvas_info  = document.getElementById('canvas_info');
     
@@ -974,6 +844,9 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	
     }  
     
+    
+
+
     function update_pvalues(){
 	var glm=layer.glm;
 	//console.log("update pv for " + glm.name + " pvl "+ glm.p_vals.length);
@@ -1144,23 +1017,6 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	return (spos[0]<0||spos[0]>=screen_dims[0]||spos[1]<0||spos[1]>=screen_dims[1]) ? false : true; 
     }
 
-    layer.update_geometry=  function (){
-
-	var glm=this.glm;
-
-	var alpha_l=1.0*this.p_values[5];
-	
-	this.g_lzoom=1.0*this.p_values[4]; //*glm.zoom;
-	this.g_trl=[1.0*this.p_values[2],1.0*this.p_values[3]]; //glm.tr[]
-	this.g_rm=[[Math.cos(alpha_l),Math.sin(alpha_l)],[-1.0*Math.sin(alpha_l),Math.cos(alpha_l)]];
-	this.g_rmi=[[this.g_rm[0][0],-this.g_rm[0][1]],[-this.g_rm[1][0],this.g_rm[1][1]]];    
-	this.g_screen_center=[glm.canvas.clientWidth/2.0, glm.canvas.clientHeight/2.0];
-	this.g_rotc=[1.0*glm.p_rotcenters[2*this.id],1.0*glm.p_rotcenters[2*this.id+1]];
-	this.g_texc=[this.width/glm.w/2.0, this.height/glm.h/2.0];
-	
-	//    console.log("ROTC = " + JSON.stringify(this.g_rotc) + "TEXC " + JSON.stringify(this.g_texc)+ "TR " + JSON.stringify(this.g_trl) + " scale " + this.g_lzoom + " screen center " + JSON.stringify(this.g_screen_center + " global rot " + JSON.stringify(this.g_rmg)));
-	this.draw_frame();
-    }
 
     layer.draw_frame=function(){
 
@@ -1348,5 +1204,5 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	//console.log("("+ipix[0]+","+ipix[1]+")<br/>" + Math.floor(pixel_value*1000)/1000.0);
     }
 
-    init_cam_source(sbig.ui_root);
+    //init_cam_source(sbig.ui_root);
 }

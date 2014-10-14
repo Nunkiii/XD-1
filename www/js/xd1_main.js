@@ -6,6 +6,10 @@ window.addEventListener("load", function(){
 
     if(typeof xd1 != 'undefined') return;
 
+
+    
+
+
     //var shad_script=document.getElementById("shader-xd1");
     //alert(JSON.stringify(document.URL));
     //alert(JSON.stringify(window.location.pathname));
@@ -22,8 +26,6 @@ window.addEventListener("load", function(){
     var xd1_tpl = window.xd=tmaster.build_template("xd1"); 
 
     xd1_tpl.xdone_node=document.getElementById("xdone");
-    
-    
     console.log("create ui .... " + xd1_tpl.xdone_node);
     var xd1_ui= create_ui({},xd1_tpl);
     
