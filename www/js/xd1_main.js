@@ -115,7 +115,6 @@ window.addEventListener("load", function(){
 		    //console.log("AB: N= "+ fv.length +" =? "+sz/4+" first elms : " + fv[0] + ", " + fv[1] );
 		    var sr=new srz_mem(b);
 		    
-		    
 		    sr.on_chunk=function(dgram){
 			//console.log("Fetching data : "+(Math.floor(100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data)))+" %");
 		    }

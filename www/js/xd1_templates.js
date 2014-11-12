@@ -177,7 +177,12 @@ var xd1_templates={
     },
     
     image_source : {
-	name : "Load data",
+	intro: "Select a FITS image file on your local filesystem",
+	name : "FITS file",
+	type : "local_file",
+	ui_opts : {editable: false, sliding : false, slided : false, type : "edit"}
+/*
+
 	ui_opts : { child_view_type : "radio", sliding : true, slided : false, root_classes : []}, 
 	elements : {
 	    local_fits : {
@@ -185,7 +190,8 @@ var xd1_templates={
 		name : "Local FITS file",
 		type : "local_file",
 		value : "No file selected"
-	    },
+	    }
+	    ,
 	    url_fits : {
 		ui_opts : {editable: true, sliding : false, slided : false},
 		name : "FITS URL",
@@ -201,7 +207,9 @@ var xd1_templates={
 		name : "Camera control",
 		ui_opts : {editable: false, sliding : false, slided : false}
 	    }
+
 	}
+*/
     },
 	
     image : {
@@ -212,7 +220,7 @@ var xd1_templates={
 	ui_opts : {child_view_type : "bar", close: true },
 	events : ["image_ready"],
 	elements : { 
-	    source : {type : "template", template_name : "image_source", ui_opts: {sliding: true, slided: false}},
+	    source : {type : "template", template_name : "image_source", ui_opts: {sliding: true, slided: true}},
 	    keys : { name : "Metadata", type : "text", elements : {}, ui_opts: {sliding: true, slided: false}},
 	    dims : { type: "template", template_name : "image_dimensions", ui_opts: {sliding: false, slided: false}},
 	    bounds : {
@@ -236,8 +244,6 @@ var xd1_templates={
 		    add_to_display : {
 			type : "action",
 			name : "Select existing display",
-			elements : {
-			}
 		    },
 		    display_list : {
 			name : "Display list",
@@ -716,7 +722,7 @@ var xd1_templates={
 	    demo : {
 		name : "Multi-Wavelength demos",
 		ui_opts : {editable: false, sliding : false, slided : false},
-		tip : "Loads fits files from server using websocket in different layers of viewer",
+		intro : "Loads fits files from server using websocket in different layers of viewer",
 		elements : {
 		    
 		    sadira : {
@@ -727,13 +733,13 @@ var xd1_templates={
 		    },
 
 		    catseye : {
-			tip : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
+			intro : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
 			name : "Hubble Cat's Eye Nebula (4 filters)",
 			type : "action",
 			ui_opts : { root_classes : ["inline"]}
 		    },
 		    M42 : {
-			tip : "Orion nebula as seen by Hubble, in red and infrared.",
+			intro : "Orion nebula as seen by Hubble, in red and infrared.",
 			name : "Hubble M42 Nebula (2 filters)",
 			type : "action",
 			ui_opts : { root_classes : ["inline"]}
@@ -768,6 +774,8 @@ var xd1_templates={
 		ui_opts: {child_view_type : "tabbed", sliding: false},
 		elements : {}
 	    },
+/*
+
 	    setup : {
 		name : "Setup",
 		elements : {
@@ -807,29 +815,47 @@ var xd1_templates={
 		    }
 		}
 	    },
+*/
 	    demo : {
-		name : "Demos",
+		name : "Multiband demos",
 		//ui_opts : {editable: false, sliding : false, slided : false},
-		tip : "Loads fits files from server using websocket in different layers of viewer",
+		intro : "Loads mutiband FITS images in different layers",
+		tpl_builder : "demo_multilayer",
 		elements : {
 		    
-		    catseye : {
-			tip : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
-			name : "Hubble Cat's Eye Nebula (4 filters)",
-			type : "action",
-			ui_opts : { root_classes : ["inline"]}
+		    cnx : {
+			type : "template",
+			template_name : "sadira"
+			
 		    },
-		    M42 : {
-			tip : "Orion nebula as seen by Hubble, in red and infrared.",
-			name : "Hubble M42 Nebula (2 filters)",
-			type : "action",
-			ui_opts : { root_classes : ["inline"]}
-		    },
-		    loiano : {
-			tip : "Star field taken from Loiano observatory.",
-			name : "Loiano starfield (4 filters)",
-			type : "action",
-			ui_opts : { root_classes : ["inline"]}
+		    demos : {
+			intro : "Choose an image set",
+			elements : {
+			    catseye : {
+				intro : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
+				name : "Hubble Cat's Eye Nebula (4 filters)",
+				type : "action",
+				ni : 4,
+				demo_name : "catseye",
+				ui_opts : { root_classes : []}
+			    },
+			    loiano : {
+				intro : "Star field taken from Loiano observatory.",
+				name : "Loiano starfield (4 filters)",
+				type : "action",
+				ni : 3,
+				demo_name : "loiano",
+				ui_opts : { root_classes : []}
+			    },
+			    M42 : {
+				intro : "Orion nebula as seen by Hubble, in red and infrared.",
+				name : "Hubble M42 Nebula (2 filters)",
+				type : "action",
+				ni : 2,
+				demo_name : "M42",
+				ui_opts : { root_classes : []}
+			    }
+			}
 		    }
 		}
 	    },

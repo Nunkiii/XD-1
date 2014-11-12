@@ -19,7 +19,10 @@ template_ui_builders.xd1=function(ui_opts, xd){
     var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
     var divider = cc('div', xdone_node);
     divider.id = 'divider';
-    
+    var mwl_demo=xd.elements.demo;
+
+    mwl_demo.xd=xd;
+
     var leftPercent = 50;
     
     function updateDivision() {
@@ -98,6 +101,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
 	views.elements["IV"+vn]=glm;
 	views.ui_childs.add_child(glm, glmui);
 	xd.gl_views.push(glm);
+	return glm;
 
     }
     
@@ -122,7 +126,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
     glm.drawing_node.appendChild(glscreen.ui);
     
-    //glm.pvals=[];
+    glm.pvals=[];
     glm.nlayers=0;
     glm.maxlayers=4;
     glm.layers=[];
@@ -134,11 +138,23 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
     var layer_ci=[];
     var cil = cursor.elements.layers;
+
     for(var l=0;l<4;l++){
 	layer_ci[l]=tmaster.build_template("cursor_layer_info"); 
 	var lui=create_ui({},layer_ci[l]);
 	cil.ui_childs.add_child(layer_ci[l], lui);
     }
+
+
+    var layer_enabled = glm.layer_enabled= new Int32Array([1,0,0,0]);
+    
+    glm.p_vals=new Float32Array(4*8);
+    glm.p_rotcenters=new Float32Array(4*2);
+    glm.p_layer_range=new Float32Array(4*2);
+    glm.ncolors=new Int32Array([0,0,0,0]);    
+    glm.cmap_texdata = new Float32Array(16*128);
+    glm.cmap_fracdata = new Float32Array(16*128);
+    
 
     glscreen.webgl_start({}, function(error, gl){
 	
@@ -359,14 +375,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    }
 	    
 	    
-	    var layer_enabled = glm.layer_enabled= new Int32Array([1,0,0,0]);
-	    
-	    glm.p_vals=new Float32Array(4*8);
-	    glm.p_rotcenters=new Float32Array(4*2);
-	    glm.p_layer_range=new Float32Array(4*2);
-	    glm.ncolors=new Int32Array([0,0,0,0]);    
-	    glm.cmap_texdata = new Float32Array(16*128);
-	    glm.cmap_fracdata = new Float32Array(16*128);
 	    
 	    var texture = gl.createTexture();
 	    var cmap_texture = gl.createTexture();
@@ -446,10 +454,11 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 		}
 		
 		glm.fullscreen(false);
-		
+		return layer;
 		//  });
 		
 	    }else alert("Max 4 layers!");
+	    return undefined;
 	}
 	    
     });
