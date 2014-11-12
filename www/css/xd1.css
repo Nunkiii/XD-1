@@ -5,8 +5,8 @@ html, body {
 }
 
 body{
-      color: #fff;
-      background-color: black;
+      color: rgba(5,5,5,1.0);
+      background-color: white;
       margin:0px;
       padding: 0px;
       }

@@ -1,7 +1,19 @@
 {
-    "http_port": 6666,
+    "http_port": 80,
+    "https_port": 443,
     "websocket" : true,
     "webrtc" : false,
+    "http_proxy" : true,
+    "https_proxy" : true,
+
+    "http_proxy_url" : "localhost:8000",
+    "https_proxy_url" : "localhost:60443",
+
+    "ssl" : {
+	"key_file" : "/home/fullmoon/prog/nodejs/sadira.11/ssl/keys/key.pem",
+	"cert_file" : "/home/fullmoon/prog/nodejs/sadira.11/ssl/keys/cert.pem"
+    },
+
     "handlers" : [ 
 	{
 	    "file" : "../node-gloria-dbms/handlers/gloria_get_handlers.js",

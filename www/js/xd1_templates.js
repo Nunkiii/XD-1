@@ -74,7 +74,8 @@ var xd1_templates={
 	    server : {
 		name : "Camera server",
 		type : "template",
-		template_name : "sadira"
+		template_name : "sadira",
+		ui_opts : { bar : true}
 	    },
 	    exposure : {
 		name : "Exposure configuration",
@@ -177,7 +178,7 @@ var xd1_templates={
     
     image_source : {
 	name : "Load data",
-	ui_opts : { child_view_type : "tabbed", sliding : true, slided : false, root_classes : []}, 
+	ui_opts : { child_view_type : "radio", sliding : true, slided : false, root_classes : []}, 
 	elements : {
 	    local_fits : {
 		ui_opts : {editable: false, sliding : false, slided : false, type : "edit"},
@@ -880,23 +881,24 @@ var xd1_templates={
 
 (function(){
   //window.tmaster=new local_templates();
-    
-    tmaster.add_templates(xd1_templates);
-    tmaster.add_templates(image_db_browser_templates);
-    
-    tmaster.icons={
-/*	double : "sadira/icons/svg/double.svg", 
-	bool : "sadira/icons/svg/bool.svg",
-	string : "sadira/icons/svg/string.svg",
-
- */
-	image : "sadira/icons/svg/mat_float.svg",
-	colormap : "sadira/icons/svg/colormap.svg",
-	object_editor : "sadira/icons/svg/root.svg",
-	gl_multilayer : "sadira/icons/svg/gl_viewport.svg",
-	gl_image_layer : "sadira/icons/svg/plot.svg",
-	view_manager : "sadira/icons/svg/plot.svg",
-    };
+//    window.addEventListener("load",function(){
+    sadira.listen("ready",function(){
+	tmaster.add_templates(xd1_templates);
+	console.log("adding xd1 templates");
+	tmaster.icons={
+	    /*	double : "sadira/icons/svg/double.svg", 
+		bool : "sadira/icons/svg/bool.svg",
+		string : "sadira/icons/svg/string.svg",
+		
+	    */
+	    image : "sadira/icons/svg/mat_float.svg",
+	    colormap : "sadira/icons/svg/colormap.svg",
+	    object_editor : "sadira/icons/svg/root.svg",
+	    gl_multilayer : "sadira/icons/svg/gl_viewport.svg",
+	    gl_image_layer : "sadira/icons/svg/plot.svg",
+	    view_manager : "sadira/icons/svg/plot.svg",
+	};
+    });
     
 
 })();
