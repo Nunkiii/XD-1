@@ -637,7 +637,7 @@ var xd1_templates={
 		    cmap : { 
 			name : "Colormap", 
 			type : "colormap",
-			tip : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
+			intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
 			ui_opts : {editable : true, sliding : false , sliding_dir : "h", slided : false,
 				   root_classes : ["full"], item_classes : []
 				  },
@@ -726,8 +726,8 @@ var xd1_templates={
 		elements : {
 		    
 		    sadira : {
-			tip : "DEV",
-			name : "Sadira link",
+			intro : "Connexion to a <i>sadira</i> websocket server.",
+			name : "Websocket link",
 			type : "template",
 			template_name : "sadira"
 		    },
@@ -769,7 +769,7 @@ var xd1_templates={
 		elements : {}
 	    },
 	    views : {
-		name : "Display",
+		name : "GL Views",
 		type : "view_manager",
 		ui_opts: {child_view_type : "tabbed", sliding: false},
 		elements : {}
@@ -824,6 +824,8 @@ var xd1_templates={
 		elements : {
 		    
 		    cnx : {
+			name : "Websocket",
+			intro : "Link to a <i>sadira</i> websocket server",
 			type : "template",
 			template_name : "sadira"
 			

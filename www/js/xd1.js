@@ -75,21 +75,25 @@ template_ui_builders.xd1=function(ui_opts, xd){
     }
 
     views.listen("element_selected", function(e){
-	//console.log("Selected !! " + e.name);
+	console.log("Selected !! " + e.name);
 	xd.select_view(e);
     });
     
-    xd.create_image_view=function(image){
+
+    xd.create_view=function(cb, opts){
 	var glm=tmaster.build_template("gl_multilayer");
-	glm.name=image.name;
 	glm.drawing_node=drawing_node;
 
 	glm.listen("gl_ready", function(){
-	    glm.create_layer(image);
-	    xd.select_view(glm);
+	    cb(null,glm);
 	});
-
+	//glm.parent=views;
 	var glmui = create_ui({}, glm);
+
+	if(è(opts))
+	    if(è(opts.name))
+		glm.set_title(opts.name);
+
 	console.log("Attach view...");
 	var i=0; var vn=0;
 	while( typeof views.elements["IV"+vn] != 'undefined'){
@@ -101,7 +105,21 @@ template_ui_builders.xd1=function(ui_opts, xd){
 	views.elements["IV"+vn]=glm;
 	views.ui_childs.add_child(glm, glmui);
 	xd.gl_views.push(glm);
-	return glm;
+
+	xd.select_view(glm);
+	
+    }
+
+    xd.create_image_view=function(image, cb, opts){
+
+	xd.create_view(function(error, glm){
+	    if(error!=null) return cb(error);
+	    var l=glm.create_layer(image);
+
+	    //glm.set_title(image.name);
+	    cb(null,glm);
+
+	}, opts);
 
     }
     
