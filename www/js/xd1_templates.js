@@ -843,7 +843,7 @@ var xd1_templates={
 				intro : "Star field taken from Loiano observatory.",
 				name : "Loiano starfield (4 filters)",
 				type : "action",
-				ni : 3,
+				ni : 4,
 				demo_name : "loiano",
 				ui_opts : { root_classes : []}
 			    },
