@@ -27,16 +27,6 @@ body{
   height: 100%;
 }
 
-#gfx_bar,#gfx{
-  width: 50%;
-  height: 100%;
-  float: left;
-  vertical-align: top;
-  resize:none;
-  overflow: auto;
-  opacity: 1.0;
-}
-
 #gfx_bar{
 /*  max-width: 35em; overflow-y : auto;*/
 /*   background-size: 1.5em; */
@@ -52,50 +42,6 @@ body{
       cursor: crosshair; 
 } 
 
-.glscreen{
-}
-.glscreen_2d{
-  position: absolute;
-  z-index: 2;
-  top:0px; 
-  margin: 0px;
-  padding: 0px;
-  
-}
-.glscreen_3d{
-  position: absolute;
-  z-index: 1;
-  top:0px;
-  margin: 0px;
-  padding: 0px; 
-/*  opacity: .5; */
-}
-
-
-#drawing{
-  height: 100%;
-  width: 100%;
-}
-
-#divider { 
-  position: absolute;
-  width: 3px;
-  margin-left: -2px;
-  top: 0;
-  bottom: 0;
-  background: #2a4;
-  border: 1px outset #bbb;
-  border-top: 0;
-  border-bottom: 0;
-  cursor: col-resize;
-}
-#divider:hover { 
-  background: #9fe;
-                 }
-
-html.dragging * { 
-  cursor: col-resize !important;
-}
 
 
 

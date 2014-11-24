@@ -217,10 +217,15 @@ var xd1_templates={
 	type : "template",
 	tpl_builder : "image",
 	template_name : "binary_object",
-	ui_opts : {child_view_type : "bar", close: true },
+	ui_opts : {child_view_type : "div", close: true },
 	events : ["image_ready"],
 	elements : { 
-	    source : {type : "template", template_name : "image_source", ui_opts: {sliding: true, slided: true}},
+	    source : {
+		intro: "Select a FITS image file on your local filesystem",
+		name : "FITS file",
+		type : "local_file",
+		ui_opts : {editable: false, sliding : false, slided : false, type : "edit"}
+	    },
 	    keys : { name : "Metadata", type : "text", elements : {}, ui_opts: {sliding: true, slided: false}},
 	    dims : { type: "template", template_name : "image_dimensions", ui_opts: {sliding: false, slided: false}},
 	    bounds : {
@@ -755,116 +760,133 @@ var xd1_templates={
     },
     
     xd1 : {
-
 	name : "XD-1",
 	type : "template",
 	tpl_builder : "xd1",
-	ui_opts: {child_view_type : "tabbed"},
+	
+	ui_opts: {child_view_type : "divider"},
+	
 	elements : {
-	    objects : { 
-		name : "Objects",
-		type : "template",
-		ui_opts: {sliding: false},
-		template_name : "user_objects",
-		elements : {}
-	    },
-	    views : {
-		name : "GL Views",
-		type : "view_manager",
-		ui_opts: {child_view_type : "tabbed", sliding: false},
-		elements : {}
-	    },
-/*
-
-	    setup : {
-		name : "Setup",
+	    
+	    ui : {
+		
+		ui_opts: {child_view_type : "tabbed"},
+		
 		elements : {
-		    sadira : {
-			tip : "DEV",
-			name : "Sadira link",
+		    objects : { 
+			name : "Objects",
 			type : "template",
-			template_name : "sadira"
-		    }
-		}
-	    },
-	    telescope_control : {
-		name: "Telescope control",
-		ui_opts : { child_view_type : "tabbed"},
-		elements : {
-		    mount : {
-			name : "Pointing",
-			type : "template",
-			template_name : "mount_control",
-			ui_opts : { sliding : false, slided: false },
+			ui_opts: {sliding: false},
+			template_name : "user_objects",
+			elements : {}
 		    },
-		    camera_science : {
-			name : "Science Camera",
-			type: "template",
-			template_name : "sbig_control",
-			ui_opts : { sliding : false, slided: false }
-		    },
-		    camera_guider : {
-			name : "Guider Camera",
-			type: "template",
-			template_name : "sbig_control",
-			ui_opts : { sliding : false, slided: false }
-		    },
-		    filter_wheel : {
-			ui_opts : { sliding : false, slided: false },
-			name : "Filter wheel"
-		    }
-		}
-	    },
-*/
-	    demo : {
-		name : "Multiband demos",
-		//ui_opts : {editable: false, sliding : false, slided : false},
-		intro : "Loads mutiband FITS images in different layers",
-		tpl_builder : "demo_multilayer",
-		elements : {
 		    
-		    cnx : {
-			name : "Websocket",
-			intro : "Link to a <i>sadira</i> websocket server",
-			type : "template",
-			template_name : "sadira"
-			
+		    views : {
+			name : "GL Views",
+			type : "view_manager",
+			ui_opts: {child_view_type : "tabbed", sliding: false},
+			elements : {}
 		    },
-		    demos : {
-			intro : "Choose an image set",
+		    /*
+		      
+		      setup : {
+		      name : "Setup",
+		      elements : {
+		      sadira : {
+		      tip : "DEV",
+		      name : "Sadira link",
+		      type : "template",
+		      template_name : "sadira"
+		      }
+		      }
+		      },
+		      telescope_control : {
+		      name: "Telescope control",
+		      ui_opts : { child_view_type : "tabbed"},
+		      elements : {
+		      mount : {
+		      name : "Pointing",
+		      type : "template",
+		      template_name : "mount_control",
+		      ui_opts : { sliding : false, slided: false },
+		      },
+		      camera_science : {
+		      name : "Science Camera",
+		      type: "template",
+		      template_name : "sbig_control",
+		      ui_opts : { sliding : false, slided: false }
+		      },
+		      camera_guider : {
+		      name : "Guider Camera",
+		      type: "template",
+		      template_name : "sbig_control",
+		      ui_opts : { sliding : false, slided: false }
+		      },
+		      filter_wheel : {
+		      ui_opts : { sliding : false, slided: false },
+		      name : "Filter wheel"
+		    }
+		    }
+		    },
+		    */
+		    
+		    demo : {
+			name : "Multiband demos",
+			//ui_opts : {editable: false, sliding : false, slided : false},
+			intro : "Loads mutiband FITS images in different layers",
+			tpl_builder : "demo_multilayer",
 			elements : {
-			    catseye : {
-				intro : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
-				name : "Hubble Cat's Eye Nebula (4 filters)",
-				type : "action",
-				ni : 4,
-				demo_name : "catseye",
-				ui_opts : { root_classes : []}
+			    
+			    cnx : {
+				name : "Websocket",
+				intro : "Link to a <i>sadira</i> websocket server",
+				type : "template",
+				template_name : "sadira"
+				
 			    },
-			    loiano : {
-				intro : "Star field taken from Loiano observatory.",
-				name : "Loiano starfield (4 filters)",
-				type : "action",
-				ni : 4,
-				demo_name : "loiano",
-				ui_opts : { root_classes : []}
-			    },
-			    M42 : {
-				intro : "Orion nebula as seen by Hubble, in red and infrared.",
-				name : "Hubble M42 Nebula (2 filters)",
-				type : "action",
-				ni : 2,
-				demo_name : "M42",
-				ui_opts : { root_classes : []}
+			    demos : {
+				intro : "Choose an image set",
+				elements : {
+				    catseye : {
+					intro : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
+					name : "Hubble Cat's Eye Nebula (4 filters)",
+					type : "action",
+					ni : 4,
+					demo_name : "catseye",
+					ui_opts : { root_classes : []}
+				    },
+				    loiano : {
+					intro : "Star field taken from Loiano observatory.",
+					name : "Loiano starfield (4 filters)",
+					type : "action",
+					ni : 4,
+					demo_name : "loiano",
+					ui_opts : { root_classes : []}
+				    },
+				    M42 : {
+					intro : "Orion nebula as seen by Hubble, in red and infrared.",
+					name : "Hubble M42 Nebula (2 filters)",
+					type : "action",
+					ni : 2,
+					demo_name : "M42",
+					ui_opts : { root_classes : []}
+				    }
+				}
 			    }
 			}
 		    }
 		}
 	    },
-
+	    drawing : {
+		name : "GL 2D Views",
+		intro  : "These are the gl screens...",
+		ui_opts : { root_classes : [] }
+	    }
 	}
     },
     
+    
+
     gl_multilayer : {
 	name : "GL Multilayer",
 	type: "gl_multilayer",

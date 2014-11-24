@@ -5,67 +5,48 @@
   
 */
 
+
+
 template_ui_builders.xd1=function(ui_opts, xd){
 
     console.log("Hello xd1 constructor on node " + xd.xdone_node );
-
-    xd.ui_root.removeChild(xd.ui_name);
+    
+    //xd.ui_root.removeChild(xd.ui_name);
     
     var server_root=xd.server_root;
     var xdone_node=xd.xdone_node;
 
-    var bar_node  = cc("header", xd.xdone_node); bar_node.id="gfx_bar"; 
-    var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";
-    var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
-    var divider = cc('div', xdone_node);
-    divider.id = 'divider';
-    var mwl_demo=xd.elements.demo;
+//    var bar_node  = cc("header", xd.xdone_node); bar_node.id="gfx_bar"; 
+//    var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";
+//    var drawing_node=cc("div", gfx_node); drawing_node.id="drawing";
 
+    for(var p in xd.elements ) console.log("xdp = " + p);
+    var mwl_demo=xd.elements.ui.elements.demo;
+
+    var user_objects=xd.elements.ui.elements.objects;
+    user_objects.xd=xd;
+
+    var drawing_node=cc("div", xd.elements.drawing.ui_root);
+    drawing_node.add_class("full");
+    console.log("drawing node is " + drawing_node);
     mwl_demo.xd=xd;
 
-    var leftPercent = 50;
+    xd.ui_childs.divider.listen("drag", function(){
+	this.update();
+    });
+
+    xd.ui_childs.divider.listen("drag_end", function(){
+	xd.gl_views.forEach(function(v){
+	    v.fullscreen(false);
+	});
+    });
+  
     
-    function updateDivision() {
-	divider.style.left = leftPercent + '%';
-	bar_node.style.width = leftPercent + '%';
-	gfx_node.style.width = (100 - leftPercent) + '%';
-    }
+    var views=xd.elements.ui.elements.views;
     
-    divider.addEventListener('mousedown', function(e) {
-	e.preventDefault();
-	var lastX = e.pageX;
-	document.documentElement.className += ' dragging';
-	document.documentElement.addEventListener('mousemove', moveHandler, true);
-	document.documentElement.addEventListener('mouseup', upHandler, true);
-
-	function moveHandler(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var deltaX = e.pageX - lastX;
-            lastX = e.pageX;
-            leftPercent += deltaX / parseFloat(document.defaultView.getComputedStyle(xdone_node).width) * 100;
-            updateDivision();
-	}
-
-	function upHandler(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            document.documentElement.className = document.documentElement.className.replace(/\bdragging\b/, '');
-            document.documentElement.removeEventListener('mousemove', moveHandler, true);
-            document.documentElement.removeEventListener('mouseup', upHandler, true);
-	    console.log("Done move..."); 
-	    xd.gl_views.forEach(function(v){
-		v.fullscreen(false);
-	    });
-	    //glm.fullscreen(false);
-	}
-    }, false);
-
-    var views=xd.elements.views;
-
     xd.gl_views=[];
     xd.selected_view=null;
-
+    
     xd.select_view=function(v){
 	if(xd.selected_view!=null){
 	    xd.selected_view.glscreen.ui.style.display="none";
@@ -123,10 +104,11 @@ template_ui_builders.xd1=function(ui_opts, xd){
 
     }
     
-    updateDivision();
+    //d.update();
 
-    console.log("Adding xdroot :  " + xd.ui_root);
-    bar_node.appendChild(xd.ui_root);
+    //console.log("Adding xdroot :  " + xd.ui_root);
+    //bar_node.appendChild(xd.ui_root);
+    //return xd.ui_root;
 }
 
 
@@ -139,8 +121,10 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     var server_root="";
     var layer_objects=glm.elements.layers;
 
-    if(typeof glm.drawing_node === 'undefined')
+    if(typeof glm.drawing_node === 'undefined'){
+	console.log("No drawing node specified...");
 	glm.drawing_node=glm.ui_root;
+    }
 
     glm.drawing_node.appendChild(glscreen.ui);
     

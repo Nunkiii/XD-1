@@ -266,10 +266,13 @@ template_ui_builders.object_editor=function(ui_opts, edit){
     var new_red=edit.elements.new_datared;
     var object_tree=window.object_tree=edit.elements.tree;
     
+
     new_object.listen("click", function(){
 
 	//console.log("Object image TPL !");
 	var new_img=tmaster.build_template("image");
+	new_img.xd=edit.xd;
+	console.log("Setting XD to " + new_img.xd);
 	//console.log("Object image TPL DONE!");
 	var img_ui=create_ui({}, new_img);
 	object_tree.ui_childs.add_child(new_img, img_ui);
@@ -315,7 +318,7 @@ template_ui_builders.image=function(ui_opts, image){
 
 
     new_display.listen("click", function(){
-	xd.create_image_view(image, function(error, glm){
+	image.xd.create_image_view(image, function(error, glm){
 	    glm.set_title(image.name + " display");
 	});
     });
@@ -323,9 +326,9 @@ template_ui_builders.image=function(ui_opts, image){
     add.listen("click", function(){
 	console.log("Selected : " + display_list.ui.selectedIndex);
 	var vn=dlist[display_list.ui.selectedIndex];
-	var glm=xd.elements.views.elements[vn];
+	var glm=image.xd.elements.views.elements[vn];
 	glm.create_layer(image);
-	xd.select_view(glm);
+	image.xd.select_view(glm);
     });
 
 /*	
