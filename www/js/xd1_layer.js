@@ -517,14 +517,15 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     var length;
 
 
-    histo_tpl.on_slide=function(slided){
+    histo_tpl.listen("slided",function(slided){
 	console.log("Histo slide ! " + slided);
 	if(slided){
 	    //histo_tpl.ui_opts.width=
-	    //histo_tpl.redraw(); 
+	    //
 	    compute_histogram(nbins, cuts.value);
+	    histo_tpl.redraw(); 
 	}
-    }
+    });
 
     histo_tpl.selection_change=function(new_cuts){
 
@@ -640,6 +641,9 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
 
     function auto_cuts(){
+	if(ù(layer)) return;
+	if(ù(layer.arr)) return;
+	
 	var ns=2000;
 	var ab=new ArrayBuffer(4*ns);
 	var fa=new Float32Array(ab);
@@ -837,8 +841,12 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     
     
     function compute_histogram(nbins, data_bounds){
-	
 	var data=layer.arr;
+	if(ù(data)){
+	    console.log("cannot compute histogram : no data !");
+	    return;
+	}
+
 	var dl=data.length ? data.length : data.byteLength;
 	
 	var histo=histo_tpl.value=[];

@@ -217,7 +217,7 @@ var xd1_templates={
 	type : "template",
 	tpl_builder : "image",
 	template_name : "binary_object",
-	ui_opts : {child_view_type : "div", close: true },
+	ui_opts : {child_view_type : "div", close: true, render_name : true },
 	events : ["image_ready"],
 	elements : { 
 	    source : {
@@ -470,6 +470,7 @@ var xd1_templates={
 	elements : {
 	    translation : {
 		name : "Translation",
+		intro : "Translation vector in image pixels units",
 		type : "labelled_vector",
 		value : [0,0],
 		value_labels : ["Tx","Ty"],
@@ -484,12 +485,14 @@ var xd1_templates={
 		ui_opts: {sliding: false, sliding_dir:"h", slided : true, root_classes : ["inline"]},
 		elements : {
 		    angle : {
-			name : "Angle (rad)",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02, 
+			name : "Angle",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02,
+			intro : "Rotation angle value, in radians, trigonometric counting",
 			ui_opts : { editable : true,root_classes : [ "inline"] }
 		    },
 
 		    center : {
 			name : "Center",
+			intro : "Rotation center in image frame pixel units",
 			type : "labelled_vector",
 			value : [0,0],
 			value_labels : ["Rx","Ry"],
@@ -760,23 +763,24 @@ var xd1_templates={
     },
     
     xd1 : {
-	name : "XD-1",
+
+	//name : "XD-1",
 	type : "template",
 	tpl_builder : "xd1",
-	
-	ui_opts: {child_view_type : "divider"},
+	//intro: "A multi-document, multi-layer FITS image viewer.",
+	ui_opts: {child_view_type : "divider", root: true, divdir: false },
 	
 	elements : {
 	    
 	    ui : {
 		
-		ui_opts: {child_view_type : "tabbed"},
+		ui_opts: {child_view_type : "tabbed", root_classes: ["vscroll"]},
 		
 		elements : {
 		    objects : { 
-			name : "Objects",
+			name : "FITS images",
 			type : "template",
-			ui_opts: {sliding: false},
+			ui_opts: {sliding: false, render_name: false},
 			template_name : "user_objects",
 			elements : {}
 		    },
@@ -784,7 +788,7 @@ var xd1_templates={
 		    views : {
 			name : "GL Views",
 			type : "view_manager",
-			ui_opts: {child_view_type : "tabbed", sliding: false},
+			ui_opts: {child_view_type : "tabbed", render_name: false},
 			elements : {}
 		    },
 		    /*
@@ -832,7 +836,7 @@ var xd1_templates={
 		    
 		    demo : {
 			name : "Multiband demos",
-			//ui_opts : {editable: false, sliding : false, slided : false},
+			ui_opts : {render_name: false}, 
 			intro : "Loads mutiband FITS images in different layers",
 			tpl_builder : "demo_multilayer",
 			elements : {
@@ -848,24 +852,24 @@ var xd1_templates={
 				intro : "Choose an image set",
 				elements : {
 				    catseye : {
-					intro : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
-					name : "Hubble Cat's Eye Nebula (4 filters)",
+					intro : "The Cat's Eye nebula (old HST data), 4 filters.",
+					name : "Launch demo",
 					type : "action",
 					ni : 4,
 					demo_name : "catseye",
 					ui_opts : { root_classes : []}
 				    },
 				    loiano : {
-					intro : "Star field taken from Loiano observatory.",
-					name : "Loiano starfield (4 filters)",
+					intro : "Star field taken from Loiano observatory, 4 filters.",
+					name : "Launch demo",
 					type : "action",
 					ni : 4,
 					demo_name : "loiano",
 					ui_opts : { root_classes : []}
 				    },
 				    M42 : {
-					intro : "Orion nebula as seen by Hubble, in red and infrared.",
-					name : "Hubble M42 Nebula (2 filters)",
+					intro : "Orion nebula as seen by Hubble, in red and infrared (2 filters).",
+					name : "Launch demo",
 					type : "action",
 					ni : 2,
 					demo_name : "M42",
@@ -874,13 +878,15 @@ var xd1_templates={
 				}
 			    }
 			}
-		    }
+		    },
+		    about : { name : "About", type : "html", url : "about.html", ui_opts : {} }
 		}
 	    },
 	    drawing : {
-		name : "GL 2D Views",
-		intro  : "These are the gl screens...",
-		ui_opts : { root_classes : [] }
+		//name : "GL 2D Screen",
+		//intro  : "GL multiviews ...",
+		//ui_opts : { root_classes : [], child_view_type : "tabbed" },
+		//elements : {}
 	    }
 	}
     },
@@ -897,6 +903,7 @@ var xd1_templates={
 	elements : {
 	    geometry : {
 		name : "View geometry",
+		intro : "Change GL view's geometrical parameters",
 		type : "template",
 		template_name : "geometry",
 		ui_opts: {
@@ -905,11 +912,13 @@ var xd1_templates={
 	    },
 	    cursor : {
 		name : "Cursor",
+		intro : "Display cursor position image information",
 		template_name : "cursor_info",
 		type : "template"
 	    },
 	    options : {
 		name : "Options",
+		intro : "GL display options",
 		template_name : "options",
 		type : "template"
 	    },
@@ -924,7 +933,7 @@ var xd1_templates={
     }
     ,
     glscreen : {
-	type : "glscreen", ui_opts : {root_classes : ["nodeco"] }
+	type : "glscreen", ui_opts : {root_classes : [] }
     }
 };
 

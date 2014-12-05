@@ -10,7 +10,8 @@
   <script src="sadira/js/utils.js"></script>
   <script src="sadira/js/datagram.js"></script> 
   <script src="sadira/js/serializer.js"></script> 
-  <script src="sadira/js/dialog.js"></script> 
+  <script src="sadira/js/dialog.js"></script>
+  <script src="sadira/js/window.js"></script> 
   <script src="sadira/js/db.js"></script>
   <script src="sadira/js/base_templates.js"></script> 
 
@@ -77,8 +78,10 @@
   <script>
    window.addEventListener("load", function(){
      var xd1_tpl=tmaster.build_template("xd1");
-     document.body.appendChild(create_ui({}, xd1_tpl));
-     xd1_tpl.trigger("view_update");
+     create_ui({},xd1_tpl);
+     attach_ui(xd1_tpl, document.body);
+
+     //xd1_tpl.trigger("view_update");
    });
   </script>
 </body>
