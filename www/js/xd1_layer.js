@@ -473,6 +473,7 @@ template_ui_builders.image=function(ui_opts, image){
 }
 
 template_ui_builders.xd1_layer=function(ui_opts, layer){
+
     //function layer(xd, id, cb){
     //var div=this.div=document.createElement("div"); 
 

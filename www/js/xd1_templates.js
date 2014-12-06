@@ -666,7 +666,7 @@ var xd1_templates={
 		    histo : {
 			name : "Histogram", 
 			type : "vector",
-			ui_opts : {width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 50},
+			ui_opts : {width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
 				   root_classes : ["inline"], item_classes : ["newline"], sliding : true , sliding_dir : "v", slided : false
 				  },
 			elements :{
