@@ -363,7 +363,7 @@ var xd1_templates={
 		type : "action"
 	    },
 	    tree : {
-		name : "Object tree",
+		//name : "Object tree",
 		ui_opts : {child_view_type : "tabbed"},
 		elements : {}
 	    }
@@ -774,13 +774,13 @@ var xd1_templates={
 	    
 	    ui : {
 		
-		ui_opts: {child_view_type : "tabbed", root_classes: ["vscroll"]},
+		ui_opts: {child_view_type : "tabbed", root_classes: []},
 		
 		elements : {
 		    objects : { 
 			name : "FITS images",
 			type : "template",
-			ui_opts: {sliding: false, render_name: false},
+			ui_opts: {render_name: false},
 			template_name : "user_objects",
 			elements : {}
 		    },

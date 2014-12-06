@@ -31,7 +31,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
     user_objects.xd=xd;
 
     var drawing_node=cc("div", xd.elements.drawing.ui_root);
-    drawing_node.add_class("child_container");
+    drawing_node.add_class("drawing_node");
 
     xd.listen("view_update", function(){
 	console.log("XD1 view update !");
@@ -447,9 +447,11 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    console.log("glm view update");
 	    
 	    //glm.ui_childs.add_child(glscreen.ui, glscreen);
-	    var ov=get_overflow(glm.drawing_node);
-	    var sz={w: parseFloat(ov.sty.width)-ov.w, h: parseFloat(ov.sty.height)-ov.h};
-	    //var sz={ w : glm.drawing_node.clientWidth, h: glm.drawing_node.clientHeight};
+	    //var ov={w:0,h:0};//
+	    //var ov=get_overflow(glm.drawing_node);
+	    //var sz={w: parseFloat(ov.sty.width)-ov.w, h: parseFloat(ov.sty.height)-ov.h};
+
+	    var sz={ w : glm.drawing_node.clientWidth, h: glm.drawing_node.clientHeight};
 	    glscreen.resize(sz.w, sz.h);
 	});
 
