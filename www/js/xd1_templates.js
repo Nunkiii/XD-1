@@ -161,6 +161,7 @@ var xd1_templates={
     image_dimensions : {
 	ui_opts : {type : "short"},
 	name : "Dimensions",
+	tip : "Dimension of the image in pixels",
 	type : "labelled_vector",
 	min : "0",
 	max : "65536",
@@ -384,7 +385,7 @@ var xd1_templates={
 	    
 	    blend : { 
 		name: "Blend boundaries", 
-		ui_opts : {root_classes : ["inline"]},
+		ui_opts : {root_classes : ["newline"]},
 		elements : {
 		    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
 		    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
@@ -392,7 +393,7 @@ var xd1_templates={
 	    },
 	    colors : {
 		name : "Colors",
-		ui_opts : {root_classes : ["inline"]},
+		ui_opts : {root_classes : ["newline"]},
 		elements : {
 
 		    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
@@ -470,7 +471,7 @@ var xd1_templates={
 	elements : {
 	    translation : {
 		name : "Translation",
-		intro : "Translation vector in image pixels units",
+		tip : "Translation vector in image pixels units",
 		type : "labelled_vector",
 		value : [0,0],
 		value_labels : ["Tx","Ty"],
@@ -486,13 +487,13 @@ var xd1_templates={
 		elements : {
 		    angle : {
 			name : "Angle",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02,
-			intro : "Rotation angle value, in radians, trigonometric counting",
+			tip : "Rotation angle value, in radians, trigonometric counting",
 			ui_opts : { editable : true,root_classes : [ "inline"] }
 		    },
 
 		    center : {
 			name : "Center",
-			intro : "Rotation center in image frame pixel units",
+			tip : "Rotation center in image frame pixel units",
 			type : "labelled_vector",
 			value : [0,0],
 			value_labels : ["Rx","Ry"],
@@ -531,7 +532,7 @@ var xd1_templates={
 	tpl_builder : "xd1_layer",
 	ui_opts : { root_classes : ["inline"], child_classes : ["newline"], //name_classes : ["inline"], item_classes : ["inline"], 
 		    //child_view_type : "tabbed", 
-		    type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar" }, 
+		    type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar", render_name : false }, 
 	
 	elements : {
 	    enable : {
@@ -617,7 +618,7 @@ var xd1_templates={
 		name : "Layer geometry",
 		type : "template",
 		template_name : "geometry",
-		ui_opts : {  root_classes : ["inline"], child_classes : ["inline"], 
+		ui_opts : {  root_classes : [], child_classes : [], 
 			    sliding : true , sliding_dir : "h", slided : false
 			    //  child_view_type : "tabbed" 
 			  }
@@ -625,14 +626,14 @@ var xd1_templates={
 
 	    general : {
 		name : "Colors/Levels",
-		ui_opts : { type: "short", root_classes : ["inline"], 
+		ui_opts : { type: "short", root_classes : [], 
 			    sliding : true , sliding_dir : "v", slided : true,
 			    child_view_type : "div" 
 			  },
 		//ui_opts : {child_classes : ["column"]},
 		elements : {
 		    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
-			    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : ["inline"]} },
+			    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : []} },
 		    
 		    // histo : {
 		    // 	name : "Colors and cuts",
@@ -645,9 +646,9 @@ var xd1_templates={
 		    cmap : { 
 			name : "Colormap", 
 			type : "colormap",
-			intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
-			ui_opts : {editable : true, sliding : false , sliding_dir : "h", slided : false,
-				   root_classes : ["full"], item_classes : []
+			//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
+			ui_opts : {editable : true,
+				   root_classes : [], item_classes : []
 				  },
 			     // value : [[0,0,0,1,0],
 			     // 	      [0.8,0.2,0.8,1.0,0.2],
@@ -658,27 +659,18 @@ var xd1_templates={
 			
 			
 			value : [[0,0,0,1,0],
-				      [0.7,0.2,0.1,1.0,0.2],
+				 [0.7,0.2,0.1,1.0,0.2],
 				 [0.8,0.9,0.1,1.0,0.6],
 				 [1,1,1,1,1]] 
 		    },
 		    
 		    histo : {
-			name : "Histogram", 
-			type : "vector",
-			ui_opts : {width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
-				   root_classes : ["inline"], item_classes : ["newline"], sliding : true , sliding_dir : "v", slided : false
-				  },
-			elements :{
-			    selection : {
-				type : "labelled_vector",
-				name : "Selection",
-				value_labels : ["Begin","End"],
-				value : [0, 0],
-				ui_opts: {root_classes : ["inline"], child_classes : ["inline"], item_classes : [], editable : false, sliding: false},
-			    },
-			    zoom : { name: "Zoom in", type : "action", ui_opts:{root_classes:["zoom","inline"], sliding : false}},  
-			    unzoom : { name : "Unzoom", type : "action", ui_opts:{root_classes:["unzoom","inline"]}}
+			name : "Histogram",
+			type : "template",
+			template_name : "vector",
+			ui_opts : {
+			    width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
+			    root_classes : ["inline"], item_classes : ["newline"], sliding : true , sliding_dir : "v", slided : false
 			}
 		    }
 		}
@@ -898,17 +890,16 @@ var xd1_templates={
 	type: "gl_multilayer",
 	events : ["gl_ready"],
 	ui_opts: {
-	    child_view_type : "bar"
+	    child_view_type : "tabbed", render_name: false
 	},
 	elements : {
 	    geometry : {
 		name : "View geometry",
 		intro : "Change GL view's geometrical parameters",
 		type : "template",
-		template_name : "geometry",
-		ui_opts: {
-		    sliding: true, child_view_type : "div"
-		}
+		template_name : "geometry"
+		//ui_opts: {sliding: true, child_view_type : "div"}
+			 
 	    },
 	    cursor : {
 		name : "Cursor",
