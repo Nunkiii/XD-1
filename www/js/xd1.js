@@ -91,7 +91,9 @@ template_ui_builders.xd1=function(ui_opts, xd){
 		glm.set_title(opts.name);
 
 	console.log("Attach view...");
+
 	var i=0; var vn=0;
+	
 	while( typeof views.elements["IV"+vn] != 'undefined'){
 	    //console.log("Exists : " + views.elements["IV"+vn]);
 	    vn++;
@@ -158,7 +160,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	glm.drawing_node.appendChild(glscreen.ui);
 
 	glm.listen("view_update", function() {
-	    console.log("glm view update");
+	    //console.log("glm view update");
 	    
 	    //glm.ui_childs.add_child(glscreen.ui, glscreen);
 	    //var ov={w:0,h:0};//
@@ -320,6 +322,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	});
 	
 	glscreen.listen("resize", function(sz){
+	    if(ù(glm.program)) return;
 	    var loc = gl.getUniformLocation(glm.program, "u_screen");
 	    gl.uniform2f(loc, sz.w,sz.h );
 	    glm.render();
@@ -417,7 +420,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 		return;
 	    }
 	    
-	    
+	    console.log("GLM linking programs...");
 	    
 	    var texture = gl.createTexture();
 	    var cmap_texture = gl.createTexture();
@@ -442,6 +445,8 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    
 	    gl.linkProgram(program);
 	    gl.useProgram(program);
+
+	    console.log("GLM linking programs...");
 	    
 	    glm.resolutionLocation = gl.getUniformLocation(program, "u_resolution");
 	    glm.le_loc=gl.getUniformLocation(program, "u_layer_enabled");	
@@ -466,6 +471,9 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    
 	    glm.trigger("gl_ready");
 	    glm.trigger("view_update");
+
+	    console.log("GLM : program ready");
+
 	    //cb(null,glm);
 	});
 	
