@@ -410,7 +410,7 @@ var xd1_templates={
     
     cursor_info : {
 	name : "Cursor",
-	ui_opts : {sliding : true, slided : false},
+	//ui_opts : {sliding : true, slided : false},
 	elements : {
 	    screen : {
 		type: "labelled_vector",
@@ -448,7 +448,10 @@ var xd1_templates={
 
     options : {
 	name : "Viewer options",
-	ui_opts : {sliding : true, slided : false, child_view_type : "div"},
+	ui_opts : {
+	    //sliding : true, slided : false, child_view_type : "div",
+	    child_classes : ["action_box", "vertical"]
+	},
 	elements : {
 	    image_axes : {
 		name : "Show image axes", type : "bool", value : false, ui_opts : { type : "edit" }
@@ -466,15 +469,19 @@ var xd1_templates={
     geometry : {
 	
 	name : "Geometry",
-	ui_opts: {root_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true},
-	//ui_opts: {root_classes : [], child_classes : [], sliding : true, sliding_dir : "h", slided : true},
+	ui_opts: {
+	    //root_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true
+	    render_name : false
+	},
+
 	elements : {
 	    translation : {
 		name : "Translation",
 		tip : "Translation vector in image pixels units",
 		type : "labelled_vector",
 		value : [0,0],
-		value_labels : ["Tx","Ty"],
+		value_labels : ["T<sub>X</sub>","T<sub>Y</sub>"],
+
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
@@ -486,13 +493,13 @@ var xd1_templates={
 		ui_opts: {sliding: false, sliding_dir:"h", slided : true, root_classes : ["inline"]},
 		elements : {
 		    angle : {
-			name : "Angle",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02,
+			name : "R<sub>α</sub>",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02,
 			tip : "Rotation angle value, in radians, trigonometric counting",
 			ui_opts : { editable : true,root_classes : [ "inline"] }
 		    },
 
 		    center : {
-			name : "Center",
+			name : "R<sub>C</sub>",
 			tip : "Rotation center in image frame pixel units",
 			type : "labelled_vector",
 			value : [0,0],
@@ -524,22 +531,77 @@ var xd1_templates={
 	ui_opts : { editable : true, root_classes : [] }
 	//ui_opts: {root_classes : ["inline"]}
     },
-    
 
+
+    levelconf : {
+	//name : "Colors/Levels",
+	ui_opts : { type: "short", root_classes : [], 
+		    //sliding : true , sliding_dir : "v", slided : true,
+		    child_view_type : "div" 
+		  },
+	//ui_opts : {child_classes : ["column"]},
+	elements : {
+	    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
+		    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : []} },
+	    
+	    // histo : {
+	    // 	name : "Colors and cuts",
+	    // 	ui_opts : { root_classes : ["inline"], child_classes : "inline", sliding : true , sliding_dir : "h", slided : false },
+	    // 	elements : {
+	    
+	    
+	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
+		     ui_opts: { sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"]}},
+	    cmap : { 
+		name : "Colormap", 
+		type : "colormap",
+		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
+		ui_opts : {editable : true,
+			   root_classes : [], item_classes : []
+			  },
+		// value : [[0,0,0,1,0],
+		// 	      [0.8,0.2,0.8,1.0,0.2],
+		// 	      [0.9,0.9,0.2,1.0,0.2],
+		// 	      [0.9,0.9,0.2,1.0,0.5],
+		// 	      [0.9,0.2,0.2,1.0,0.5],
+		// 	      [1,1,1,1,1]] },
+		
+		
+		value : [[0,0,0,1,0],
+			 [0.7,0.2,0.1,1.0,0.2],
+			 [0.8,0.9,0.1,1.0,0.6],
+			 [1,1,1,1,1]] 
+	    },
+	    
+	    histo : {
+		name : "Histogram",
+		type : "template",
+		template_name : "vector",
+		ui_opts : {
+		    //width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
+		    //root_classes : [], item_classes : [],
+		    sliding : true , sliding_dir : "h", slided : false
+		}
+	    }
+	}
+    },
+    
+    
     gl_image_layer : {
 	name :  "GL Image layer",
 	type : "template",
 	tpl_builder : "xd1_layer",
 	ui_opts : { root_classes : ["inline"], child_classes : ["newline"], //name_classes : ["inline"], item_classes : ["inline"], 
 		    //child_view_type : "tabbed", 
-		    type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar", render_name : false }, 
+		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
+		    render_name : false }, 
 	
 	elements : {
 	    enable : {
-		name : "Enable",
+		name : "Enable layer",
 		type : "bool",
 		value : true,
-		ui_opts : {editable : true, label : true, type : "edit"}
+		ui_opts : {editable : false, label : true, type : "edit"}
 	    }
 
 	    /*,
@@ -615,66 +677,20 @@ var xd1_templates={
 	    }*/,
 	    geometry : {
 
-		name : "Layer geometry",
+		tip : "Layer geometry",
 		type : "template",
 		template_name : "geometry",
-		ui_opts : {  root_classes : [], child_classes : [], 
-			    sliding : true , sliding_dir : "h", slided : false
-			    //  child_view_type : "tabbed" 
-			  }
-	    },
-
-	    general : {
-		name : "Colors/Levels",
-		ui_opts : { type: "short", root_classes : [], 
-			    sliding : true , sliding_dir : "v", slided : true,
-			    child_view_type : "div" 
-			  },
-		//ui_opts : {child_classes : ["column"]},
-		elements : {
-		    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
-			    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : []} },
-		    
-		    // histo : {
-		    // 	name : "Colors and cuts",
-		    // 	ui_opts : { root_classes : ["inline"], child_classes : "inline", sliding : true , sliding_dir : "h", slided : false },
-		    // 	elements : {
-		    
-		    
-		    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
-			     ui_opts: { sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"]}},
-		    cmap : { 
-			name : "Colormap", 
-			type : "colormap",
-			//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
-			ui_opts : {editable : true,
-				   root_classes : [], item_classes : []
-				  },
-			     // value : [[0,0,0,1,0],
-			     // 	      [0.8,0.2,0.8,1.0,0.2],
-			     // 	      [0.9,0.9,0.2,1.0,0.2],
-			     // 	      [0.9,0.9,0.2,1.0,0.5],
-			     // 	      [0.9,0.2,0.2,1.0,0.5],
-			     // 	      [1,1,1,1,1]] },
-			
-			
-			value : [[0,0,0,1,0],
-				 [0.7,0.2,0.1,1.0,0.2],
-				 [0.8,0.9,0.1,1.0,0.6],
-				 [1,1,1,1,1]] 
-		    },
-		    
-		    histo : {
-			name : "Histogram",
-			type : "template",
-			template_name : "vector",
-			ui_opts : {
-			    width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
-			    root_classes : ["inline"], item_classes : ["newline"], sliding : true , sliding_dir : "v", slided : false
-			}
-		    }
+		ui_opts : {
+		    root_classes : [], child_classes : [], 
+		    //sliding : true , sliding_dir : "h", slided : false
+		    //  child_view_type : "tabbed" 
 		}
+	    },
+	    general : {
+		type : "template", template_name : "levelconf"
+		
 	    }
+	    
 	}
     },
     
@@ -721,17 +737,15 @@ var xd1_templates={
 	    },
 	    demo : {
 		name : "Multi-Wavelength demos",
-		ui_opts : {editable: false, sliding : false, slided : false},
-		intro : "Loads fits files from server using websocket in different layers of viewer",
+		ui_opts : {editable: false, sliding : false, slided : false, child_classes : ["action_box","vertical"]},
+		intro : "Loads multiple fits files of different wavelength band in multiple color layers.",
 		elements : {
-		    
 		    sadira : {
-			intro : "Connexion to a <i>sadira</i> websocket server.",
-			name : "Websocket link",
+			intro : "Websocket connexion to sadira server.",
+			name : "Websocket",
 			type : "template",
 			template_name : "sadira"
 		    },
-
 		    catseye : {
 			intro : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
 			name : "Hubble Cat's Eye Nebula (4 filters)",
@@ -828,20 +842,22 @@ var xd1_templates={
 		    
 		    demo : {
 			name : "Multiband demos",
-			ui_opts : {render_name: false}, 
-			intro : "Loads mutiband FITS images in different layers",
+			ui_opts : {render_name: false},
+			intro : "Loads multiple FITS files of different wavelength band in multiple color layers.",
 			tpl_builder : "demo_multilayer",
 			elements : {
 			    
 			    cnx : {
 				name : "Websocket",
-				intro : "Link to a <i>sadira</i> websocket server",
+				tip : "Websocket connexion to a sadira server",
 				type : "template",
 				template_name : "sadira"
 				
 			    },
 			    demos : {
-				intro : "Choose an image set",
+				intro : "Choose an image set :",
+				ui_opts :{child_classes : ["action_box","vertical"]},
+				
 				elements : {
 				    catseye : {
 					intro : "The Cat's Eye nebula (old HST data), 4 filters.",
@@ -894,7 +910,7 @@ var xd1_templates={
 	},
 	elements : {
 	    geometry : {
-		name : "View geometry",
+		tip : "View geometry",
 		intro : "Change GL view's geometrical parameters",
 		type : "template",
 		template_name : "geometry"
@@ -902,13 +918,13 @@ var xd1_templates={
 			 
 	    },
 	    cursor : {
-		name : "Cursor",
-		intro : "Display cursor position image information",
+		ui_opts : {render_name : false},
+		intro : "Display the cursor position image information",
 		template_name : "cursor_info",
 		type : "template"
 	    },
 	    options : {
-		name : "Options",
+		ui_opts : {render_name : false},
 		intro : "GL display options",
 		template_name : "options",
 		type : "template"
@@ -916,7 +932,8 @@ var xd1_templates={
 	    layers : {
 		name : "Image layers",
 		ui_opts: {
-		    sliding: true, child_view_type : "tabbed"
+		    sliding: true, child_view_type : "tabbed",
+		    render_name : false
 		},
 		elements : {}
 	    }

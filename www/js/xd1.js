@@ -74,14 +74,18 @@ template_ui_builders.xd1=function(ui_opts, xd){
 
     xd.create_view=function(cb, opts){
 	var glm=tmaster.build_template("gl_multilayer");
-	glm.drawing_node=drawing_node;
+	
+	
+	//glm.parent=views;
+	var glmui = create_ui({}, glm);
+
+	glm.set_drawing_node(drawing_node);
 
 	glm.listen("gl_ready", function(){
 	    cb(null,glm);
 	});
-	//glm.parent=views;
-	var glmui = create_ui({}, glm);
 
+	
 	if(è(opts))
 	    if(è(opts.name))
 		glm.set_title(opts.name);
@@ -124,27 +128,54 @@ template_ui_builders.xd1=function(ui_opts, xd){
 
 
 template_ui_builders.gl_multilayer=function(ui_opts, glm){
+    var glscreen=glm.glscreen;
+    if(ù(glscreen)){
+	glscreen=glm.glscreen=tmaster.build_template("glscreen"); 
+	create_ui({ type: "short", root_classes : [] }, glscreen,0 );
+    }
 
-    var glscreen=glm.glscreen=tmaster.build_template("glscreen"); 
-    create_ui({ type: "short", root_classes : [] }, glscreen,0 );
     glm.canvas=glscreen.canvas;
     var ctx2d=glm.ctx2d=glscreen.canvas2d.getContext("2d");
-    var server_root="";
+    var server_root=è(glm.server_root) ? glm.server_root : "";
     var layer_objects=glm.elements.layers;
 
-    
+
+    var geo=glm.elements.geometry.elements;
+
+    var tr=glm.tr=geo.translation;
+    var zm=glm.zm=geo.zoom; 
+    var ag=glm.ag=geo.rotation.elements.angle; 
+    var rc=glm.rc=geo.rotation.elements.center;
+
     // if(typeof glm.drawing_node === 'undefined'){
     // 	console.log("No drawing node specified...");
     // 	glm.drawing_node=glm.ui_root;
     // }
     
     //
+    glm.set_drawing_node=function(node){
+	glm.drawing_node=node;
+	glm.drawing_node.appendChild(glscreen.ui);
+
+	glm.listen("view_update", function() {
+	    console.log("glm view update");
+	    
+	    //glm.ui_childs.add_child(glscreen.ui, glscreen);
+	    //var ov={w:0,h:0};//
+	    //var ov=get_overflow(glm.drawing_node);
+	    //var sz={w: parseFloat(ov.sty.width)-ov.w, h: parseFloat(ov.sty.height)-ov.h};
+	    
+	    var sz={ w : glm.drawing_node.clientWidth, h: glm.drawing_node.clientHeight};
+	    glscreen.resize(sz.w, sz.h);
+	});
+	
+    }
     
     glm.pvals=[];
     glm.nlayers=0;
     glm.maxlayers=4;
     glm.layers=[];
-    glm.layer_enabled=[];
+    //glm.layer_enabled=[];
     //glm.p_layer_range=[];
     
     var cursor=glm.elements.cursor; 
@@ -184,11 +215,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
 	glm.gl=gl;
 
-	var geo=glm.elements.geometry.elements;
-	var tr=glm.tr=geo.translation;
-	var zm=glm.zm=geo.zoom; 
-	var ag=glm.ag=geo.rotation.elements.angle; 
-	var rc=glm.rc=geo.rotation.elements.center;
 
 	
 	tr.onchange = function(){
@@ -386,8 +412,8 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	xhr_query(server_root+"xd1.glsl", function (error, shader_src) {
 	    
 	    if(error!=null){
-		console.log("Error (Bug?) downloading shader " + error);
-		cb(error);
+		console.log("Error downloading XD1 shader code " + error);
+		glm.abort_error("Error while downloading XD1 shader code : "+error);
 		return;
 	    }
 	    
@@ -443,17 +469,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    //cb(null,glm);
 	});
 	
-	glm.listen("view_update", function() {
-	    console.log("glm view update");
-	    
-	    //glm.ui_childs.add_child(glscreen.ui, glscreen);
-	    //var ov={w:0,h:0};//
-	    //var ov=get_overflow(glm.drawing_node);
-	    //var sz={w: parseFloat(ov.sty.width)-ov.w, h: parseFloat(ov.sty.height)-ov.h};
-
-	    var sz={ w : glm.drawing_node.clientWidth, h: glm.drawing_node.clientHeight};
-	    glscreen.resize(sz.w, sz.h);
-	});
 
 	
 	glm.create_layer=function(image){
@@ -472,7 +487,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 		layer.container=layer_objects.ui_childs;
 		layer_objects.ui_childs.add_child(layer,lay_ui);
 
-		glm.drawing_node.appendChild(glscreen.ui);
+
 		
 		
 		//layer.view_update_childs();
