@@ -270,7 +270,7 @@ var xd1_templates={
     image_reduction : {
 	type : "image_reduction",
 	name : "Simple image reduction",
-	ui_opts : { child_view_type : "bar"},
+	ui_opts : { child_view_type : "bar", close: true},
 	elements : {
 	    processing: {
 		name : "Processing",
@@ -591,10 +591,12 @@ var xd1_templates={
 	name :  "GL Image layer",
 	type : "template",
 	tpl_builder : "xd1_layer",
-	ui_opts : { root_classes : ["inline"], child_classes : ["newline"], //name_classes : ["inline"], item_classes : ["inline"], 
+	ui_opts : { //root_classes : ["inline"], child_classes : ["newline"], //name_classes : ["inline"], item_classes : ["inline"], 
 		    //child_view_type : "tabbed", 
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
-		    render_name : false }, 
+	    render_name : false,
+	    close: true
+	}, 
 	
 	elements : {
 	    enable : {
@@ -696,7 +698,9 @@ var xd1_templates={
     
     gl_view_2d :  {
 	name : "GL 2D View",
-	ui_opts: {root_classes : ["inline"], item_classes : ["inline"], child_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true, child_view_type : "tabbed"},
+	ui_opts: {
+	    //root_classes : ["inline"], item_classes : ["inline"], child_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true,
+	    child_view_type : "tabbed"},
 	//ui_opts: {sliding: true, sliding_dir:"h", root_classes : []},
 	// elements : {
 	//     layers : { 
@@ -705,7 +709,8 @@ var xd1_templates={
 	    layers : {
 		name : "Image Layers",
 		ui_opts: {
-		    sliding: false, sliding_dir:"h", slided : true, root_classes : ["inline"], child_classes : ["inline"],child_view_type : "tabbed"
+		    //sliding: false, sliding_dir:"h", slided : true, root_classes : ["inline"], child_classes : ["inline"],
+		    child_view_type : "tabbed"
 		},
 	    	elements : {
 		    newlayer : {
@@ -906,7 +911,7 @@ var xd1_templates={
 	type: "gl_multilayer",
 	events : ["gl_ready"],
 	ui_opts: {
-	    child_view_type : "tabbed", render_name: false
+	    child_view_type : "tabbed", render_name: false, close: true
 	},
 	elements : {
 	    geometry : {
@@ -932,7 +937,8 @@ var xd1_templates={
 	    layers : {
 		name : "Image layers",
 		ui_opts: {
-		    sliding: true, child_view_type : "tabbed",
+		    //sliding: true,
+		    child_view_type : "tabbed",
 		    render_name : false
 		},
 		elements : {}
