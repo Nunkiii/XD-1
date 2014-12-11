@@ -517,6 +517,68 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     var bsize=null; 
     var length;
 
+    histo_tpl.elements.selection.ui_root.add_class("disabled");
+    //histo_tpl.elements.range.ui_root.add_class("disabled");
+
+
+    function update_histo_cmap(){
+	var brg=histo_tpl.select_brg;
+	//console.log("Selection changed brg = " + brg);
+	var xmarg=0.0;//histo_tpl.ui_opts.margin.left;
+	if(brg!=null){
+
+
+	    var pt  = histo_tpl.svg.createSVGPoint(); 
+	    function rect_corners(rect){
+		var corners = {};
+		var matrix  = rect.getScreenCTM();
+		pt.x = rect.x.animVal.value;
+		pt.y = rect.y.animVal.value;
+		corners.nw = pt.matrixTransform(matrix);
+		pt.x += rect.width.animVal.value;
+		corners.ne = pt.matrixTransform(matrix);
+		pt.y += rect.height.animVal.value;
+		corners.se = pt.matrixTransform(matrix);
+		pt.x -= rect.width.animVal.value;
+		corners.sw = pt.matrixTransform(matrix);
+		return corners;
+	    }
+
+	    
+	    //histo_cmap.style.width=(brg[1].getBBox().width+0.0)+'px';
+	    //histo_cmap.style.marginLeft=(brg[1].getBBox().x+xmarg)+'px';
+	    var bid=0;
+	    
+	    brg.selectAll("rect").each(function(){
+		// brg.each(function(){
+
+		var bcr=histo_tpl.ui.getBoundingClientRect();
+		
+		if(bid==1){
+		    var corners=rect_corners(this);
+		    //console.log("BRUSH "+bid+": x=" + this.getBBox().x + " y=" + this.getBBox().y+ " w=" + this.getBBox().width+ " h=" + this.getBBox().height);
+		    //console.log("Corners : " + JSON.stringify(corners));
+		    var w=corners.ne.x-corners.nw.x;
+		    var x=corners.nw.x-bcr.left-1;
+		    var y=corners.nw.y-bcr.top-5;
+		    //this.node().style.background=cmap.css_color_gradient;
+		    //histo_cmap.style.width=(this.getBBox().width+0.0)+'px';
+		    histo_cmap.style.width=w+'px';
+		    
+		    histo_cmap.style.left=x+'px';
+		    histo_cmap.style.top=y+'px';
+		    
+		}
+		bid++;
+		
+	    });	       	
+	    
+	}else
+	    console.log("brg is NULL !");
+
+
+
+    }
 
     histo_tpl.listen("slided",function(slided){
 	console.log("Histo slide ! " + slided);
@@ -528,56 +590,65 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	}
     });
 
-    histo_tpl.selection_change=function(new_cuts){
-
-	console.log("Histo selection change!"); 
+    histo_tpl.listen("selection_change",function(new_cuts){
+	console.log("Histo selection change !" + new_cuts[0] + ", " + new_cuts[1]); 
 	cuts.set_value(new_cuts);
-	cuts.onchange();
-    }
+	update_histo_cmap();
+    });
 
-    histo_tpl.on_range_change=function(new_cuts){
-	//console.log("Range change !, recomp histo");
-	compute_histogram(nbins, new_cuts);
-    }
+    histo_tpl.listen("range_change",function(new_range){
+	console.log("Histo Range change !, recomp histo");
+	compute_histogram(nbins, new_range);
+	update_histo_cmap();
+    });
 
-    layer.elements.enable.onchange = function(){
+    var histo_cmap=cc("div",histo_tpl.ui);
+    histo_cmap.style.position="absolute";//className="histo_cmap";
+    histo_cmap.style.top="0em";
+    histo_cmap.style.height="1em";
+    cmap.listen("colormap_changed", function(cm){
+	histo_cmap.style.background=cmap.css_color_gradient;
+    });
+
+    
+    layer.elements.enable.listen("change", function(){
 	//console.log("Change !!!");
 	var glm=layer.glm;
 	glm.layer_enabled[layer.id]=this.value;
 	var le_loc=layer.gl.getUniformLocation(glm.program, "u_layer_enabled");
 	layer.gl.uniform4iv(le_loc, glm.layer_enabled);
 	glm.render();
-    };
+    });
 
-    cuts.onchange = function(){
+    cuts.listen("change",function(){
 	layer.p_values[0]=this.value[0];
 	layer.p_values[1]=this.value[1];
-	//console.log("Cuts changed to " + JSON.stringify(this.value));
+	console.log("Cuts changed to " + JSON.stringify(this.value));
 	update_pvalues();
-    };
+    });
     
-    tr.onchange = function(){
+    tr.listen("change",function(){
 	layer.p_values[2]=this.value[0];
 	layer.p_values[3]=this.value[1];
 	update_pvalues();
-    };
+    });
 
-    zm.onchange=function(){
+    zm.listen("change",function(){
 	layer.p_values[4]=this.value;
 	update_pvalues();
-    }
+    });
 
-    ag.onchange=function(){
+    ag.listen("change",function(){
 	layer.p_values[5]=this.value;
 	update_pvalues();
-    }
+    });
 
-    lum.onchange=function(){
+    lum.listen("change",function(){
 	layer.p_values[6]=this.value;
 	update_pvalues();
-    }
+    });
 
-    rc.onchange=function(){
+    rc.listen("change",function(){
 	var rc_loc=layer.gl.getUniformLocation(glm.program, "u_rotcenters");
 	glm.p_rotcenters[2*layer.id]=this.value[0];
 	glm.p_rotcenters[2*layer.id+1]=this.value[1];
@@ -585,7 +656,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	layer.gl.uniform2fv(rc_loc, glm.p_rotcenters);
 	glm.render();
 	
-    }
+    });
 
 
     layer.update_geometry=  function (){
@@ -666,7 +737,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	//console.log("Number of items : " + fa.length, " NB = " + ab.byteLength + " npix="+ll + " cuts + " + JSON.stringify(newcuts));
 	
 	cuts.set_value(newcuts);
-	cuts.onchange();
+	cuts.trigger("change");
 
     }
     
@@ -850,12 +921,16 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
 	var dl=data.length ? data.length : data.byteLength;
 	
-	var histo=histo_tpl.value=[];
-	var step=histo_tpl.step=(data_bounds[1]-data_bounds[0])/nbins;
-	var start=histo_tpl.start=data_bounds[0];//+.5*step;
+	histo_tpl.step=(data_bounds[1]-data_bounds[0])/histo_tpl.value.length;
+	histo_tpl.start=data_bounds[0];//+.5*step;
 	
-	bsize=(histo_tpl.elements.selection.value[1]-histo_tpl.elements.selection.value[0])/nbins;
+	var step=histo_tpl.step;//=(data_bounds[1]-data_bounds[0])/nbins;
+	var start=histo_tpl.start;//=data_bounds[0];//+.5*step;
 
+
+	bsize=(histo_tpl.elements.range.value[1]-histo_tpl.elements.range.value[0])/nbins;
+
+	var histo=histo_tpl.value=[];
 	for(var i=0;i<nbins;i++){
 	    histo[i]=0;
 	}
@@ -872,7 +947,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	    }
 	}
 	
-	histo_tpl.set_value();
+	histo_tpl.redraw();
 	//console.log("Histo : " + JSON.stringify(layer.histo));
 	
     }  
@@ -945,12 +1020,14 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	
 	compute_histogram(nbins, ext);
 	auto_cuts();
-	histo_tpl.set_range(cuts.value);
+	
+	//histo_tpl.set_range(ext);
+	histo_tpl.set_selection(cuts.value);
 
 	//if(bsize==null)
 
 	//console.log("Histo ui " + JSON.stringify(histo_tpl.ui_opts));
-	histo_tpl.redraw();
+	//histo_tpl.redraw();
 
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, glm.texture);
@@ -971,54 +1048,55 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
     }
     
-    function setup_layer_data(){
-	var glm=layer.glm;
-	var gl=glm.gl;
-	var w=glm.w;
-	var h=glm.h;
+    // function setup_layer_data(){
+    // 	var glm=layer.glm;
+    // 	var gl=glm.gl;
+    // 	var w=glm.w;
+    // 	var h=glm.h;
 
-	console.log("Setting up layer " + layer.id + "... " + w + ", " + h);
+    // 	console.log("Setting up layer " + layer.id + "... " + w + ", " + h);
 	
-	layer.p_values[0]=layer.ext[0];
-	layer.p_values[1]=layer.ext[1];
+    // 	layer.p_values[0]=layer.ext[0];
+    // 	layer.p_values[1]=layer.ext[1];
 
-	histo_tpl.min=layer.ext[0];
-	histo_tpl.max=layer.ext[1];
-	histo_tpl.step=(layer.ext[1]-layer.ext[0])/200.0;
-	//x_domain_full=[layer.p_values[0]+.5*bsize,layer.p_values[0]+(nbins-.5)*bsize];
+    // 	histo_tpl.set_range(layer.ext);
+    // 	histo_tpl.min=layer.ext[0];
+    // 	histo_tpl.max=layer.ext[1];
+    // 	histo_tpl.step=(layer.ext[1]-layer.ext[0])/200.0;
+    // 	//x_domain_full=[layer.p_values[0]+.5*bsize,layer.p_values[0]+(nbins-.5)*bsize];
 
-	//histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
-	//histo_tpl.ui_opts.heigth=histo_tpl.ui.clientHeight;
-	compute_histogram(nbins, layer.ext);
-	auto_cuts();
-	histo_tpl.set_range(cuts.value);
+    // 	//histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
+    // 	//histo_tpl.ui_opts.heigth=histo_tpl.ui.clientHeight;
+    // 	compute_histogram(nbins, layer.ext);
+    // 	auto_cuts();
+    // 	histo_tpl.set_selection(cuts.value);
 
-	//if(bsize==null)
+    // 	//if(bsize==null)
 
-	console.log("Histo ui " + JSON.stringify(histo_tpl.ui_opts));
-	histo_tpl.redraw();
+    // 	console.log("Histo ui " + JSON.stringify(histo_tpl.ui_opts));
+    // 	histo_tpl.redraw();
 
-	for(var i=0;i<glm.fv.length;i++) glm.fv[i]=Math.random();
+    // 	for(var i=0;i<glm.fv.length;i++) glm.fv[i]=Math.random();
 
-	gl.activeTexture(gl.TEXTURE0);
-	gl.bindTexture(gl.TEXTURE_2D, glm.texture);
-	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.FLOAT, glm.fv);
-	gl.uniform1i(gl.getUniformLocation(glm.program, "u_image"), 0);
+    // 	gl.activeTexture(gl.TEXTURE0);
+    // 	gl.bindTexture(gl.TEXTURE_2D, glm.texture);
+    // 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
+    // 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    // 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    // 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.FLOAT, glm.fv);
+    // 	gl.uniform1i(gl.getUniformLocation(glm.program, "u_image"), 0);
 	
-	//reset_histogram();
+    // 	//reset_histogram();
 	
-	//cmap.create_colors(def_colormaps[layer.id]);
-	//cmap.last.insert_color([0.0,0.4,0.0,1.0], 0.5);
-	//cmap.select_element(cmap.elements[cmap.elements.length-1]);
-	//cmap.display({type : "edit"});
+    // 	//cmap.create_colors(def_colormaps[layer.id]);
+    // 	//cmap.last.insert_color([0.0,0.4,0.0,1.0], 0.5);
+    // 	//cmap.select_element(cmap.elements[cmap.elements.length-1]);
+    // 	//cmap.display({type : "edit"});
 	
-	glm.fullscreen(false);
+    // 	glm.fullscreen(false);
 	
 	
-    }
+    // }
 
     layer.get_screen_pos= function (ipix){
 	var l=this,glm=this.glm;

@@ -24,13 +24,13 @@ template_ui_builders.xd1=function(ui_opts, xd){
     var mwl_demo=xd.elements.ui.elements.demo;
 
     var user_objects=xd.elements.ui.elements.objects;
-    var drawing_widget=xd.elements.drawing;
+    var drawing_widget=xd.elements.drawing.elements.screen;
 
     drawing_widget.ui_root.style.overflow="hidden";
 
     user_objects.xd=xd;
 
-    var drawing_node=cc("div", xd.elements.drawing.ui_root);
+    var drawing_node=cc("div", drawing_widget.ui_root);
     drawing_node.add_class("drawing_node");
 
     xd.listen("view_update", function(){
@@ -53,7 +53,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
     });
   
     
-    var views=xd.elements.ui.elements.views;
+    var views=xd.elements.drawing.elements.views;
     
     xd.gl_views=[];
     xd.selected_view=null;
@@ -217,28 +217,25 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
 	glm.gl=gl;
 
-
-	
-	tr.onchange = function(){
-	    gl.uniform2fv(tr_loc, this.value);
+	tr.listen("change",function(){
+	    //console.log("TR changed ! " + this.value[0]);
+	    gl.uniform2fv(glm.tr_loc, this.value);
 	    glm.render();
-	};
-
-	zm.onchange=function(){
+	});
+		  
+	zm.listen("change",function(){
 	    update_zoom();
-	};
+	});
 
-	ag.onchange=function(){
+	ag.listen("change",function(){
 	    update_angle();
 	    glm.render();
-	};
+	});
 	
-	rc.onchange=function(){
-	    gl.uniform2fv(rotcenter_loc, rc.value);
+	rc.listen("change",function(){
+	    gl.uniform2fv(glm.rotcenter_loc, rc.value);
 	    glm.render();
-	};
-
-
+	});
 	
 	glm.update_layer_ranges=function(){
 	    var w=glscreen.canvas.clientWidth;
@@ -445,8 +442,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    
 	    gl.linkProgram(program);
 	    gl.useProgram(program);
-
-	    console.log("GLM linking programs...");
 	    
 	    glm.resolutionLocation = gl.getUniformLocation(program, "u_resolution");
 	    glm.le_loc=gl.getUniformLocation(program, "u_layer_enabled");	

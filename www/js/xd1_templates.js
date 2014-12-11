@@ -550,8 +550,6 @@ var xd1_templates={
 	    // 	elements : {
 	    
 	    
-	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
-		     ui_opts: { sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"]}},
 	    cmap : { 
 		name : "Colormap", 
 		type : "colormap",
@@ -572,6 +570,8 @@ var xd1_templates={
 			 [0.8,0.9,0.1,1.0,0.6],
 			 [1,1,1,1,1]] 
 	    },
+	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
+		     ui_opts: { sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"]}},
 	    
 	    histo : {
 		name : "Histogram",
@@ -796,12 +796,6 @@ var xd1_templates={
 			elements : {}
 		    },
 		    
-		    views : {
-			name : "GL Views",
-			type : "view_manager",
-			ui_opts: {child_view_type : "tabbed", render_name: false},
-			elements : {}
-		    },
 		    /*
 		      
 		      setup : {
@@ -896,6 +890,23 @@ var xd1_templates={
 		}
 	    },
 	    drawing : {
+		ui_opts : { child_view_type : "divider", divdir : true},
+		//type : "string", value : "Hello widget !",
+	    	elements : {
+		    views : {
+			name : "GL Views",
+			type : "view_manager",
+			ui_opts: {child_view_type : "tabbed", render_name: false},
+			elements : {}
+		    },
+
+	    	    screen : {
+	    		//name : "GL Screen"
+	    		//type : "glscreen"
+	    	    }
+		    
+	    	}
+
 		//name : "GL 2D Screen",
 		//intro  : "GL multiviews ...",
 		//ui_opts : { root_classes : [], child_view_type : "tabbed" },
