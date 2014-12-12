@@ -69,12 +69,24 @@
    }
 
   </script>
-
+  
   <title>XD-1, an experimental WebGL FITS Viewer </title>
-
+  
+<style>
+  #bg{
+  background-image: url("ico/milkyway.jpg");
+  background-repeat: no-repeat; 
+   position: fixed;
+   width: 100%;
+   height: 100%;
+   top: 0px; left:0px;
+   opacity: .3;
+  }
+</style>
 </head>
-
+  
 <body>
+  <div id="bg"></div>
   <script>
    window.addEventListener("load", function(){
      var xd1_tpl=tmaster.build_template("xd1");
@@ -84,5 +96,6 @@
      //xd1_tpl.trigger("view_update");
    });
   </script>
+  
 </body>
 
