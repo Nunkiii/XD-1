@@ -130,7 +130,9 @@ template_ui_builders.xd1=function(ui_opts, xd){
 
 
 template_ui_builders.gl_multilayer=function(ui_opts, glm){
+
     var glscreen=glm.glscreen;
+
     if(ù(glscreen)){
 	glscreen=glm.glscreen=tmaster.build_template("glscreen"); 
 	create_ui({ type: "short", root_classes : [] }, glscreen,0 );
@@ -140,8 +142,8 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     var ctx2d=glm.ctx2d=glscreen.canvas2d.getContext("2d");
     var server_root=è(glm.server_root) ? glm.server_root : "";
     var layer_objects=glm.elements.layers;
-
-
+    
+    
     var geo=glm.elements.geometry.elements;
 
     var tr=glm.tr=geo.translation;
@@ -153,8 +155,15 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     // 	console.log("No drawing node specified...");
     // 	glm.drawing_node=glm.ui_root;
     // }
-    
     //
+    
+    glm.listen("close", function(){
+	console.log("GLM close !");
+	glm.drawing_node.removeChild(glscreen.ui);
+	delete glm;
+    });
+
+    
     glm.set_drawing_node=function(node){
 	glm.drawing_node=node;
 	glm.drawing_node.appendChild(glscreen.ui);
@@ -174,7 +183,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     }
     
     glm.pvals=[];
-    glm.nlayers=0;
     glm.maxlayers=4;
     glm.layers=[];
     //glm.layer_enabled=[];
@@ -190,10 +198,11 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	layer_ci[l]=tmaster.build_template("cursor_layer_info"); 
 	var lui=create_ui({},layer_ci[l]);
 	cil.ui_childs.add_child(layer_ci[l], lui);
+	lui.add_class("disabled");
     }
 
 
-    var layer_enabled = glm.layer_enabled= new Int32Array([1,0,0,0]);
+    var layer_enabled = glm.layer_enabled= new Int32Array([0,0,0,0]);
     
     glm.p_vals=new Float32Array(4*8);
     glm.p_rotcenters=new Float32Array(4*2);
@@ -201,9 +210,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     glm.ncolors=new Int32Array([0,0,0,0]);    
     glm.cmap_texdata = new Float32Array(16*128);
     glm.cmap_fracdata = new Float32Array(16*128);
-    
-
-    
     
     glscreen.webgl_start({}, function(error, gl){
 	
@@ -241,7 +247,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    var w=glscreen.canvas.clientWidth;
 	    var h=glscreen.canvas.clientHeight;
 	    
-	    for(var l=0;l<glm.nlayers;l++){
+	    for(var l=0;l<glm.layers.length;l++){
 		var lay=glm.layers[l];
 		if(typeof lay!='undefined'){
 		    glm.p_layer_range[2*lay.id]=lay.width*1.0/glm.w;
@@ -280,7 +286,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    //console.log("clear " + glscreen.canvas.clientWidth + " " + glscreen.canvas.clientHeight);
 	    ctx2d.clearRect(0,0,glscreen.canvas.clientWidth, glscreen.canvas.clientHeight);
 	    
-	    for(var l=0;l<glm.nlayers;l++)
+	    for(var l=0;l<glm.layers.length;l++)
 		if(glm.layer_enabled[l])
 		    glm.layers[l].update_pointer_info(e.cursor, layer_ci[l]);
 
@@ -363,11 +369,11 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    gl.drawArrays(gl.TRIANGLES, 0, 6);
 	    
 
-	    for(var l=0;l<glm.nlayers;l++)
-		if(glm.layer_enabled[l])
+	    for(var l=0;l<glm.layers.length;l++)
+		if(glm.layer_enabled[glm.layers[l].id])
 		    glm.layers[l].update_geometry();
-
-
+	    
+	    
 	    //ctx2d.fillStyle = "#FF0000";
 	    //ctx2d.fillRect(0,0,150,75);
 	    /*
@@ -471,48 +477,90 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
 	    //cb(null,glm);
 	});
-	
 
-	
-	glm.create_layer=function(image){
-	    if(glm.nlayers<glm.maxlayers){
-		
-		var layer=tmaster.build_template("gl_image_layer"); 
-		layer.name=image.name;
-		image.listen("name_changed", function(n){
-		    layer.name=n;
-		});
-
-		var lay_ui=create_ui({type:"short" }, layer, 0);
-
-		layer.xd1_attach(glm, glm.nlayers);
-		
-		layer.container=layer_objects.ui_childs;
-		layer_objects.ui_childs.add_child(layer,lay_ui);
-
-
-		
-		
-		//layer.view_update_childs();
-		
-		glm.layers[glm.nlayers]=layer;
-		glm.layer_enabled[glm.nlayers]=1;
-		//var le_loc=gl.getUniformLocation(glm.program, "u_layer_enabled");
-		gl.uniform4iv(glm.le_loc, glm.layer_enabled);
-		
-		glm.nlayers++;
-
-		if(typeof image != 'undefined'){
-		    layer.setup_image(image);
-		}
-
-		glm.trigger("view_update");
-
-		return layer;
-		//  });
-		
-	    }else alert("Max 4 layers!");
+	glm.get_layer=function(lid){
+	    for(var l=0;l<glm.layers.length;l++)
+		if(glm.layers[l].id === lid) return l;
 	    return undefined;
+	}
+	
+	glm.delete_layer=function(lid){
+	    var lay=glm.get_layer(lid);
+	    
+	    if(ù(lay)) {
+		console.log("No such layer " + lid);
+		return;
+	    }
+	    
+	    glm.layer_enabled[lid]=0;
+	    //var le_loc=gl.getUniformLocation(glm.program, "u_layer_enabled");
+	    gl.uniform4iv(glm.le_loc, glm.layer_enabled);
+	    //glm.nlayers--;
+	    glm.layers.splice(lay,1);
+	    
+	    layer_ci[lid].ui_root.add_class("disabled");
+	    
+	    console.log("After delete : NLAYERS = " + glm.layers.length);
+	    
+	    glm.trigger("view_update");
+
+	}
+
+	glm.create_layer=function(image, lid){
+	    if(ù(lid)){
+		lid=glm.maxlayers+1;
+		for(var l=0;l<4;l++)
+		    if(glm.layer_enabled[l]===0){
+			lid=l; break;
+		    }
+	    }
+	    
+	    if(lid<0 || lid>=glm.maxlayers){
+		alert("["+lid+"]All four layers already active, please remove one before adding a new one.");
+		return undefined;
+		
+	    }
+
+	    var ex_lay=glm.get_layer(lid);
+	    if(è(ex_lay)){
+		glm.layers[ex_lay].trigger("close");
+		//glm.delete_layer(lid);
+	    }
+
+	    console.log("Creating new layer at position " + lid);
+	    
+	    var layer=tmaster.build_template("gl_image_layer"); 
+	    layer.name=image.name;
+	    image.listen("name_changed", function(n){
+		layer.name=n;
+	    });
+	    
+	    var lay_ui=create_ui({type:"short" }, layer, 0);
+	    
+	    layer.xd1_attach(glm, lid);
+		
+	    layer.container=layer_objects.ui_childs;
+	    layer_objects.ui_childs.add_child(layer,lay_ui);
+	    //layer.view_update_childs();
+	    
+	    glm.layers.push(layer);
+	    glm.layer_enabled[lid]=1;
+	    //var le_loc=gl.getUniformLocation(glm.program, "u_layer_enabled");
+	    gl.uniform4iv(glm.le_loc, glm.layer_enabled);
+
+	    
+	    layer_ci[lid].ui_root.remove_class("disabled");
+	    
+	    //glm.nlayers++;
+	    
+	    if(typeof image != 'undefined'){
+		layer.setup_image(image);
+	    }
+
+	    glm.trigger("view_update");
+	    
+	    return layer;
+
 	}
 	    
     });

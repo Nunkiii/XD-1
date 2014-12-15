@@ -525,22 +525,26 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	var brg=histo_tpl.select_brg;
 	//console.log("Selection changed brg = " + brg);
 	var xmarg=0.0;//histo_tpl.ui_opts.margin.left;
+
 	if(brg!=null){
 
-
 	    var pt  = histo_tpl.svg.createSVGPoint(); 
+
 	    function rect_corners(rect){
+		//console.log("Getting corners for " + rect );
 		var corners = {};
 		var matrix  = rect.getScreenCTM();
+		
+		//console.log("Getting matrix " + JSON.stringify(matrix) );
 		pt.x = rect.x.animVal.value;
 		pt.y = rect.y.animVal.value;
-		corners.nw = pt.matrixTransform(matrix);
+		corners.nw = matrix ? pt.matrixTransform(matrix) : pt;
 		pt.x += rect.width.animVal.value;
-		corners.ne = pt.matrixTransform(matrix);
+		corners.ne = matrix ? pt.matrixTransform(matrix): pt;
 		pt.y += rect.height.animVal.value;
-		corners.se = pt.matrixTransform(matrix);
+		corners.se = matrix ? pt.matrixTransform(matrix): pt;
 		pt.x -= rect.width.animVal.value;
-		corners.sw = pt.matrixTransform(matrix);
+		corners.sw = matrix ? pt.matrixTransform(matrix): pt;
 		return corners;
 	    }
 
@@ -580,6 +584,13 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
     }
 
+    layer.listen("close", function(){
+	console.log("Layer close !");
+	this.glm.delete_layer(this.id);
+    });
+
+
+    
     histo_tpl.listen("slided",function(slided){
 	console.log("Histo slide ! " + slided);
 	if(slided){
@@ -591,7 +602,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     });
 
     histo_tpl.listen("selection_change",function(new_cuts){
-	console.log("Histo selection change !" + new_cuts[0] + ", " + new_cuts[1]); 
+	//console.log("Histo selection change !" + new_cuts[0] + ", " + new_cuts[1]); 
 	cuts.set_value(new_cuts);
 	update_histo_cmap();
     });
@@ -623,7 +634,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     cuts.listen("change",function(){
 	layer.p_values[0]=this.value[0];
 	layer.p_values[1]=this.value[1];
-	console.log("Cuts changed to " + JSON.stringify(this.value));
+	//console.log("Cuts changed to " + JSON.stringify(this.value));
 	update_pvalues();
     });
     

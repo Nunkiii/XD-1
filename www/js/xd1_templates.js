@@ -431,7 +431,7 @@ var xd1_templates={
     },
     
     cursor_layer_info : {
-	name : "Info",
+	name : "Cursor Layer Info",
 	elements : {
 	    imgpos : {
 		type: "labelled_vector",
