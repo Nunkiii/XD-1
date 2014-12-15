@@ -530,15 +530,20 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    console.log("Creating new layer at position " + lid);
 	    
 	    var layer=tmaster.build_template("gl_image_layer"); 
-	    layer.name=image.name;
-	    image.listen("name_changed", function(n){
-		layer.name=n;
-	    });
-	    
+
 	    var lay_ui=create_ui({type:"short" }, layer, 0);
-	    
 	    layer.xd1_attach(glm, lid);
-		
+
+	    
+	    layer.listen("name_changed", function(n){
+		console.log("Layer name changed");
+		layer_ci[this.id].set_title(n);
+	    });
+
+	    	    
+	    layer.set_title(image.name);
+
+	    
 	    layer.container=layer_objects.ui_childs;
 	    layer_objects.ui_childs.add_child(layer,lay_ui);
 	    //layer.view_update_childs();
