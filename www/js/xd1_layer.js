@@ -164,7 +164,7 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 	demos[d].listen("click", function(act){
 	    //for(var p in act) console.log("p : " + p);
 	    //console.log("Load MWL " + act.demo_name + " ni "+ act.ni);
-	    load_mwl_demo(act.demo_name,act.ni);
+	    load_mwl_demo(act.demo_name,act.ni,this);
 	});
     }
 
@@ -178,24 +178,29 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
     });
 
 
-    function load_mwl_demo(what,nf){
+    function load_mwl_demo(what,nf,act){
 	
 	
 	var xd=demo.xd;
 
 	var img_id=0;
 	var d= sadira.dialogs.create_dialog({ handler : "fits.test_get_data", what : what});
-
-
+	
 	xd.create_view(function(error, xd1_display){
-
+	    
+	    
+	    
+	    
 	    d.srz_request=function(dgram, result_cb){
 		
 		console.log("SRZ Request !");
 		
 		var sz=dgram.header.sz;
-		var	w=dgram.header.width;
+		var w=dgram.header.width;
 		var h=dgram.header.height;
+
+		//info.innerHTML="Downloading "+dgram.header.name+" : "+ format_byte_number(sz);
+		//prog.value=0;
 		
 		console.log("Ready to receive "+sz +" bytes. Image ["+dgram.header.name+"] size will be : " + w + ", " + h + "<br/>");
 		
@@ -206,11 +211,15 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 		//console.log("AB: N= "+ fv.length +" =? "+sz/4+" first elms : " + fv[0] + ", " + fv[1] );
 		var sr=new srz_mem(b);
 		
+		sr.info=cc("div",act.ui_root);
+		sr.info.innerHTML="Downloading "+dgram.header.name+" : "+ format_byte_number(sz);
+		sr.prog=cc("progress",act.ui_root); sr.prog.min=0; sr.prog.max=100;
 		
 		sr.on_chunk=function(dgram){
+		    sr.prog.value=100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data);
 		    //console.log("Fetching data : "+(Math.floor(100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data)))+" %");
 		}
-	    
+		
 		
 		
 		sr.on_done=function(){
@@ -244,14 +253,14 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 		    
 		    //lay.name.innerHTML+="Dialog handshake OK <br/>";
 		    for(img_id=0;img_id<nf;img_id++)
-			    d.send_datagram({type : "get_data", imgid : img_id},null,function(error){
-				if(error){
-				    dinfo.innerHTML+="ERROR"+error+" <br/>";
-				}else{
-				    console.log("OK");
-				}
-				
-			    });
+			d.send_datagram({type : "get_data", imgid : img_id},null,function(error){
+			    if(error){
+				dinfo.innerHTML+="ERROR"+error+" <br/>";
+			    }else{
+				console.log("OK");
+			    }
+			    
+			});
 		}
 		
 	    });

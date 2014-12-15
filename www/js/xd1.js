@@ -20,7 +20,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
 //    var gfx_node=cc("div",xdone_node); gfx_node.id="gfx";
 
 
-    for(var p in xd.elements ) console.log("xdp = " + p);
+    //for(var p in xd.elements ) console.log("xdp = " + p);
     var mwl_demo=xd.elements.ui.elements.demo;
 
     var user_objects=xd.elements.ui.elements.objects;
