@@ -128,6 +128,14 @@ template_ui_builders.xd1=function(ui_opts, xd){
     //return xd.ui_root;
 }
 
+template_ui_builders.cursor_layer_info=function(ui_opts, cli){
+    console.log("Building cursor info ....");
+    var pxv=cli.elements.pixval;
+    var cmdiv=cli.cmdiv=cc("div", pxv.ui_root); cmdiv.className="colormap";
+    cmdiv.style.width="10em";
+    cmdiv.style.height="1em";
+}
+
 
 template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
@@ -413,9 +421,12 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 		gl.STATIC_DRAW
 	    );
 	}
+
 	
-	
-	xhr_query(server_root+"xd1.glsl", function (error, shader_src) {
+	//var glsl_loc="./"+server_root+"/xd1.glsl";
+	var glsl_loc="/XD-1/xd1.glsl";
+	console.log("Downloading glsl [" + glsl_loc+"]" );
+	xhr_query(glsl_loc, function (error, shader_src) {
 	    
 	    if(error!=null){
 		console.log("Error downloading XD1 shader code " + error);
@@ -543,6 +554,11 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    	    
 	    layer.set_title(image.name);
 
+	    layer.cmap.listen("colormap_changed", function(cm){
+		layer_ci[lid].cmdiv.style.background=cm.css_color_gradient;
+	    });
+
+	    
 	    
 	    layer.container=layer_objects.ui_childs;
 	    layer_objects.ui_childs.add_child(layer,lay_ui);
@@ -563,6 +579,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    }
 
 	    glm.trigger("view_update");
+	    layer.cmap.trigger("colormap_changed", layer.cmap);
 	    
 	    return layer;
 

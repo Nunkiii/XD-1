@@ -432,6 +432,7 @@ var xd1_templates={
     
     cursor_layer_info : {
 	name : "Cursor Layer Info",
+	type : "cursor_layer_info",
 	elements : {
 	    imgpos : {
 		type: "labelled_vector",
@@ -775,16 +776,38 @@ var xd1_templates={
     
     xd1 : {
 
-	//name : "XD-1",
+
 	type : "template",
 	tpl_builder : "xd1",
-	//intro: "A multi-document, multi-layer FITS image viewer.",
 	ui_opts: {child_view_type : "divider", root: true, divdir: false },
+
+	/*
+	name : "XD-1.984",
+	intro: "A multi-document, multi-layer FITS image viewer.",
+
+
+	toolbar : {
+	    login : {
+		ui_opts : { sliding  : true, slided : false },
+		name : "Login",
+		type : "login"
+	    },
+	    signup : {
+		name : "Signup",
+		type : "template",
+		template_name : "signup"
+	    }
+			    
+	},
+	*/
 	
 	elements : {
+
 	    
 	    ui : {
-		
+		name : "XD-1.984",
+		intro: "A multi-document, multi-layer FITS image viewer.",
+
 		ui_opts: {child_view_type : "tabbed", root_classes: []},
 		
 		elements : {
@@ -793,7 +816,9 @@ var xd1_templates={
 			type : "template",
 			ui_opts: {render_name: false},
 			template_name : "user_objects",
-			elements : {}
+			elements : {
+
+			}
 		    },
 		    
 		    /*
@@ -886,7 +911,7 @@ var xd1_templates={
 			    }
 			}
 		    },
-		    about : { name : "About", type : "html", url : "about.html", ui_opts : {} }
+		    about : { name : "About", type : "html", url : "/XD-1/about.html", ui_opts : {} }
 		}
 	    },
 	    drawing : {
@@ -975,12 +1000,12 @@ var xd1_templates={
 		string : "sadira/icons/svg/string.svg",
 		
 	    */
-	    image : "sadira/icons/svg/mat_float.svg",
-	    colormap : "sadira/icons/svg/colormap.svg",
-	    object_editor : "sadira/icons/svg/root.svg",
-	    gl_multilayer : "sadira/icons/svg/gl_viewport.svg",
-	    gl_image_layer : "sadira/icons/svg/plot.svg",
-	    view_manager : "sadira/icons/svg/plot.svg",
+	    image : "/sadira/icons/svg/mat_float.svg",
+	    colormap : "/sadira/icons/svg/colormap.svg",
+	    object_editor : "/sadira/icons/svg/root.svg",
+	    gl_multilayer : "/sadira/icons/svg/gl_viewport.svg",
+	    gl_image_layer : "/sadira/icons/svg/plot.svg",
+	    view_manager : "/sadira/icons/svg/plot.svg",
 	};
     });
     

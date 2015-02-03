@@ -22,7 +22,7 @@
   <script src="sadira/js/community/d3.v3.min.js"></script>
   <script src="sadira/js/community/sha1.js"></script>
   <script src="sadira/js/community/radixsort.min.js"></script>
-
+  <script src="sadira/js/community/owasp-password-strength-test.js"></script>
 
   
   <script src="sadira/js/db_basetypes.js"></script>
@@ -80,7 +80,9 @@
    width: 100%;
    height: 100%;
    top: 0px; left:0px;
-   opacity: .3;
+   opacity: .2;
+   z-index: 0;
+   pointer-events: none;
   }
 </style>
 </head>
@@ -89,6 +91,7 @@
   <div id="bg"></div>
   <script>
    window.addEventListener("load", function(){
+  
      var xd1_tpl=tmaster.build_template("xd1");
      create_ui({},xd1_tpl);
      attach_ui(xd1_tpl, document.body);

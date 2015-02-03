@@ -189,8 +189,6 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 	xd.create_view(function(error, xd1_display){
 	    
 	    
-	    
-	    
 	    d.srz_request=function(dgram, result_cb){
 		
 		console.log("SRZ Request !");
@@ -223,6 +221,9 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 		
 		
 		sr.on_done=function(){
+
+		    act.ui_root.removeChild(sr.prog);
+		    act.ui_root.removeChild(sr.info);
 		    
 		    console.log("GoT image data !!! " + fvp.byteLength);
 		    var img=tmaster.build_template("image");
@@ -414,10 +415,10 @@ template_ui_builders.image=function(ui_opts, image){
 		// Get the minimum and maximum pixels
 		var extent = dataunit.getExtent(arr);
 		
-		image.set_title(fits_file.ui.files[0].name);
+		image.set_title(fits_file.ui_input.files[0].name);
 		//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
 
-		bin_size.set_value(fits_file.ui.files[0].size);
+		bin_size.set_value(fits_file.ui_input.files[0].size);
 
 		bounds.set_value(extent);
 		console.log("Frame read : D=("+dims.value[0]+","+dims.value[1]+")  externt " + extent[0] + "," + extent[1] + " wh="+w+","+h);
@@ -631,9 +632,10 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     histo_cmap.style.position="absolute";//className="histo_cmap";
     histo_cmap.style.top="0em";
     histo_cmap.style.height="1em";
+
     cmap.listen("colormap_changed", function(cm){
 	histo_cmap.style.background=cmap.css_color_gradient;
-    });
+    }, true);
 
     
     layer.elements.enable.listen("change", function(){
