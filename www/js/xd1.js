@@ -45,12 +45,13 @@ template_ui_builders.xd1=function(ui_opts, xd){
 	this.update();
     });
     */
-    
-    xd.ui_childs.divider.listen("drag_end", function(){
-	xd.gl_views.forEach(function(v){
-	    v.fullscreen(false);
+
+    if(è(xd.ui_childs.divider))
+	xd.ui_childs.divider.listen("drag_end", function(){
+	    xd.gl_views.forEach(function(v){
+		v.fullscreen(false);
+	    });
 	});
-    });
   
     
     var views=xd.elements.drawing.elements.views;

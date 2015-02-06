@@ -147,10 +147,12 @@ var xd1_templates={
 	name : "Binary object",
 	elements : {
 	    size : {
+		ui_opts : {label : true},
 		name : "Size",
 		type : "bytesize"
 	    },
 	    binary_type : {
+		ui_opts : { label : true},
 		name : "Binary type",
 		type : "string"
 	    }
@@ -159,7 +161,7 @@ var xd1_templates={
     },
     
     image_dimensions : {
-	ui_opts : {type : "short"},
+	ui_opts : {type : "short", label : true},
 	name : "Dimensions",
 	tip : "Dimension of the image in pixels",
 	type : "labelled_vector",
@@ -171,6 +173,7 @@ var xd1_templates={
     },
 
     sky_coords : {
+	ui_opts : {label : true},
 	name : "Sky coordinates",
 	type : "labelled_vector",
 	value_labels : ["Ra","Dec"],
@@ -225,9 +228,13 @@ var xd1_templates={
 		intro: "Select a FITS image file on your local filesystem",
 		name : "FITS file",
 		type : "local_file",
-		ui_opts : {editable: false, sliding : false, slided : false, type : "edit"}
+		ui_opts : {editable: false, sliding : false, slided : false, type : "edit"},
+		elements : {
+		    keys : { name : "Metadata", type : "text", elements : {}, ui_opts: {sliding: true, slided: false, label : true}}
+		}
+		
 	    },
-	    keys : { name : "Metadata", type : "text", elements : {}, ui_opts: {sliding: true, slided: false}},
+	    
 	    dims : { type: "template", template_name : "image_dimensions", ui_opts: {sliding: false, slided: false}},
 	    bounds : {
 		type : "labelled_vector",
@@ -236,12 +243,12 @@ var xd1_templates={
 		value_labels : ["Min","Max"],
 		min : "-100000", 
 		max : "100000", 
-		ui_opts : { editable : false, sliding : false , sliding_dir : "h",slided : false }
+		ui_opts : { editable : false, sliding : false , sliding_dir : "h",slided : false, label : true }
 		//ui_opts: {}
 	    },
 	    view : {
 		name: "Display",
-		ui_opts: {sliding: false, slided: false, bar : false},
+		ui_opts: {sliding: false, slided: false, bar : false, child_classes : ["btn-group"]},
 		elements : {
 		    new_display : {
 			type : "action",
@@ -379,27 +386,27 @@ var xd1_templates={
 		type : "labelled_vector", 
 		value : [0,1], 
 		value_labels : ["Start","End"], min : "0", max : "1", step : ".01",
-		ui_opts : {root_classes : [], editable : true, type : "short"} 
+		ui_opts : {root_classes : [], editable : true, type : "short", label:true} 
 	    },	    
-	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, root_classes : ["inline"]}},
+	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, root_classes : ["inline"], label:true}},
 	    
 	    blend : { 
 		name: "Blend boundaries", 
 		ui_opts : {root_classes : ["newline"]},
 		elements : {
-		    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
-		    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"]}},
+		    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"], label:true}},
+		    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"], label:true}},
 		}
 	    },
 	    colors : {
 		name : "Colors",
 		ui_opts : {root_classes : ["newline"]},
 		elements : {
-
-		    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
-		    inleft : { name : "InL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
-		    inright : { name : "InR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
-		    outright : { name : "OutR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"]}},
+		    
+		    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"], label:true}},
+		    inleft : { name : "InL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"], label:true}},
+		    inright : { name : "InR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"], label:true}},
+		    outright : { name : "OutR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"], label:true}},
 		}
 	    },
 	    split : {name : "Split section", type : "action"}
@@ -416,13 +423,15 @@ var xd1_templates={
 		type: "labelled_vector",
 		name : "Screen pixel",
 		value_labels : ["X","Y"],
-		value : [0,0]
+		value : [0,0],
+		ui_opts : { label : true, root_classes : ["inline"] }
 	    },
 	    astro : {
 		type: "labelled_vector",
 		name : "Equatorial coordinates",
 		value_labels : ["Ra","Dec"],
-		value : [0,0]
+		value : [0,0],
+		ui_opts : { label : true, root_classes : ["inline"] }
 	    },
 	    layers : {
 	    }
@@ -438,11 +447,13 @@ var xd1_templates={
 		type: "labelled_vector",
 		name : "Image pixel",
 		value_labels : ["X","Y"],
-		value : [0,0]
+		value : [0,0],
+		ui_opts : { label : true }
 	    },
 	    pixval : {
 		name : "Pixel value",
-		type : "double"
+		type : "double",
+		ui_opts : { label : true }
 	    }
 	}
     },
@@ -486,17 +497,19 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "inline", "number_fixed_size"], editable : true, sliding : false, sliding_dir : "h", slided : true}
+		ui_opts: {root_classes : [ "inline", "number_fixed_size"],
+			  editable : true, sliding : false, sliding_dir : "h", slided : true, label: true}
 	    },
 
 	    rotation : {
 		name : "Rotation",
-		ui_opts: {sliding: false, sliding_dir:"h", slided : true, root_classes : ["inline"]},
+		ui_opts: {sliding: false, sliding_dir:"h", slided : true,
+			  root_classes : ["inline"], label: true},
 		elements : {
 		    angle : {
 			name : "R<sub>α</sub>",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02,
 			tip : "Rotation angle value, in radians, trigonometric counting",
-			ui_opts : { editable : true,root_classes : [ "inline"] }
+			ui_opts : { editable : true,root_classes : [ "inline"], label: true }
 		    },
 
 		    center : {
@@ -510,13 +523,14 @@ var xd1_templates={
 			step: "1",
 			ui_opts: {
 			    root_classes : [ "inline"],
-			    editable: true, sliding : true, sliding_dir : "h", slided: false }
+			    editable: true, sliding : true, sliding_dir : "h", slided: false , label: true
+			}
 		    }
 		}
 	    },
 	    
 	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		     ui_opts : { editable : true, root_classes : ["inline"], sliding : false, sliding_dir : "h", slided : true} 
+		     ui_opts : { editable : true, root_classes : ["inline"], sliding : false, sliding_dir : "h", slided : true, label: true} 
 		   }
 	    
 	}
@@ -529,7 +543,7 @@ var xd1_templates={
 	min : "-100000", 
 	max : "100000", 
 	step: "100",
-	ui_opts : { editable : true, root_classes : [] }
+	ui_opts : { editable : true, root_classes : [],label : true }
 	//ui_opts: {root_classes : ["inline"]}
     },
 
@@ -543,7 +557,7 @@ var xd1_templates={
 	//ui_opts : {child_classes : ["column"]},
 	elements : {
 	    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
-		    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : []} },
+		    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : [], label : true} },
 	    
 	    // histo : {
 	    // 	name : "Colors and cuts",
@@ -556,7 +570,8 @@ var xd1_templates={
 		type : "colormap",
 		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
 		ui_opts : {editable : true,
-			   root_classes : [], item_classes : []
+			   root_classes : [], item_classes : [],
+			   label : true
 			  },
 		// value : [[0,0,0,1,0],
 		// 	      [0.8,0.2,0.8,1.0,0.2],
@@ -572,7 +587,10 @@ var xd1_templates={
 			 [1,1,1,1,1]] 
 	    },
 	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
-		     ui_opts: { sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"]}},
+		     ui_opts: {
+			 sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"],
+			 label : true
+			      }},
 	    
 	    histo : {
 		name : "Histogram",
@@ -581,7 +599,7 @@ var xd1_templates={
 		ui_opts : {
 		    //width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
 		    //root_classes : [], item_classes : [],
-		    sliding : true , sliding_dir : "h", slided : false
+		    sliding : true , sliding_dir : "h", slided : false,label : true
 		}
 	    }
 	}
@@ -779,42 +797,47 @@ var xd1_templates={
 
 	type : "template",
 	tpl_builder : "xd1",
-	ui_opts: {child_view_type : "divider", root: true, divdir: false },
+	ui_opts: {child_view_type : "divider", root: false, divdir: false },
 
 	/*
 	name : "XD-1.984",
 	intro: "A multi-document, multi-layer FITS image viewer.",
 
-
-	toolbar : {
-	    login : {
-		ui_opts : { sliding  : true, slided : false },
-		name : "Login",
-		type : "login"
-	    },
-	    signup : {
-		name : "Signup",
-		type : "template",
-		template_name : "signup"
-	    }
-			    
-	},
 	*/
+
+
+
 	
 	elements : {
 
 	    
 	    ui : {
 		name : "XD-1.984",
-		intro: "A multi-document, multi-layer FITS image viewer.",
+		subtitle : "A multi-document, multi-layer FITS image viewer",
+		ui_opts: {child_view_type : "tabbed", root_classes: [], name_classes : [], name_node : "h2"},
+		
+		toolbar : {
+		    file : {
+			name : "File",
+			elements : {
+			    open : {
+				name : "Open FITS file"
+			    },
+			    demos : {
+				name : "Load a demo"
+			    },
+			}
+		    },
+		    about : {
+			name : "About"
+		    }
+		},
 
-		ui_opts: {child_view_type : "tabbed", root_classes: []},
 		
 		elements : {
 		    objects : { 
-			name : "FITS images",
 			type : "template",
-			ui_opts: {render_name: false},
+			ui_opts: {},
 			template_name : "user_objects",
 			elements : {
 
@@ -915,6 +938,7 @@ var xd1_templates={
 		}
 	    },
 	    drawing : {
+		//name : "GL Screen",
 		ui_opts : { child_view_type : "divider", divdir : true},
 		//type : "string", value : "Hello widget !",
 	    	elements : {

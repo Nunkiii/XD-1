@@ -284,7 +284,7 @@ template_ui_builders.object_editor=function(ui_opts, edit){
 	new_img.xd=edit.xd;
 	console.log("Setting XD to " + new_img.xd);
 	//console.log("Object image TPL DONE!");
-	var img_ui=create_ui({}, new_img);
+	var img_ui=create_ui({}, new_img, edit.depth+1);
 	object_tree.ui_childs.add_child(new_img, img_ui);
     });
    new_red.listen("click", function(){
@@ -303,7 +303,7 @@ template_ui_builders.image=function(ui_opts, image){
     var bin_size=image.elements.size;
     var dims=image.elements.dims;
     var bounds=image.elements.bounds;
-    var meta=image.elements.keys;
+    var meta=image.elements.source.elements.keys;
     var fits_file=image.elements.source;//.elements.local_fits;
     //var gloria=image.elements.source.elements.gloria;
     var view=image.elements.view.elements;
