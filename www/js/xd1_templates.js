@@ -481,9 +481,12 @@ var xd1_templates={
     geometry : {
 	
 	name : "Geometry",
+	intro : undefined,
 	ui_opts: {
 	    //root_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true
-	    render_name : false
+	    //render_name : false,
+	    child_view_type : "div"
+	    
 	},
 
 	elements : {
@@ -549,7 +552,7 @@ var xd1_templates={
 
 
     levelconf : {
-	//name : "Colors/Levels",
+	//xname : "Colors/Levels",
 	ui_opts : { type: "short", root_classes : [], 
 		    //sliding : true , sliding_dir : "v", slided : true,
 		    child_view_type : "div" 
@@ -571,7 +574,6 @@ var xd1_templates={
 		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
 		ui_opts : {editable : true,
 			   root_classes : [], item_classes : [],
-			   label : true
 			  },
 		// value : [[0,0,0,1,0],
 		// 	      [0.8,0.2,0.8,1.0,0.2],
@@ -599,7 +601,7 @@ var xd1_templates={
 		ui_opts : {
 		    //width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
 		    //root_classes : [], item_classes : [],
-		    sliding : true , sliding_dir : "h", slided : false,label : true
+		    sliding : true , sliding_dir : "h", slided : true
 		}
 	    }
 	}
@@ -697,11 +699,11 @@ var xd1_templates={
 		}
 	    }*/,
 	    geometry : {
-
-		tip : "Layer geometry",
+		name : "Layer geometry",
 		type : "template",
 		template_name : "geometry",
 		ui_opts : {
+		    
 		    root_classes : [], child_classes : [], 
 		    //sliding : true , sliding_dir : "h", slided : false
 		    //  child_view_type : "tabbed" 
@@ -797,7 +799,7 @@ var xd1_templates={
 
 	type : "template",
 	tpl_builder : "xd1",
-	ui_opts: {child_view_type : "divider", root: false, divdir: false },
+	ui_opts: {child_view_type : "divider", root: false, divdir: false, split_frac : 33 },
 
 	/*
 	name : "XD-1.984",
@@ -939,7 +941,7 @@ var xd1_templates={
 	    },
 	    drawing : {
 		//name : "GL Screen",
-		ui_opts : { child_view_type : "divider", divdir : true},
+		ui_opts : { child_view_type : "divider", divdir : false},
 		//type : "string", value : "Hello widget !",
 	    	elements : {
 		    views : {
