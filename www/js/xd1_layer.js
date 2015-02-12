@@ -969,13 +969,9 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
 	var dl=data.length ? data.length : data.byteLength;
 	
-	histo_tpl.step=(data_bounds[1]-data_bounds[0])/histo_tpl.value.length;
-	histo_tpl.start=data_bounds[0];//+.5*step;
+	var step=histo_tpl.step=(data_bounds[1]-data_bounds[0])/histo_tpl.value.length;
+	var start=histo_tpl.start=data_bounds[0];//+.5*step;
 	
-	var step=histo_tpl.step;//=(data_bounds[1]-data_bounds[0])/nbins;
-	var start=histo_tpl.start;//=data_bounds[0];//+.5*step;
-
-
 	bsize=(histo_tpl.elements.range.value[1]-histo_tpl.elements.range.value[0])/nbins;
 
 	var histo=histo_tpl.value=[];
