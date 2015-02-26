@@ -621,7 +621,24 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	cuts.set_value(new_cuts);
 	update_histo_cmap();
     });
-
+    
+    var autocout={type: "action", name : "Auto cuts", ui_opts : { label: true, btn_type : "xs", fa_icon: "leaf"}  };
+    
+    create_ui({},autocout);
+    
+    histo_tpl.ui_childs.div.appendChild(autocout.ui_root);
+    
+    autocout.listen("click",function(){
+	console.log("Unzoom Range change !, recomp histo");
+	reset_histogram();
+    });
+    
+    histo_tpl.elements.unzoom.listen("click",function(){
+	console.log("Unzoom Range change !, recomp histo");
+	compute_histogram(nbins, layer.ext);
+	update_histo_cmap();
+    });
+    
     histo_tpl.listen("range_change",function(new_range){
 	console.log("Histo Range change !, recomp histo");
 	compute_histogram(nbins, new_range);
@@ -760,12 +777,11 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
 	//	for (var i=0;i<sfa.length/20;i++)
 	//	    console.log( i + " : " + sfa[i]);
-
-	//console.log("Number of items : " + fa.length, " NB = " + ab.byteLength + " npix="+ll + " cuts + " + JSON.stringify(newcuts));
+	
+	console.log("AUTOCOUT Number of items : " + fa.length, " NB = " + ab.byteLength + " npix="+ll + " cuts + " + JSON.stringify(newcuts));
 	
 	cuts.set_value(newcuts);
 	cuts.trigger("change");
-
     }
     
 
@@ -779,6 +795,16 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	//bsize=(high-low)/nbins;
 	compute_histogram(nbins,layer.ext);
 	auto_cuts();
+
+	
+	var cl2=.5*(cuts.value[1]-cuts.value[0]);
+	var autoc=[cuts.value[0]-cl2, cuts.value[1]+cl2];
+	if(autoc[0]<layer.ext[0])autoc[0]=layer.ext[0];
+	if(autoc[1]>layer.ext[1])autoc[1]=layer.ext[1];
+	
+	compute_histogram(nbins, autoc);
+	update_histo_cmap();
+	histo_tpl.config_range();
 
 	//draw_histogram();
 	
@@ -801,7 +827,6 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     layer.listen("name_changed", function(n){
 	
     });
-
 
     var cmt;
     
@@ -969,17 +994,17 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
 	var dl=data.length ? data.length : data.byteLength;
 	
-	var step=histo_tpl.step=(data_bounds[1]-data_bounds[0])/histo_tpl.value.length;
-	var start=histo_tpl.start=data_bounds[0];//+.5*step;
+	var step=(data_bounds[1]-data_bounds[0])/nbins; //histo_tpl.value.length;
+	var start=data_bounds[0];//+.5*step;
 	
 	bsize=(histo_tpl.elements.range.value[1]-histo_tpl.elements.range.value[0])/nbins;
 
-	var histo=histo_tpl.value=[];
+	var histo=[];
 	for(var i=0;i<nbins;i++){
 	    histo[i]=0;
 	}
 	
-	//console.log("Data bounds : " + layer.ext[0] + ", " + layer.ext[1], " bin size = " + bsize + " nbins " + nbins + " ndata=" + dl + " start " + start + " step " + step);
+	console.log("Compute histo Data bounds : " + layer.ext[0] + ", " + layer.ext[1], " bin size = " + bsize + " nbins " + nbins + " ndata=" + dl + " start " + start + " step " + step);
 	
 	
 	for(var i=0;i<dl;i++){
@@ -990,8 +1015,22 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 		    histo[bid]++; 
 	    }
 	}
+
+	if(histo_tpl.plots.length===0){
+	    histo_tpl.add_plot_linear(histo, start, step);
+
+	}else{
+	    var p= histo_tpl.plots[0];
+	    p.args[1]=start;
+	    p.args[2]=step;
+	    p.data=histo;
+	    histo_tpl.config_range();
+	}
 	
-	histo_tpl.redraw();
+	//histo_tpl.set_value(histo);
+
+	//histo_tpl.elements.range.set_value([0, nbins]);
+
 	//console.log("Histo : " + JSON.stringify(layer.histo));
 	
     }  
@@ -1031,9 +1070,12 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	layer.p_values[0]=ext[0];
 	layer.p_values[1]=ext[1];
 
+	/*
 	histo_tpl.min=ext[0];
 	histo_tpl.max=ext[1];
 	histo_tpl.step=(ext[1]-ext[0])/200.0;
+	*/
+	
 	//x_domain_full=[image.p_values[0]+.5*bsize,image.p_values[0]+(nbins-.5)*bsize];
 
 	//histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
@@ -1059,18 +1101,10 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	    }
 	}
 	
-	//for(var i=0;i<fv.length;i++) fv[i]=Math.random();
 
-	
-	compute_histogram(nbins, ext);
-	auto_cuts();
-	
 	//histo_tpl.set_range(ext);
 	histo_tpl.set_selection(cuts.value);
-
-	//if(bsize==null)
-
-	//console.log("Histo ui " + JSON.stringify(histo_tpl.ui_opts));
+	reset_histogram();
 	//histo_tpl.redraw();
 
 	gl.activeTexture(gl.TEXTURE0);

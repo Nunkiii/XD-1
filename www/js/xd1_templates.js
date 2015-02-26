@@ -378,8 +378,8 @@ var xd1_templates={
 	}
     },
     colormap_edit : {
-//	name : "Color segment edit",
-	ui_opts : { root_classes : []},
+	name : "Color interval ",
+	ui_opts : { root_classes : [], label:true},
 	elements : {
 	    range : {
 		name : "Range", 
@@ -388,19 +388,19 @@ var xd1_templates={
 		value_labels : ["Start","End"], min : "0", max : "1", step : ".01",
 		ui_opts : {root_classes : [], editable : true, type : "short", label:true} 
 	    },	    
-	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, root_classes : ["inline"], label:true}},
+	    uniform : { name : "Uniform color", value : false, type : "bool" , ui_opts : {visible : false, label:true}},
 	    
 	    blend : { 
 		name: "Blend boundaries", 
-		ui_opts : {root_classes : ["newline"]},
+		ui_opts : {root_classes : [], label : true},
 		elements : {
-		    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"], label:true}},
-		    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true,root_classes : ["inline"], label:true}},
+		    blendl : { name : "BlendLeft", value : true, type : "bool" , ui_opts : {visible : true,label:true}},
+		    blendr : { name : "BlendRight", value : true, type : "bool" , ui_opts : {visible : true, label:true}},
 		}
 	    },
 	    colors : {
 		name : "Colors",
-		ui_opts : {root_classes : ["newline"]},
+		ui_opts : {label : true},
 		elements : {
 		    
 		    outleft : { name : "OutL", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"], label:true}},
@@ -409,7 +409,8 @@ var xd1_templates={
 		    outright : { name : "OutR", type : "color", value : "#fff", ui_opts : {root_classes : ["inline"], label:true}},
 		}
 	    },
-	    split : {name : "Split section", type : "action"}
+	    split : {name : "Split section", type : "action", ui_opts : { label: true, btn_type : "xs", fa_icon : "insert"}},
+	    delete : {name : "Delete section", type : "action", ui_opts : { label: true, btn_type : "xs", fa_icon : "delete"}},
 	    
 	}
 	
