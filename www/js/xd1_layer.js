@@ -504,12 +504,13 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     }
 
     //var layer_opts=this.layer_opts=tmaster.build_template("gl_image_layer"); 
-    //var depth=1;//layer_opts.depth+1;
-
-    var cuts=layer.cuts=layer.elements.general.elements.cuts; 
-    var histo_tpl=layer.elements.general.elements.histo; 
-    var cmap=layer.cmap=layer.elements.general.elements.cmap; 
-    var lum=layer.elements.general.elements.lum; 
+  //var depth=1;//layer_opts.depth+1;
+    var geom=layer.elements;
+    
+    var cuts=layer.cuts=geom.cuts; 
+    var histo_tpl=geom.histo; 
+    var cmap=layer.cmap=geom.cmap; 
+    var lum=geom.lum; 
     var tr=layer.elements.geometry.elements.translation;
     var zm=layer.elements.geometry.elements.zoom; 
     var ag=layer.elements.geometry.elements.rotation.elements.angle; 

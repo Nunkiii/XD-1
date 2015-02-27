@@ -556,55 +556,11 @@ var xd1_templates={
 	//xname : "Colors/Levels",
 	ui_opts : { type: "short", root_classes : [], 
 		    //sliding : true , sliding_dir : "v", slided : true,
-		    child_view_type : "div" 
+		    child_view_type : "pills" 
 		  },
 	//ui_opts : {child_classes : ["column"]},
 	elements : {
-	    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
-		    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : [], label : true} },
 	    
-	    // histo : {
-	    // 	name : "Colors and cuts",
-	    // 	ui_opts : { root_classes : ["inline"], child_classes : "inline", sliding : true , sliding_dir : "h", slided : false },
-	    // 	elements : {
-	    
-	    
-	    cmap : { 
-		name : "Colormap", 
-		type : "colormap",
-		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
-		ui_opts : {editable : true,
-			   root_classes : [], item_classes : [],
-			  },
-		// value : [[0,0,0,1,0],
-		// 	      [0.8,0.2,0.8,1.0,0.2],
-		// 	      [0.9,0.9,0.2,1.0,0.2],
-		// 	      [0.9,0.9,0.2,1.0,0.5],
-		// 	      [0.9,0.2,0.2,1.0,0.5],
-		// 	      [1,1,1,1,1]] },
-		
-		
-		value : [[0,0,0,1,0],
-			 [0.7,0.2,0.1,1.0,0.2],
-			 [0.8,0.9,0.1,1.0,0.6],
-			 [1,1,1,1,1]] 
-	    },
-	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
-		     ui_opts: {
-			 sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"],
-			 label : true
-			      }},
-	    
-	    histo : {
-		name : "Histogram",
-		type : "template",
-		template_name : "vector",
-		ui_opts : {
-		    //width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
-		    //root_classes : [], item_classes : [],
-		    sliding : true , sliding_dir : "h", slided : true
-		}
-	    }
 	}
     },
     
@@ -614,7 +570,7 @@ var xd1_templates={
 	type : "template",
 	tpl_builder : "xd1_layer",
 	ui_opts : { //root_classes : ["inline"], child_classes : ["newline"], //name_classes : ["inline"], item_classes : ["inline"], 
-		    //child_view_type : "tabbed", 
+	    child_view_type : "pills", 
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
 	    render_name : false,
 	    close: true
@@ -625,80 +581,8 @@ var xd1_templates={
 		name : "Enable layer",
 		type : "bool",
 		value : true,
-		ui_opts : {editable : false, label : true, type : "edit"}
-	    }
-
-	    /*,
-	    image : {
-		ui_opts : {  
-		    sliding : true , sliding_dir : "h", slided : false, child_classes : ["newline"], child_view_type : "bar"
-		},
-		name : "Layer configuration",
-		elements :{
-
-		    source : {
-			name : "Data source",
-			ui_opts : { child_view_type : "tabbed", sliding : true, slided : true, root_classes : []}, 
-			elements : {
-			    local_fits : {
-				ui_opts : {editable: true, sliding : false, slided : true},
-				name : "Local FITS file",
-				type : "local_file",
-				value : "No file selected"
-			    },
-			    url_fits : {
-				ui_opts : {editable: true, sliding : false, slided : false},
-				name : "FITS URL",
-				type : "url"
-			    },
-			    gloria : {
-				ui_opts : {editable: false, sliding : false, slided : false},
-				name : "GLORIA images",
-				type : "template",
-				template_name : "image_db_browser"
-			    },
-			    sbig : {
-				name : "Camera control",
-				ui_opts : {editable: false, sliding : false, slided : false}
-			    }
-			}
-			
-		    },
-		    info : {
-			name : "Image info",
-			ui_opts : {editable: false, sliding : true, slided : false, root_classes : [], child_classes : ["inline"]},
-			elements : {
-			    
-			    dims : { 
-				type: "template", 
-				template_name : "image_dimensions",
-				ui_opts : { name_classes : ["inline"] }
-			    },
-			    file_size : {
-				ui_opts : {root_classes : ["inline"] },
-				name : "File size (original)",
-				type : "bytesize"
-			    },
-			    size : {
-				ui_opts : {root_classes : ["inline"] },
-				name : "Image size (double) in ArrayBuffer",
-				type : "bytesize"
-			    },
-			    bounds : {
-				type : "labelled_vector",
-				name : "Data value bounds",
-				value : [0,0],
-				value_labels : ["Min","Max"],
-				min : "-100000", 
-				max : "100000", 
-				ui_opts : { editable : false, sliding : false , sliding_dir : "h", slided : true, root_classes : ["inline"] }
-				//ui_opts: {}
-			    }
-
-			}
-		    }
-		}
-	    }*/,
+		ui_opts : {editable : false, label : false, type : "edit"}
+	    },
 	    geometry : {
 		name : "Layer geometry",
 		type : "template",
@@ -707,13 +591,64 @@ var xd1_templates={
 		    
 		    root_classes : [], child_classes : [], 
 		    //sliding : true , sliding_dir : "h", slided : false
-		    //  child_view_type : "tabbed" 
+		    //child_view_type : "pills" 
+		},
+		elements : {
 		}
 	    },
-	    general : {
-		type : "template", template_name : "levelconf"
+	    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
+		    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : [], label : false} },
+	    
+	    // histo : {
+		    // 	name : "Colors and cuts",
+	    // 	ui_opts : { root_classes : ["inline"], child_classes : "inline", sliding : true , sliding_dir : "h", slided : false },
+	    // 	elements : {
+	    
+		    
+	    cmap : { 
+		name : "Colormap", 
+		type : "colormap",
+		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
+		ui_opts : {editable : true,
+			   root_classes : [], item_classes : [],
+			  },
+			// value : [[0,0,0,1,0],
+		// 	      [0.8,0.2,0.8,1.0,0.2],
+		// 	      [0.9,0.9,0.2,1.0,0.2],
+		// 	      [0.9,0.9,0.2,1.0,0.5],
+			// 	      [0.9,0.2,0.2,1.0,0.5],
+		// 	      [1,1,1,1,1]] },
+		
+		
+		value : [[0,0,0,1,0],
+				 [0.7,0.2,0.1,1.0,0.2],
+			 [0.8,0.9,0.1,1.0,0.6],
+			 [1,1,1,1,1]] 
+	    },
+	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
+		     ui_opts: {
+			 sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"],
+			 label : false
+		     }},
+	    
+	    histo : {
+		name : "Histogram",
+		type : "template",
+		template_name : "vector",
+		ui_opts : {
+		    //width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
+		    //root_classes : [], item_classes : [],
+		    sliding : false , sliding_dir : "h", slided : true
+		}
+		
 		
 	    }
+	    
+	    // ,
+	    // general : {
+	    // 	type : "template", template_name : "levelconf"
+	    
+	    // }
 	    
 	}
     },
@@ -797,58 +732,76 @@ var xd1_templates={
     
     xd1 : {
 
-
+	//name: "XD1", 
 	type : "template",
 	tpl_builder : "xd1",
-	ui_opts: {child_view_type : "divider", root: false, divdir: false, split_frac : 33 },
-
-	/*
-	name : "XD-1.984",
-	intro: "A multi-document, multi-layer FITS image viewer.",
-
-	*/
-
-
-
+	ui_opts: {child_view_type : "pills", root: true, label: true, divdir: false, split_frac : 33, root_classes : ["container-fluid"], child_classes : ["row"] },
 	
-	elements : {
+	// elements : {
 
 	    
-	    ui : {
-		name : "XD-1.984",
-		subtitle : "A multi-document, multi-layer FITS image viewer",
-		ui_opts: {child_view_type : "tabbed", root_classes: [], name_classes : [], name_node : "h2"},
+	//     ui : {
+	// 	name : "Images",
+	// 	//subtitle : "A multi-document, multi-layer FITS image viewer",
+	// 	ui_opts: {child_view_type : "tabbed", root_classes : ["col-md-6","left"], name_classes : [], name_node : "h2"},
 		
-		toolbar : {
-		    file : {
-			name : "File",
-			elements : {
-			    open : {
-				name : "Open FITS file"
-			    },
-			    demos : {
-				name : "Load a demo"
-			    },
-			}
-		    },
-		    about : {
-			name : "About"
-		    }
-		},
-
-		
+	toolbar : {
+	    file : {
+		name : "File",
 		elements : {
-		    objects : { 
-			type : "template",
-			ui_opts: {},
-			template_name : "user_objects",
-			elements : {
-
-			}
+		    open : {
+			name : "Open FITS file"
+		    },
+		    demos : {
+			name : "Load a demo"
+		    },
+		}
+	    },
+	    about : {
+		name : "XD-1.984",
+		intro: "A multi-document, multi-layer FITS image viewer."
+	    }
+	},
+	
+	
+	elements : {
+	    objects : { 
+		type : "template",
+		ui_opts: {},
+		template_name : "user_objects",
+		elements : {
+		    
+		}
+	    },
+	    
+	    drawing : {
+		name : "Views",
+		ui_opts : { child_view_type : "div", divdir : false, root_classes : ["row","right"]},
+		//type : "string", value : "Hello widget !",
+	    	elements : {
+		    views : {
+			name : "GL Views",
+			type : "view_manager",
+			ui_opts: {child_view_type : "tabbed", render_name: false, root_classes : ["col-md-6"]},
+			elements : {}
 		    },
 		    
-		    /*
-		      
+	    	    screen : {
+			ui_opts : { root_classes : ["col-md-6"], item_classes : ["col-md-6"]},
+	    		//name : "GL Screen"
+	    		//type : "glscreen"
+	    	    }
+		    
+	    	}
+		
+		//name : "GL 2D Screen",
+		//intro  : "GL multiviews ...",
+		//ui_opts : { root_classes : [], child_view_type : "tabbed" },
+		//elements : {}
+	    },
+	    
+	    /*
+	      
 		      setup : {
 		      name : "Setup",
 		      elements : {
@@ -937,44 +890,24 @@ var xd1_templates={
 			    }
 			}
 		    },
-		    about : { name : "About", type : "html", url : "/XD-1/about.html", ui_opts : {} }
-		}
-	    },
-	    drawing : {
-		//name : "GL Screen",
-		ui_opts : { child_view_type : "divider", divdir : false},
-		//type : "string", value : "Hello widget !",
-	    	elements : {
-		    views : {
-			name : "GL Views",
-			type : "view_manager",
-			ui_opts: {child_view_type : "tabbed", render_name: false},
-			elements : {}
-		    },
-
-	    	    screen : {
-	    		//name : "GL Screen"
-	    		//type : "glscreen"
-	    	    }
-		    
-	    	}
-
-		//name : "GL 2D Screen",
-		//intro  : "GL multiviews ...",
-		//ui_opts : { root_classes : [], child_view_type : "tabbed" },
-		//elements : {}
+	    about : {
+		type : "html", url : "/XD-1/about.html", ui_opts : {},
+		name : "About xd1",
+		intro: "A multi-document, multi-layer FITS image viewer."
 	    }
 	}
+	//     },
+	// }
     },
     
     
-
+    
     gl_multilayer : {
 	name : "GL Multilayer",
 	type: "gl_multilayer",
 	events : ["gl_ready"],
 	ui_opts: {
-	    child_view_type : "tabbed", render_name: false, close: true
+	    child_view_type : "pills", render_name: false, close: true
 	},
 	elements : {
 	    geometry : {

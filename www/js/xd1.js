@@ -21,9 +21,9 @@ template_ui_builders.xd1=function(ui_opts, xd){
 
 
     //for(var p in xd.elements ) console.log("xdp = " + p);
-    var mwl_demo=xd.elements.ui.elements.demo;
+    var mwl_demo=xd.elements.demo;
 
-    var user_objects=xd.elements.ui.elements.objects;
+    var user_objects=xd.elements.objects;
     var drawing_widget=xd.elements.drawing.elements.screen;
 
     drawing_widget.ui_root.style.overflow="hidden";
@@ -32,7 +32,13 @@ template_ui_builders.xd1=function(ui_opts, xd){
 
     var drawing_node=cc("div", drawing_widget.ui_root);
     drawing_node.add_class("drawing_node");
+    //drawing_widget.ui_root.
 
+    
+    
+
+    
+    
     xd.listen("view_update", function(){
 	console.log("XD1 view update !");
     });
@@ -81,8 +87,22 @@ template_ui_builders.xd1=function(ui_opts, xd){
 	var glmui = create_ui({}, glm);
 
 	glm.set_drawing_node(drawing_node);
-
+	
 	glm.listen("gl_ready", function(){
+	    
+	    var iv=setInterval(function(){
+		var w=drawing_widget.ui_root.clientWidth;
+		//console.log("W=" + drawing_widget.ui_root.clientWidth);
+		if(w>0){
+	
+		    glm.trigger("view_update");
+		    clearInterval(iv);
+		}
+		//drawing_node.style.height=drawing_widget.ui_root.clientWidth+"px";
+	    }, 200);
+
+	    
+	    
 	    cb(null,glm);
 	});
 
@@ -173,23 +193,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     });
 
     
-    glm.set_drawing_node=function(node){
-	glm.drawing_node=node;
-	glm.drawing_node.appendChild(glscreen.ui);
-
-	glm.listen("view_update", function() {
-	    //console.log("glm view update");
-	    
-	    //glm.ui_childs.add_child(glscreen.ui, glscreen);
-	    //var ov={w:0,h:0};//
-	    //var ov=get_overflow(glm.drawing_node);
-	    //var sz={w: parseFloat(ov.sty.width)-ov.w, h: parseFloat(ov.sty.height)-ov.h};
-	    
-	    var sz={ w : glm.drawing_node.clientWidth, h: glm.drawing_node.clientHeight};
-	    glscreen.resize(sz.w, sz.h);
-	});
-	
-    }
     
     glm.pvals=[];
     glm.maxlayers=4;
@@ -252,6 +255,26 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    glm.render();
 	});
 	
+	glm.set_drawing_node=function(node){
+	    glm.drawing_node=node;
+	    glm.drawing_node.appendChild(glscreen.ui);
+
+	    glm.listen("view_update", function() {
+		//console.log("glm view update");
+		glm.glscreen.resize(glm.drawing_node.clientWidth, glm.drawing_node.clientHeight);
+		glm.glscreen.canvas.focus();
+		glm.render();
+		//glm.ui_childs.add_child(glscreen.ui, glscreen);
+		//var ov={w:0,h:0};//
+		//var ov=get_overflow(glm.drawing_node);
+		//var sz={w: parseFloat(ov.sty.width)-ov.w, h: parseFloat(ov.sty.height)-ov.h};
+		
+		//var sz={ w : glm.drawing_node.clientWidth, h: glm.drawing_node.clientHeight};
+		//glscreen.resize(sz.w, sz.h);
+	    });
+	    
+	}
+
 	glm.update_layer_ranges=function(){
 	    var w=glscreen.canvas.clientWidth;
 	    var h=glscreen.canvas.clientHeight;
@@ -359,11 +382,15 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    
 	});
 	
+
+
 	glm.render=function () {
 
-	    //console.log("Rendering...");
-	    
 	    var positionLocation = gl.getAttribLocation(glm.program, "vPosition");
+
+	    console.log("Render vp " + glm.drawing_node.clientWidth + " , " +  glm.drawing_node.clientHeight);
+	    //gl.viewport(0, 0, glm.drawing_node.clientWidth, glm.drawing_node.clientHeight);
+
 	    
 	    //window.requestAnimationFrame(render, canvas);
 	    
@@ -480,10 +507,10 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    create_vertex_buffer();
 
 
-	    glscreen.canvas.focus();
+	    
 	    
 	    glm.trigger("gl_ready");
-	    glm.trigger("view_update");
+
 
 	    console.log("GLM : program ready");
 
@@ -588,4 +615,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    
     });
 
+    //return drawing_node;
+    
 }
