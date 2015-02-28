@@ -184,7 +184,9 @@ var xd1_templates={
 	intro: "Select a FITS image file on your local filesystem",
 	name : "FITS file",
 	type : "local_file",
-	ui_opts : {editable: false, sliding : false, slided : false, type : "edit"}
+	ui_opts : {label : true, editable: false, sliding : false, slided : false, type : "edit",
+		   root_classes : ["col-md-12"], child_classes : ["row"]
+		  }
 /*
 
 	ui_opts : { child_view_type : "radio", sliding : true, slided : false, root_classes : []}, 
@@ -221,21 +223,27 @@ var xd1_templates={
 	type : "template",
 	tpl_builder : "image",
 	template_name : "binary_object",
-	ui_opts : {child_view_type : "div", close: true, render_name : true },
+	ui_opts : {child_view_type : "div", close: true, render_name : true, child_classes : ["row"], root_classes : ["container-fluid"] },
 	events : ["image_ready"],
 	elements : { 
 	    source : {
 		intro: "Select a FITS image file on your local filesystem",
 		name : "FITS file",
 		type : "local_file",
-		ui_opts : {editable: false, sliding : false, slided : false, type : "edit"},
+		ui_opts : {editable: false, sliding : false, slided : false, type : "edit",
+			   root_classes : ["col-md-12"]
+			  },
 		elements : {
-		    keys : { name : "Metadata", type : "text", elements : {}, ui_opts: {sliding: true, slided: false, label : true}}
+		    keys : { name : "Metadata", type : "text", elements : {},
+			     ui_opts: {sliding: true, slided: false, label : true, root_classes : ["col-md-3"]}}
 		}
 		
 	    },
 	    
-	    dims : { type: "template", template_name : "image_dimensions", ui_opts: {sliding: false, slided: false}},
+	    dims : { type: "template", template_name : "image_dimensions",
+		     ui_opts: {sliding: false, slided: false,
+			       root_classes : ["col-md-4"]
+			      }},
 	    bounds : {
 		type : "labelled_vector",
 		name : "Data value bounds",
@@ -243,12 +251,16 @@ var xd1_templates={
 		value_labels : ["Min","Max"],
 		min : "-100000", 
 		max : "100000", 
-		ui_opts : { editable : false, sliding : false , sliding_dir : "h",slided : false, label : true }
+		ui_opts : { editable : false, sliding : false , sliding_dir : "h",slided : false, label : true,
+			    root_classes : ["col-md-4"]
+			  }
 		//ui_opts: {}
 	    },
 	    view : {
 		name: "Display",
-		ui_opts: {sliding: false, slided: false, bar : false, child_classes : ["btn-group"]},
+		ui_opts: {sliding: false, slided: false, bar : false,
+			  root_classes : ["col-md-12"],
+			  child_classes : ["btn-group"]},
 		elements : {
 		    new_display : {
 			type : "action",
@@ -277,7 +289,7 @@ var xd1_templates={
     image_reduction : {
 	type : "image_reduction",
 	name : "Simple image reduction",
-	ui_opts : { child_view_type : "bar", close: true},
+	ui_opts : { child_view_type : "pills", close: true},
 	elements : {
 	    processing: {
 		name : "Processing",
@@ -731,11 +743,13 @@ var xd1_templates={
     },
     
     xd1 : {
-
-	//name: "XD1", 
+	/*
+	name: "XD1",
+	intro : "JS/WebGL FITS viewer",
+*/
 	type : "template",
 	tpl_builder : "xd1",
-	ui_opts: {child_view_type : "pills", root: true, label: true, divdir: false, split_frac : 33, root_classes : ["container-fluid"], child_classes : ["row"] },
+	ui_opts: {child_view_type : "pills", root: true, label: false, divdir: false, split_frac : 33, root_classes : ["container-fluid"], child_classes : ["row"] },
 	
 	// elements : {
 
@@ -767,7 +781,7 @@ var xd1_templates={
 	elements : {
 	    objects : { 
 		type : "template",
-		ui_opts: {},
+		ui_opts: {root_classes : ["col-md-12"]},
 		template_name : "user_objects",
 		elements : {
 		    
@@ -776,7 +790,7 @@ var xd1_templates={
 	    
 	    drawing : {
 		name : "Views",
-		ui_opts : { child_view_type : "div", divdir : false, root_classes : ["row","right"]},
+		ui_opts : { child_view_type : "div", divdir : false, root_classes : ["col-md-12"], child_classes : ["row"]},
 		//type : "string", value : "Hello widget !",
 	    	elements : {
 		    views : {
@@ -787,7 +801,7 @@ var xd1_templates={
 		    },
 		    
 	    	    screen : {
-			ui_opts : { root_classes : ["col-md-6"], item_classes : ["col-md-6"]},
+			ui_opts : { root_classes : ["col-md-6"], item_classes : []},
 	    		//name : "GL Screen"
 	    		//type : "glscreen"
 	    	    }
