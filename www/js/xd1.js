@@ -506,9 +506,6 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
 	    create_vertex_buffer();
 
-
-	    
-	    
 	    glm.trigger("gl_ready");
 
 

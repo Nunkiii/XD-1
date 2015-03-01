@@ -223,7 +223,8 @@ var xd1_templates={
 	type : "template",
 	tpl_builder : "image",
 	template_name : "binary_object",
-	ui_opts : {child_view_type : "div", close: true, render_name : true, child_classes : ["row"], root_classes : ["container-fluid"] },
+	ui_opts : {child_view_type : "div", close: true, render_name : true,
+		   child_classes : ["row"], root_classes : ["container-fluid"] },
 	events : ["image_ready"],
 	elements : { 
 	    source : {
@@ -430,21 +431,23 @@ var xd1_templates={
     
     cursor_info : {
 	name : "Cursor",
-	//ui_opts : {sliding : true, slided : false},
+	ui_opts : {
+	    root_classes : ["panel panel-default container-fluid"], child_classes : ["row"]
+	},
 	elements : {
 	    screen : {
 		type: "labelled_vector",
 		name : "Screen pixel",
 		value_labels : ["X","Y"],
 		value : [0,0],
-		ui_opts : { label : true, root_classes : ["inline"] }
+		ui_opts : { label : true, root_classes : ["col-md-6"] }
 	    },
 	    astro : {
 		type: "labelled_vector",
 		name : "Equatorial coordinates",
 		value_labels : ["Ra","Dec"],
 		value : [0,0],
-		ui_opts : { label : true, root_classes : ["inline"] }
+		ui_opts : { label : true, root_classes : ["col-md-6"] }
 	    },
 	    layers : {
 	    }
@@ -455,18 +458,19 @@ var xd1_templates={
     cursor_layer_info : {
 	name : "Cursor Layer Info",
 	type : "cursor_layer_info",
+	ui_opts : {root_classes : ["container-fluid"], child_classes : ["row"], label : true},
 	elements : {
 	    imgpos : {
 		type: "labelled_vector",
 		name : "Image pixel",
 		value_labels : ["X","Y"],
 		value : [0,0],
-		ui_opts : { label : true }
+		ui_opts : { label : true, root_classes : ["col-md-5"] }
 	    },
 	    pixval : {
 		name : "Pixel value",
 		type : "double",
-		ui_opts : { label : true }
+		ui_opts : { label : true, root_classes : ["col-md-5"] }
 	    }
 	}
     },
@@ -474,18 +478,20 @@ var xd1_templates={
     options : {
 	name : "Viewer options",
 	ui_opts : {
+	    root_classes : ["container-fluid"],
 	    //sliding : true, slided : false, child_view_type : "div",
-	    child_classes : ["action_box", "vertical"]
+	    child_classes : ["row"]
 	},
 	elements : {
 	    image_axes : {
-		name : "Show image axes", type : "bool", value : false, ui_opts : { type : "edit" }
+		name : "Show image axes", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["col-md-4"] }
 	    },
 	    x_plot : {
-		name : "Show X plot", type : "bool", value : false, ui_opts : { type : "edit"}
+		name : "Show X plot", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["col-md-4"]}
+									 
 	    },
 	    y_plot : {
-		name : "Show Y plot", type : "bool", value : false, ui_opts : { type : "edit"}
+		name : "Show Y plot", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["col-md-4"]}
 	    }
 
 	}
@@ -498,7 +504,8 @@ var xd1_templates={
 	ui_opts: {
 	    //root_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true
 	    //render_name : false,
-	    child_view_type : "div"
+	    child_view_type : "div",
+	    fa_icon : "crop"
 	    
 	},
 
@@ -509,7 +516,7 @@ var xd1_templates={
 		type : "labelled_vector",
 		value : [0,0],
 		value_labels : ["T<sub>X</sub>","T<sub>Y</sub>"],
-
+		
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
@@ -520,7 +527,7 @@ var xd1_templates={
 	    rotation : {
 		name : "Rotation",
 		ui_opts: {sliding: false, sliding_dir:"h", slided : true,
-			  root_classes : ["inline"], label: true},
+			  root_classes : ["inline"], label: true, fa_icon : "rotate-left"},
 		elements : {
 		    angle : {
 			name : "R<sub>α</sub>",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02,
@@ -546,7 +553,8 @@ var xd1_templates={
 	    },
 	    
 	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		     ui_opts : { editable : true, root_classes : ["inline"], sliding : false, sliding_dir : "h", slided : true, label: true} 
+		     ui_opts : { editable : true, root_classes : ["inline"], sliding : false, sliding_dir : "h", slided : true, label: true,
+				 fa_icon : "crosshairs"} 
 		   }
 	    
 	}
@@ -581,8 +589,10 @@ var xd1_templates={
 	name :  "GL Image layer",
 	type : "template",
 	tpl_builder : "xd1_layer",
-	ui_opts : { //root_classes : ["inline"], child_classes : ["newline"], //name_classes : ["inline"], item_classes : ["inline"], 
-	    child_view_type : "pills", 
+	ui_opts : {
+	    root_classes : [], child_classes : [],
+	    child_view_type : "pills",
+	    
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
 	    render_name : false,
 	    close: true
@@ -593,15 +603,15 @@ var xd1_templates={
 		name : "Enable layer",
 		type : "bool",
 		value : true,
-		ui_opts : {editable : false, label : false, type : "edit"}
+		ui_opts : {editable : false, label : false, type : "edit", root_classes : ["col-md-12"]}
 	    },
 	    geometry : {
 		name : "Layer geometry",
 		type : "template",
 		template_name : "geometry",
 		ui_opts : {
-		    
-		    root_classes : [], child_classes : [], 
+		    root_classes : ["col-md-12"],
+		    child_classes : [], 
 		    //sliding : true , sliding_dir : "h", slided : false
 		    //child_view_type : "pills" 
 		},
@@ -609,7 +619,12 @@ var xd1_templates={
 		}
 	    },
 	    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
-		    ui_opts : {input_type : "range", editable: true , type : "short",  root_classes : [], label : false} },
+		    ui_opts : {
+			input_type : "range", editable: true , type : "short", root_classes : ["col-md-12"], label : false,
+			fa_icon : "lightbulb-o"
+		    }
+
+		   },
 	    
 	    // histo : {
 		    // 	name : "Colors and cuts",
@@ -622,7 +637,7 @@ var xd1_templates={
 		type : "colormap",
 		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
 		ui_opts : {editable : true,
-			   root_classes : [], item_classes : [],
+			   root_classes : ["col-md-12"], item_classes : [],
 			  },
 			// value : [[0,0,0,1,0],
 		// 	      [0.8,0.2,0.8,1.0,0.2],
@@ -639,7 +654,7 @@ var xd1_templates={
 	    },
 	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
 		     ui_opts: {
-			 sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",  root_classes : ["inline"],
+			 sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short", root_classes : ["col-md-12"],
 			 label : false
 		     }},
 	    
@@ -650,7 +665,8 @@ var xd1_templates={
 		ui_opts : {
 		    //width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
 		    //root_classes : [], item_classes : [],
-		    sliding : false , sliding_dir : "h", slided : true
+		    sliding : false , sliding_dir : "h", slided : true,
+		    root_classes : ["col-md-12"]
 		}
 		
 		
@@ -751,14 +767,6 @@ var xd1_templates={
 	tpl_builder : "xd1",
 	ui_opts: {child_view_type : "pills", root: true, label: false, divdir: false, split_frac : 33, root_classes : ["container-fluid"], child_classes : ["row"] },
 	
-	// elements : {
-
-	    
-	//     ui : {
-	// 	name : "Images",
-	// 	//subtitle : "A multi-document, multi-layer FITS image viewer",
-	// 	ui_opts: {child_view_type : "tabbed", root_classes : ["col-md-6","left"], name_classes : [], name_node : "h2"},
-		
 	toolbar : {
 	    file : {
 		name : "File",
@@ -790,13 +798,19 @@ var xd1_templates={
 	    
 	    drawing : {
 		name : "Views",
-		ui_opts : { child_view_type : "div", divdir : false, root_classes : ["col-md-12"], child_classes : ["row"]},
+		ui_opts : { child_view_type : "div", divdir : false, root_classes : ["col-md-12"], child_classes : ["row"],
+			    fa_icon : "image",
+			    render_name : false
+			  },
 		//type : "string", value : "Hello widget !",
 	    	elements : {
 		    views : {
 			name : "GL Views",
 			type : "view_manager",
-			ui_opts: {child_view_type : "tabbed", render_name: false, root_classes : ["col-md-6"]},
+			ui_opts: {child_view_type : "tabbed",
+				  render_name: false,
+				  root_classes : ["col-md-6"],
+				  child_classes : [""]},
 			elements : {}
 		    },
 		    
@@ -814,96 +828,54 @@ var xd1_templates={
 		//elements : {}
 	    },
 	    
-	    /*
-	      
-		      setup : {
-		      name : "Setup",
-		      elements : {
-		      sadira : {
-		      tip : "DEV",
-		      name : "Sadira link",
-		      type : "template",
-		      template_name : "sadira"
-		      }
-		      }
-		      },
-		      telescope_control : {
-		      name: "Telescope control",
-		      ui_opts : { child_view_type : "tabbed"},
-		      elements : {
-		      mount : {
-		      name : "Pointing",
-		      type : "template",
-		      template_name : "mount_control",
-		      ui_opts : { sliding : false, slided: false },
-		      },
-		      camera_science : {
-		      name : "Science Camera",
-		      type: "template",
-		      template_name : "sbig_control",
-		      ui_opts : { sliding : false, slided: false }
-		      },
-		      camera_guider : {
-		      name : "Guider Camera",
-		      type: "template",
-		      template_name : "sbig_control",
-		      ui_opts : { sliding : false, slided: false }
-		      },
-		      filter_wheel : {
-		      ui_opts : { sliding : false, slided: false },
-		      name : "Filter wheel"
-		    }
-		    }
-		    },
-		    */
+	    demo : {
+		name : "Multiband demos",
+		ui_opts : {render_name: false},
+		intro : "Loads multiple FITS files of different wavelength band in multiple color layers.",
+		tpl_builder : "demo_multilayer",
+		elements : {
 		    
-		    demo : {
-			name : "Multiband demos",
-			ui_opts : {render_name: false},
-			intro : "Loads multiple FITS files of different wavelength band in multiple color layers.",
-			tpl_builder : "demo_multilayer",
+		    cnx : {
+			ui_opts : {label: true},
+			name : "Websocket",
+			tip : "Websocket connexion to a sadira server",
+			type : "template",
+			template_name : "sadira"
+			
+		    },
+		    demos : {
+			intro : "Choose an image set :",
+			ui_opts :{child_classes : ["action_box","vertical"]},
+			
 			elements : {
-			    
-			    cnx : {
-				name : "Websocket",
-				tip : "Websocket connexion to a sadira server",
-				type : "template",
-				template_name : "sadira"
-				
+			    catseye : {
+				intro : "The Cat's Eye nebula (old HST data), 4 filters.",
+				name : "Launch demo",
+				type : "action",
+				ni : 4,
+				demo_name : "catseye",
+				ui_opts : { root_classes : []}
 			    },
-			    demos : {
-				intro : "Choose an image set :",
-				ui_opts :{child_classes : ["action_box","vertical"]},
-				
-				elements : {
-				    catseye : {
-					intro : "The Cat's Eye nebula (old HST data), 4 filters.",
-					name : "Launch demo",
-					type : "action",
-					ni : 4,
-					demo_name : "catseye",
-					ui_opts : { root_classes : []}
-				    },
-				    loiano : {
-					intro : "Star field taken from Loiano observatory, 4 filters.",
-					name : "Launch demo",
-					type : "action",
-					ni : 4,
-					demo_name : "loiano",
-					ui_opts : { root_classes : []}
-				    },
-				    M42 : {
-					intro : "Orion nebula as seen by Hubble, in red and infrared (2 filters).",
-					name : "Launch demo",
-					type : "action",
-					ni : 2,
-					demo_name : "M42",
-					ui_opts : { root_classes : []}
-				    }
-				}
+			    loiano : {
+				intro : "Star field taken from Loiano observatory, 4 filters.",
+				name : "Launch demo",
+				type : "action",
+				ni : 4,
+				demo_name : "loiano",
+				ui_opts : { root_classes : []}
+			    },
+			    M42 : {
+				intro : "Orion nebula as seen by Hubble, in red and infrared (2 filters).",
+				name : "Launch demo",
+				type : "action",
+				ni : 2,
+				demo_name : "M42",
+				ui_opts : { root_classes : []}
 			    }
 			}
-		    },
+		    }
+		}
+	    },
 	    about : {
 		type : "html", url : "/XD-1/about.html", ui_opts : {},
 		name : "About xd1",
@@ -914,32 +886,32 @@ var xd1_templates={
 	// }
     },
     
-    
-    
     gl_multilayer : {
 	name : "GL Multilayer",
 	type: "gl_multilayer",
 	events : ["gl_ready"],
 	ui_opts: {
-	    child_view_type : "pills", render_name: false, close: true
+	    child_view_type : "pills", render_name: false, close: true,
+	    root_classes : [""],child_classes : [""]
 	},
 	elements : {
 	    geometry : {
 		tip : "View geometry",
 		intro : "Change GL view's geometrical parameters",
 		type : "template",
-		template_name : "geometry"
+		template_name : "geometry",
+		ui_opts : {render_name : false, root_classes : ["panel panel-default col-md-12"]}
 		//ui_opts: {sliding: true, child_view_type : "div"}
 			 
 	    },
 	    cursor : {
-		ui_opts : {render_name : false},
+		//ui_opts : {render_name : false, root_classes : ["col-md-12"]},
 		intro : "Display the cursor position image information",
 		template_name : "cursor_info",
 		type : "template"
 	    },
 	    options : {
-		ui_opts : {render_name : false},
+		ui_opts : {root_classes : ["col-md-12"]},
 		intro : "GL display options",
 		template_name : "options",
 		type : "template"
@@ -948,6 +920,8 @@ var xd1_templates={
 		name : "Image layers",
 		ui_opts: {
 		    //sliding: true,
+		    root_classes : ["col-md-12"],
+		    child_classes : ["row"],
 		    child_view_type : "tabbed",
 		    render_name : false
 		},
