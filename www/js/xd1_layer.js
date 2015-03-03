@@ -640,9 +640,9 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	update_histo_cmap();
     });
     
-    histo_tpl.listen("range_change",function(new_range){
+    histo_tpl.elements.zoom.listen("click",function(new_range){
 	console.log("Histo Range change !, recomp histo");
-	compute_histogram(nbins, new_range);
+	compute_histogram(nbins, histo_tpl.elements.range.value);
 	update_histo_cmap();
     });
 
@@ -782,6 +782,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	console.log("AUTOCOUT Number of items : " + fa.length, " NB = " + ab.byteLength + " npix="+ll + " cuts + " + JSON.stringify(newcuts));
 	
 	cuts.set_value(newcuts);
+	//histo_tpl.set_selection(newcuts);
 	cuts.trigger("change");
     }
     
@@ -1026,6 +1027,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	    p.args[2]=step;
 	    p.data=histo;
 	    histo_tpl.config_range();
+	    //histo_tpl.set_range();
 	}
 	
 	//histo_tpl.set_value(histo);

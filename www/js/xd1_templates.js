@@ -478,20 +478,22 @@ var xd1_templates={
     options : {
 	name : "Viewer options",
 	ui_opts : {
-	    root_classes : ["container-fluid"],
+	    root_classes : ["panel panel-default container-fluid"],
 	    //sliding : true, slided : false, child_view_type : "div",
-	    child_classes : ["row"]
+	    render_name : true,
+	    subtitle : "Set display options",
+	    child_classes : ["col-md-12"]
 	},
 	elements : {
 	    image_axes : {
-		name : "Show image axes", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["col-md-4"] }
+		name : "Show image axes", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"] }
 	    },
 	    x_plot : {
-		name : "Show X plot", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["col-md-4"]}
+		name : "Show X plot", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
 									 
 	    },
 	    y_plot : {
-		name : "Show Y plot", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["col-md-4"]}
+		name : "Show Y plot", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
 	    }
 
 	}
@@ -500,7 +502,6 @@ var xd1_templates={
     geometry : {
 	
 	name : "Geometry",
-	intro : undefined,
 	ui_opts: {
 	    //root_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true
 	    //render_name : false,
@@ -681,83 +682,6 @@ var xd1_templates={
 	}
     },
     
-    gl_view_2d :  {
-	name : "GL 2D View",
-	ui_opts: {
-	    //root_classes : ["inline"], item_classes : ["inline"], child_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true,
-	    child_view_type : "tabbed"},
-	//ui_opts: {sliding: true, sliding_dir:"h", root_classes : []},
-	// elements : {
-	//     layers : { 
-	// 	name: "Layers", 
-	elements : {
-	    layers : {
-		name : "Image Layers",
-		ui_opts: {
-		    //sliding: false, sliding_dir:"h", slided : true, root_classes : ["inline"], child_classes : ["inline"],
-		    child_view_type : "tabbed"
-		},
-	    	elements : {
-		    newlayer : {
-			type : "action",
-			name : "Add new layer",
-			ui_opts: {
-			    root_classes : ["inline"], name_classes : [], label : true
-			}
-
-		    }/*,
-		    layer_objects : { 
-			ui_opts: {
-			    child_view_type : "bar", root_classes : ["inline"], child_classes : ["newline"]
-			}
-		    }*/
-		}
-	    },
-	    
-	    //	}
-	    //	    },
-	    
-	    geometry : {
-		name : "Global geometry",
-		type : "template",
-		template_name : "geometry",
-		ui_opts: {
-		    sliding: false, child_view_type : "div"
-		}
-	    },
-	    demo : {
-		name : "Multi-Wavelength demos",
-		ui_opts : {editable: false, sliding : false, slided : false, child_classes : ["action_box","vertical"]},
-		intro : "Loads multiple fits files of different wavelength band in multiple color layers.",
-		elements : {
-		    sadira : {
-			intro : "Websocket connexion to sadira server.",
-			name : "Websocket",
-			type : "template",
-			template_name : "sadira"
-		    },
-		    catseye : {
-			intro : "The Cat's Eye nebula as seen by Hubble a long time ago, with 4 different filters.",
-			name : "Hubble Cat's Eye Nebula (4 filters)",
-			type : "action",
-			ui_opts : { root_classes : ["inline"]}
-		    },
-		    M42 : {
-			intro : "Orion nebula as seen by Hubble, in red and infrared.",
-			name : "Hubble M42 Nebula (2 filters)",
-			type : "action",
-			ui_opts : { root_classes : ["inline"]}
-		    }
-		}
-	    },
-
-	    about : { name : "About", type : "html", url : "about.html", ui_opts : { sliding : false, sliding_dir : "v", slided : false, root_classes : ["inline"]} },
-
-   
-	}
-	
-    },
-    
     xd1 : {
 	/*
 	name: "XD1",
@@ -787,7 +711,8 @@ var xd1_templates={
 	
 	
 	elements : {
-	    objects : { 
+	    objects : {
+		name : "Images",
 		type : "template",
 		ui_opts: {root_classes : ["col-md-12"]},
 		template_name : "user_objects",
@@ -816,6 +741,7 @@ var xd1_templates={
 		    
 	    	    screen : {
 			ui_opts : { root_classes : ["col-md-6"], item_classes : []},
+			
 	    		//name : "GL Screen"
 	    		//type : "glscreen"
 	    	    }
@@ -831,8 +757,9 @@ var xd1_templates={
 	    demo : {
 		name : "Multiband demos",
 		ui_opts : {render_name: false},
-		intro : "Loads multiple FITS files of different wavelength band in multiple color layers.",
+		subtitle : "Loads multiple FITS files of different wavelength band in multiple color layers.",
 		tpl_builder : "demo_multilayer",
+		ui_opts : { root_classes : [], child_classes : [], name_classes : ["page-header"] },
 		elements : {
 		    
 		    cnx : {
@@ -897,22 +824,22 @@ var xd1_templates={
 	elements : {
 	    geometry : {
 		tip : "View geometry",
-		intro : "Change GL view's geometrical parameters",
+		subtitle : "Change GL view's geometrical parameters",
 		type : "template",
 		template_name : "geometry",
-		ui_opts : {render_name : false, root_classes : ["panel panel-default col-md-12"]}
+		ui_opts : {root_classes : ["panel panel-default col-md-12"]}
 		//ui_opts: {sliding: true, child_view_type : "div"}
 			 
 	    },
 	    cursor : {
 		//ui_opts : {render_name : false, root_classes : ["col-md-12"]},
-		intro : "Display the cursor position image information",
+		subtitle : "Display cursor position information",
 		template_name : "cursor_info",
 		type : "template"
 	    },
 	    options : {
-		ui_opts : {root_classes : ["col-md-12"]},
-		intro : "GL display options",
+		ui_opts : {root_classes : ["panel panel-default col-md-12"]},
+		subtitle : "GL display options",
 		template_name : "options",
 		type : "template"
 	    },
@@ -926,6 +853,20 @@ var xd1_templates={
 		    render_name : false
 		},
 		elements : {}
+	    },
+	    iexport : {
+		name : "Export image",
+		subtitle : "Save current GL view as a bitmap.",
+		ui_opts : {root_classes : ["panel panel-default container-fluid"],
+			  item_classes : ["row"]
+			  },
+		elements : {
+		    topng : {
+			name : "Save view to PNG",
+			type : "action"
+		    }
+		}
+		
 	    }
 	}	
     }

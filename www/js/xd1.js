@@ -180,6 +180,9 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     var ag=glm.ag=geo.rotation.elements.angle; 
     var rc=glm.rc=geo.rotation.elements.center;
 
+    var topng=glm.elements.iexport.elements.topng;
+
+    
     // if(typeof glm.drawing_node === 'undefined'){
     // 	console.log("No drawing node specified...");
     // 	glm.drawing_node=glm.ui_root;
@@ -272,6 +275,13 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 		//var sz={ w : glm.drawing_node.clientWidth, h: glm.drawing_node.clientHeight};
 		//glscreen.resize(sz.w, sz.h);
 	    });
+	    
+	    topng.listen("click", function(){
+		var w=window.open(glm.glscreen.canvas.toDataURL("image/png"));
+		//w.document.write("<img src='"+d+"' alt='from canvas'/>");
+		
+	    });
+
 	    
 	}
 
@@ -388,7 +398,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
 	    var positionLocation = gl.getAttribLocation(glm.program, "vPosition");
 
-	    console.log("Render vp " + glm.drawing_node.clientWidth + " , " +  glm.drawing_node.clientHeight);
+	    //console.log("Render vp " + glm.drawing_node.clientWidth + " , " +  glm.drawing_node.clientHeight);
 	    //gl.viewport(0, 0, glm.drawing_node.clientWidth, glm.drawing_node.clientHeight);
 
 	    
