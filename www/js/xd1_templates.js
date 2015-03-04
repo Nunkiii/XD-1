@@ -684,8 +684,7 @@ var xd1_templates={
     
     xd1 : {
 	/*
-	name: "XD1",
-	intro : "JS/WebGL FITS viewer",
+
 */
 	type : "template",
 	tpl_builder : "xd1",
@@ -712,7 +711,9 @@ var xd1_templates={
 	
 	elements : {
 	    objects : {
-		name : "Images",
+		name: "XD-1",
+		sibtitle : "A JS/WebGL FITS viewer",
+		name_node : "h1",
 		type : "template",
 		ui_opts: {root_classes : ["col-md-12"]},
 		template_name : "user_objects",
@@ -757,13 +758,14 @@ var xd1_templates={
 	    demo : {
 		name : "Multiband demos",
 		ui_opts : {render_name: false},
-		subtitle : "Loads multiple FITS files of different wavelength band in multiple color layers.",
+		subtitle : "Loads images from different wavelength bands in multiple color layers of the same display.",
 		tpl_builder : "demo_multilayer",
-		ui_opts : { root_classes : [], child_classes : [], name_classes : ["page-header"] },
+		ui_opts : { root_classes : ["container-fluid"], child_classes : ["row"], name_classes : [],
+			    name_node : "h2"},
 		elements : {
 		    
 		    cnx : {
-			ui_opts : {label: true},
+			ui_opts : {label: true, root_classes : ["panel panel-default col-md-12"], sliding: true, slided: false},
 			name : "Websocket",
 			tip : "Websocket connexion to a sadira server",
 			type : "template",
@@ -772,7 +774,7 @@ var xd1_templates={
 		    },
 		    demos : {
 			intro : "Choose an image set :",
-			ui_opts :{child_classes : ["action_box","vertical"]},
+			ui_opts :{child_classes : ["action_box","vertical"],root_classes : ["panel panel-default col-md-12"]},
 			
 			elements : {
 			    catseye : {
@@ -804,9 +806,9 @@ var xd1_templates={
 		}
 	    },
 	    about : {
-		type : "html", url : "/XD-1/about.html", ui_opts : {},
+		type : "html", url : "/XD-1/about.html", ui_opts : {name_node : "h2", name_classes : [], root_classes : ["container"]},
 		name : "About xd1",
-		intro: "A multi-document, multi-layer FITS image viewer."
+		subtitle: "A multi-document, multi-layer FITS image viewer."
 	    }
 	}
 	//     },

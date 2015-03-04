@@ -1,8 +1,9 @@
 template_ui_builders.sbig_control=function(ui_opts, sbig){
-
-    var expo=sbig.elements.exposure.elements;
-    var cooling=sbig.elements.cooling.elements;
-    var actions=sbig.elements.actions.elements;
+    var controls=sbig.elements.control;
+    
+    var expo=controls.elements.exposure.elements;
+    var cooling=controls.elements.cooling.elements;
+    var actions=controls.elements.actions.elements;
     var exptime=expo.exptime;
     var nexpo=expo.nexpo;
     var messages=sbig.elements.messages;
