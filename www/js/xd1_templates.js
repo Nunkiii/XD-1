@@ -587,12 +587,12 @@ var xd1_templates={
     
     
     gl_image_layer : {
-	name :  "GL Image layer",
 	type : "template",
+	name :  "Geometry/Color configuration",
 	tpl_builder : "xd1_layer",
 	ui_opts : {
-	    root_classes : [], child_classes : [],
-	    child_view_type : "pills",
+	    root_classes : [], child_classes : ["row"],
+	    child_view_type : "tabbed",
 	    
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
 	    render_name : false,
@@ -604,14 +604,14 @@ var xd1_templates={
 		name : "Enable layer",
 		type : "bool",
 		value : true,
-		ui_opts : {editable : false, label : false, type : "edit", root_classes : ["col-md-12"]}
+		ui_opts : {editable : false, label : false, type : "edit", root_classes : []}
 	    },
 	    geometry : {
 		name : "Layer geometry",
 		type : "template",
 		template_name : "geometry",
 		ui_opts : {
-		    root_classes : ["col-md-12"],
+		    //root_classes : ["col-md-12"],
 		    child_classes : [], 
 		    //sliding : true , sliding_dir : "h", slided : false
 		    //child_view_type : "pills" 
@@ -621,7 +621,9 @@ var xd1_templates={
 	    },
 	    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
 		    ui_opts : {
-			input_type : "range", editable: true , type : "short", root_classes : ["col-md-12"], label : false,
+			input_type : "range", editable: true , type : "short",
+			//root_classes : ["col-md-12"],
+			label : false,
 			fa_icon : "lightbulb-o"
 		    }
 
@@ -638,7 +640,8 @@ var xd1_templates={
 		type : "colormap",
 		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
 		ui_opts : {editable : true,
-			   root_classes : ["col-md-12"], item_classes : [],
+			   //root_classes : ["col-md-12"],
+			   item_classes : [],
 			  },
 			// value : [[0,0,0,1,0],
 		// 	      [0.8,0.2,0.8,1.0,0.2],
@@ -655,7 +658,8 @@ var xd1_templates={
 	    },
 	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
 		     ui_opts: {
-			 sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short", root_classes : ["col-md-12"],
+			 sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",
+			 //root_classes : ["col-md-12"],
 			 label : false
 		     }},
 	    
@@ -665,9 +669,9 @@ var xd1_templates={
 		template_name : "vector",
 		ui_opts : {
 		    //width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
-		    //root_classes : [], item_classes : [],
+		    root_classes : ["container-fluid"], item_classes : [],
 		    sliding : false , sliding_dir : "h", slided : true,
-		    root_classes : ["col-md-12"]
+		    //root_classes : ["col-md-12"]
 		}
 		
 		
@@ -760,12 +764,12 @@ var xd1_templates={
 		ui_opts : {render_name: false},
 		subtitle : "Loads images from different wavelength bands in multiple color layers of the same display.",
 		tpl_builder : "demo_multilayer",
-		ui_opts : { root_classes : ["container-fluid"], child_classes : ["row"], name_classes : [],
+		ui_opts : { root_classes : [""], child_classes : ["row"], name_classes : [],
 			    name_node : "h2"},
 		elements : {
 		    
 		    cnx : {
-			ui_opts : {label: true, root_classes : ["panel panel-default col-md-12"], sliding: true, slided: false},
+			ui_opts : {label: true, root_classes : ["container"], sliding: true, slided: false},
 			name : "Websocket",
 			tip : "Websocket connexion to a sadira server",
 			type : "template",
@@ -773,40 +777,37 @@ var xd1_templates={
 			
 		    },
 		    demos : {
-			intro : "Choose an image set :",
-			ui_opts :{child_classes : ["action_box","vertical"],root_classes : ["panel panel-default col-md-12"]},
+			name : "Choose an image set :",
+			ui_opts :{child_classes : ["action_box vertical"],root_classes : ["container"]},
 			
 			elements : {
 			    catseye : {
-				intro : "The Cat's Eye nebula (old HST data), 4 filters.",
-				name : "Launch demo",
+				name : "The Cat's Eye nebula (old HST data), 4 filters.",
 				type : "action",
 				ni : 4,
 				demo_name : "catseye",
-				ui_opts : { root_classes : []}
+				ui_opts : { root_classes : [], item_classes : ["btn btn-info btn-lg btn-block"]}
 			    },
 			    loiano : {
-				intro : "Star field taken from Loiano observatory, 4 filters.",
-				name : "Launch demo",
+				name : "Star field taken from Loiano observatory, 4 filters.",
 				type : "action",
 				ni : 4,
 				demo_name : "loiano",
-				ui_opts : { root_classes : []}
+				ui_opts : {  item_classes : ["btn btn-info btn-lg btn-block"] }
 			    },
 			    M42 : {
-				intro : "Orion nebula as seen by Hubble, in red and infrared (2 filters).",
-				name : "Launch demo",
+				name : "Orion nebula as seen by Hubble, in red and infrared (2 filters).",
 				type : "action",
 				ni : 2,
 				demo_name : "M42",
-				ui_opts : { root_classes : []}
+				ui_opts : {  item_classes : ["btn btn-info btn-lg btn-block"]}
 			    }
 			}
 		    }
 		}
 	    },
 	    about : {
-		type : "html", url : "/XD-1/about.html", ui_opts : {name_node : "h2", name_classes : [], root_classes : ["container"]},
+		type : "html", url : "/XD-1/about.html", ui_opts : {name_node : "h1", name_classes : [], root_classes : ["container-fluid"]},
 		name : "About xd1",
 		subtitle: "A multi-document, multi-layer FITS image viewer."
 	    }
@@ -829,7 +830,7 @@ var xd1_templates={
 		subtitle : "Change GL view's geometrical parameters",
 		type : "template",
 		template_name : "geometry",
-		ui_opts : {root_classes : ["panel panel-default col-md-12"]}
+		ui_opts : {root_classes : []}
 		//ui_opts: {sliding: true, child_view_type : "div"}
 			 
 	    },
@@ -837,30 +838,40 @@ var xd1_templates={
 		//ui_opts : {render_name : false, root_classes : ["col-md-12"]},
 		subtitle : "Display cursor position information",
 		template_name : "cursor_info",
-		type : "template"
+		type : "template",
+		ui_opts : {fa_icon : "bullseye"} 
 	    },
 	    options : {
-		ui_opts : {root_classes : ["panel panel-default col-md-12"]},
+		ui_opts : {
+		    root_classes : [],
+		    child_classes : ["container"],
+		    fa_icon : "list"
+		},
 		subtitle : "GL display options",
 		template_name : "options",
 		type : "template"
 	    },
 	    layers : {
-		name : "Image layers",
+		name :  "Image Layers",
+		subtitle : "Configure image layers options.",
+		intro : "<p>Up to four image layers can be displayed using a unique floating point RGBA texture as data input.</p><p> Geometry and color computations are done for every screen pixel using an OpenGL shader program using the 4-band floating-point texture and other small pseudo-textures containing the geometrical, colormap and other parameters needed for the final pixel color computation.</p><p> All the texture data is pre-loaded in the GPU RAM and parallel processed by the many potential GPU cores (thousands on high end hardware), resulting in an incredibly fast rendering of the rather complex XD-1 image pipeline.</p>",
+		
 		ui_opts: {
 		    //sliding: true,
-		    root_classes : ["col-md-12"],
+		    root_classes : [],
 		    child_classes : ["row"],
 		    child_view_type : "tabbed",
-		    render_name : false
+		    render_name : true,
+		    fa_icon : "film"
 		},
 		elements : {}
 	    },
 	    iexport : {
 		name : "Export image",
+		intro : "<p>The WebGL canvas content is encoded as a  base64 string embedded to an html image attached to a new browser tab/window.</p><p>This is the most straight way to produce a PNG image from an HTML canvas.",
 		subtitle : "Save current GL view as a bitmap.",
-		ui_opts : {root_classes : ["panel panel-default container-fluid"],
-			  item_classes : ["row"]
+		ui_opts : {root_classes : [],
+			  item_classes : []
 			  },
 		elements : {
 		    topng : {
