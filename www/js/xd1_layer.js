@@ -507,8 +507,9 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
   //var depth=1;//layer_opts.depth+1;
     var geom=layer.elements;
     
-    var cuts=layer.cuts=geom.cuts; 
-    var histo_tpl=geom.histo; 
+
+    var histo_tpl=geom.histo;
+    var cuts=layer.cuts=histo_tpl.elements.cuts; 
     var cmap=layer.cmap=geom.cmap; 
     var lum=geom.lum; 
     var tr=layer.elements.geometry.elements.translation;

@@ -568,7 +568,7 @@ var xd1_templates={
 	min : "-100000", 
 	max : "100000", 
 	step: "100",
-	ui_opts : { editable : true, root_classes : [],label : true }
+	ui_opts : { editable : true, root_classes : ["inline"],label : true }
 	//ui_opts: {root_classes : ["inline"]}
     },
 
@@ -591,8 +591,8 @@ var xd1_templates={
 	name :  "Geometry/Color configuration",
 	tpl_builder : "xd1_layer",
 	ui_opts : {
-	    root_classes : [], child_classes : ["row"],
-	    child_view_type : "tabbed",
+	    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
+	    child_view_type : "div",
 	    
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
 	    render_name : false,
@@ -604,15 +604,16 @@ var xd1_templates={
 		name : "Enable layer",
 		type : "bool",
 		value : true,
-		ui_opts : {editable : false, label : false, type : "edit", root_classes : []}
+		ui_opts : {editable : false, label : true, type : "edit", root_classes : ["inline"]}
 	    },
 	    geometry : {
-		name : "Layer geometry",
+		//name : "Layer geometry",
 		type : "template",
 		template_name : "geometry",
 		ui_opts : {
 		    //root_classes : ["col-md-12"],
-		    child_classes : [], 
+		    child_classes : [],
+		    render_name : false
 		    //sliding : true , sliding_dir : "h", slided : false
 		    //child_view_type : "pills" 
 		},
@@ -622,8 +623,8 @@ var xd1_templates={
 	    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
 		    ui_opts : {
 			input_type : "range", editable: true , type : "short",
-			//root_classes : ["col-md-12"],
-			label : false,
+			root_classes : ["inline"],
+			label : true,
 			fa_icon : "lightbulb-o"
 		    }
 
@@ -656,22 +657,23 @@ var xd1_templates={
 			 [0.8,0.9,0.1,1.0,0.6],
 			 [1,1,1,1,1]] 
 	    },
-	    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
-		     ui_opts: {
-			 sliding : false , sliding_dir : "h", slided : false, editable : true,  type : "short",
-			 //root_classes : ["col-md-12"],
-			 label : false
-		     }},
 	    
 	    histo : {
 		name : "Histogram",
 		type : "template",
 		template_name : "vector",
 		ui_opts : {
-		    //width: 300, height: 200, margin : {top: 10, right: 15, bottom: 30, left: 70},
-		    root_classes : ["container-fluid"], item_classes : [],
-		    sliding : false , sliding_dir : "h", slided : true,
-		    //root_classes : ["col-md-12"]
+		    root_classes : ["container-fluid"], child_classes : ["row"],
+		},
+		elements : {
+		    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
+			     ui_opts: {
+				 editable : true,  type : "short",
+				 root_classes : ["col-md-12"], child_classes : ["container"],
+				 label : true
+			     }}
+		    
+		    
 		}
 		
 		
@@ -739,13 +741,13 @@ var xd1_templates={
 			type : "view_manager",
 			ui_opts: {child_view_type : "tabbed",
 				  render_name: false,
-				  root_classes : ["col-md-6"],
+				  root_classes : ["col-md-5"],
 				  child_classes : [""]},
 			elements : {}
 		    },
 		    
 	    	    screen : {
-			ui_opts : { root_classes : ["col-md-6"], item_classes : []},
+			ui_opts : { root_classes : ["col-md-7"], item_classes : []},
 			
 	    		//name : "GL Screen"
 	    		//type : "glscreen"
