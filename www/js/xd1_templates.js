@@ -458,7 +458,7 @@ var xd1_templates={
 	    child_view_type : "div",
 	    
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
-	    render_name : false,
+	    //render_name : false,
 	    close: true
 	}, 
 	
@@ -725,7 +725,7 @@ var xd1_templates={
 		    //sliding: true,
 		    root_classes : [],
 		    child_classes : ["row"],
-		    child_view_type : "tabbed",
+		    child_view_type : "pills",
 		    render_name : true,
 		    fa_icon : "film"
 		},

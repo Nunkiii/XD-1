@@ -824,7 +824,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     layer.g_screen_center=[0,0];
     layer.g_scale=1.0;
     
-    var cb= cmap.event_callbacks["colormap_changed"];
+    //var cb= cmap.event_callbacks["colormap_changed"];
     //console.log("Have the cb ? " + cb);
     
     layer.listen("name_changed", function(n){
@@ -838,22 +838,13 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	var cmap_data=cmap.value;
 	glm.ncolors[layer.id]=cmap_data.length;
 
-//	if(ù(cmt)){
-	    if(è(layer.get_title_node)){
-		var tn=layer.get_title_node();
-		tn.style.background=cm.css_color_gradient;
-	    }
-		
-	// 	console.log("Got title node " + tn + " setting title CM!");
-	// 	cmt=cc("div",tn); cmt.className="colormap";
-	//     }else{
-	// 	console.log("No get_title_node ! ");
-	//     }
+	layer.set_title( '<div style="background : '+cm.css_color_gradient+'; width: 100%; height : .5em; display : inline-block; " ></div><span>Layer ' + (layer.id+1)+ '</span>');
+
+	// if(è(layer.get_title_node)){
+	//     var tn=layer.get_title_node();
+	//     tn.style.background=cm.css_color_gradient;
 	// }
-	// if(è(cmt))cmt.style.background=cm.css_color_gradient;
-	
-	//console.log("Update Colormap ncolors: "+glm.ncolors[layer.id]+"  data :" + JSON.stringify(cmap_data));
-	
+		
 	var of=128*4*layer.id;
 	for(var cmi=0;cmi<cmap_data.length;cmi++){
 	    var c=cmap_data[cmi];
@@ -1067,7 +1058,9 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	var ext=image.elements.bounds.value;
 
 	//console.log("Setting up layer " + layer.id + "... Img is " + iw + ", " + ih);
-	
+
+	layer.subtitle=image.name;
+	layer.rebuild_name();
 	layer.width=iw;
 	layer.height=ih;
 	
