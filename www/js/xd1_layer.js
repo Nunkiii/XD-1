@@ -3,7 +3,7 @@
   XD-1  - LAYER CLASS
 
   Qk/Sadira project
-  Pierre Sprimont, INAF/IASF, Bologna, 2014
+  Pierre Sprimont, INAF/IASF, Bologna, 2014, 2015
   
 */
 
@@ -68,30 +68,11 @@ var gl_bbig = function (w,h) {
 		    }
 		}
 		
-		//delete xd.bbig;
-		//delete xd.fv;
-		
-		//xd.fv=newfv;
-		//xd.bbig=newbbig;
-		//xd.w=w;
-		//xd.h=h;
-		
-		//this=new_bbig;
-
 		console.log("Resizing bbig buffer done");
 	    }
 
 	}else{
 	    allocate_bbig(w,h);
-	    /*
-	      for(var i=0;i<this.fv.length;i++){
-	      fv[i]=0.0;
-	      }
-	    */
-
-	    // canvas_info.innerHTML="GL texture ("+ w + ", " + h + ")";
-	    //xd.bbig=create_bbig_buffer(w,h);
-	    //xd.fv=xd.bbig.fv;
 	}
 	
 	this.trigger("resize");
@@ -303,7 +284,7 @@ template_ui_builders.image=function(ui_opts, image){
     var bin_size=image.elements.size;
     var dims=image.elements.dims;
     var bounds=image.elements.bounds;
-    var meta=image.elements.source.elements.keys;
+    var meta=image.elements.keys;
     var fits_file=image.elements.source;//.elements.local_fits;
     //var gloria=image.elements.source.elements.gloria;
     var view=image.elements.view.elements;
@@ -459,26 +440,10 @@ template_ui_builders.image=function(ui_opts, image){
 	var h=header.height;
 	
 	image.update_extent();
-
-	
-	//console.log("Setting image data " + JSON.stringify(header) + " bytes : " + length + "data exts " + extent[0] + "," + extent[1]);
-
-	// var extent = [1e20,-1e20];
-	// for (var i=0;i<length;i++){
-	//     //if(i%500==0)console.log("fvp " + i + " : " + fvp[i]);
-	//     if(fvp[i]>extent[1])extent[1]=fvp[i];
-	//     if(fvp[i]<extent[0])extent[0]=fvp[i];
-	// }
-	// Get the minimum and maximum pixels
-	
-	//image.set_title(header.name);
 	bin_size.set_value(header.sz);
 
 	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
 	meta.set_value(JSON.stringify(header, null, 5));
-	//bounds.set_value(extent);
-	//console.log("Frame read : D=("+image.width+","+image.height+")  data exts " + extent[0] + "," + extent[1]);
-	//image_info.innerHTML="Dims : ("+image.width+", "+image.height+")";
 	
 	dims.set_value([w,h]);
 	image.trigger("image_ready",image);
@@ -518,17 +483,6 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     var rc=layer.elements.geometry.elements.rotation.elements.center;
 
     var image=layer.elements.image;
-
-/*
-    var fits_file=image.elements.source.elements.local_fits;
-    var gloria=image.elements.source.elements.gloria;
-    var sbig=image.elements.source.elements.sbig;
-
-    var file_size=image.elements.info.elements.file_size;
-    var image_size=image.elements.info.elements.size;
-    var dims=image.elements.info.elements.dims;
-    var bounds=image.elements.info.elements.bounds; 
-*/
 
     var nbins=512;
     var bsize=null; 
@@ -1022,10 +976,6 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	    //histo_tpl.set_range();
 	}
 	
-	//histo_tpl.set_value(histo);
-
-	//histo_tpl.elements.range.set_value([0, nbins]);
-
 	//console.log("Histo : " + JSON.stringify(layer.histo));
 	
     }  
@@ -1067,16 +1017,6 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	layer.p_values[0]=ext[0];
 	layer.p_values[1]=ext[1];
 
-	/*
-	histo_tpl.min=ext[0];
-	histo_tpl.max=ext[1];
-	histo_tpl.step=(ext[1]-ext[0])/200.0;
-	*/
-	
-	//x_domain_full=[image.p_values[0]+.5*bsize,image.p_values[0]+(nbins-.5)*bsize];
-
-	//histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
-	//histo_tpl.ui_opts.heigth=histo_tpl.ui.clientHeight;
 	
 	layer.arr=image.fvp;
 	layer.ext=ext;
@@ -1111,67 +1051,11 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.FLOAT, glm.fv);
 	gl.uniform1i(gl.getUniformLocation(glm.program, "u_image"), 0);
-	
-	//reset_histogram();
-	
-	//cmap.create_colors(def_colormaps[layer.id]);
-	//cmap.last.insert_color([0.0,0.4,0.0,1.0], 0.5);
-	//cmap.select_element(cmap.elements[cmap.elements.length-1]);
-	//cmap.display({type : "edit"});
-	
+
 	glm.fullscreen(false);
 
     }
     
-    // function setup_layer_data(){
-    // 	var glm=layer.glm;
-    // 	var gl=glm.gl;
-    // 	var w=glm.w;
-    // 	var h=glm.h;
-
-    // 	console.log("Setting up layer " + layer.id + "... " + w + ", " + h);
-	
-    // 	layer.p_values[0]=layer.ext[0];
-    // 	layer.p_values[1]=layer.ext[1];
-
-    // 	histo_tpl.set_range(layer.ext);
-    // 	histo_tpl.min=layer.ext[0];
-    // 	histo_tpl.max=layer.ext[1];
-    // 	histo_tpl.step=(layer.ext[1]-layer.ext[0])/200.0;
-    // 	//x_domain_full=[layer.p_values[0]+.5*bsize,layer.p_values[0]+(nbins-.5)*bsize];
-
-    // 	//histo_tpl.ui_opts.width=histo_tpl.ui.clientWidth;
-    // 	//histo_tpl.ui_opts.heigth=histo_tpl.ui.clientHeight;
-    // 	compute_histogram(nbins, layer.ext);
-    // 	auto_cuts();
-    // 	histo_tpl.set_selection(cuts.value);
-
-    // 	//if(bsize==null)
-
-    // 	console.log("Histo ui " + JSON.stringify(histo_tpl.ui_opts));
-    // 	histo_tpl.redraw();
-
-    // 	for(var i=0;i<glm.fv.length;i++) glm.fv[i]=Math.random();
-
-    // 	gl.activeTexture(gl.TEXTURE0);
-    // 	gl.bindTexture(gl.TEXTURE_2D, glm.texture);
-    // 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
-    // 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    // 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    // 	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, w, h, 0, gl.RGBA, gl.FLOAT, glm.fv);
-    // 	gl.uniform1i(gl.getUniformLocation(glm.program, "u_image"), 0);
-	
-    // 	//reset_histogram();
-	
-    // 	//cmap.create_colors(def_colormaps[layer.id]);
-    // 	//cmap.last.insert_color([0.0,0.4,0.0,1.0], 0.5);
-    // 	//cmap.select_element(cmap.elements[cmap.elements.length-1]);
-    // 	//cmap.display({type : "edit"});
-	
-    // 	glm.fullscreen(false);
-	
-	
-    // }
 
     layer.get_screen_pos= function (ipix){
 	var l=this,glm=this.glm;
@@ -1384,12 +1268,6 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	    ctx2d.stroke();
 	    ctx2d.closePath();
 	}
-	//this.pointer_info.innerHTML="("+ipix[0]+","+ipix[1]+")<br/>" + Math.floor(pixel_value*1000)/1000.0;
-
-	//POS " +pos + " L= " + this.arr.length + 
-	//	" D : " + this.width + "," + this.height ;
 	//console.log("("+ipix[0]+","+ipix[1]+")<br/>" + Math.floor(pixel_value*1000)/1000.0);
     }
-
-    //init_cam_source(sbig.ui_root);
 }

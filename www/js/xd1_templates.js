@@ -44,41 +44,13 @@ var xd1_templates={
     },
     
     image_source : {
-	intro: "Select a FITS image file on your local filesystem",
+	subtitle: "Select a FITS image file on your local filesystem",
 	name : "FITS file",
 	type : "local_file",
-	ui_opts : {label : true, editable: false, sliding : false, slided : false, type : "edit",
-		   root_classes : ["col-md-12"], child_classes : ["row"]
-		  }
-/*
-
-	ui_opts : { child_view_type : "radio", sliding : true, slided : false, root_classes : []}, 
-	elements : {
-	    local_fits : {
-		ui_opts : {editable: false, sliding : false, slided : false, type : "edit"},
-		name : "Local FITS file",
-		type : "local_file",
-		value : "No file selected"
-	    }
-	    ,
-	    url_fits : {
-		ui_opts : {editable: true, sliding : false, slided : false},
-		name : "FITS URL",
-		type : "url"
-	    },
-	    gloria : {
-		ui_opts : {editable: false, sliding : false, slided : false},
-		name : "GLORIA images",
-		type : "template",
-		template_name : "image_db_browser"
-	    },
-	    sbig : {
-		name : "Camera control",
-		ui_opts : {editable: false, sliding : false, slided : false}
-	    }
-
+	ui_opts : {
+	    label : true, editable: false, sliding : false, slided : false, type : "edit",
+	    root_classes : ["col-md-5"], child_classes : ["row"]
 	}
-*/
     },
 	
     image : {
@@ -86,24 +58,20 @@ var xd1_templates={
 	type : "template",
 	tpl_builder : "image",
 	template_name : "binary_object",
-	ui_opts : {child_view_type : "div", close: true, render_name : true,
-		   child_classes : ["row"], root_classes : ["container-fluid"] },
+	ui_opts : {child_view_type : "div", close: true, render_name : true, name_node : "h2",
+		   child_classes : ["inline"], root_classes : ["container-fluid"] },
 	events : ["image_ready"],
 	elements : { 
 	    source : {
-		intro: "Select a FITS image file on your local filesystem",
+		subtitle: "Select a FITS image file on your local filesystem",
 		name : "FITS file",
 		type : "local_file",
 		ui_opts : {editable: false, sliding : false, slided : false, type : "edit",
-			   root_classes : ["col-md-12"]
+			   root_classes : ["col-md-5"], child_classes : ["row"]
 			  },
-		elements : {
-		    keys : { name : "Metadata", type : "text", elements : {},
-			     ui_opts: {sliding: true, slided: false, label : true, root_classes : ["col-md-3"]}}
-		}
-		
 	    },
-	    
+	    keys : { name : "Metadata", type : "text", elements : {},
+		     ui_opts: {sliding: true, slided: false, label : true, root_classes : ["col-md-4"]}},	    
 	    dims : { type: "template", template_name : "image_dimensions",
 		     ui_opts: {sliding: false, slided: false,
 			       root_classes : ["col-md-4"]
@@ -120,6 +88,7 @@ var xd1_templates={
 			  }
 		//ui_opts: {}
 	    },
+
 	    view : {
 		name: "Display",
 		ui_opts: {sliding: false, slided: false, bar : false,
@@ -145,6 +114,8 @@ var xd1_templates={
 		    
 		}
 	    }
+
+
 	    
 
 	}
@@ -295,7 +266,7 @@ var xd1_templates={
     cursor_info : {
 	name : "Cursor",
 	ui_opts : {
-	    root_classes : ["panel panel-default container-fluid"], child_classes : ["row"]
+	    root_classes : ["container-fluid"], child_classes : ["row"]
 	},
 	elements : {
 	    screen : {
@@ -303,16 +274,17 @@ var xd1_templates={
 		name : "Screen pixel",
 		value_labels : ["X","Y"],
 		value : [0,0],
-		ui_opts : { label : true, root_classes : ["col-md-6"] }
+		ui_opts : { label : true, root_classes : ["col-sm-6"] }
 	    },
 	    astro : {
 		type: "labelled_vector",
 		name : "Equatorial coordinates",
 		value_labels : ["Ra","Dec"],
 		value : [0,0],
-		ui_opts : { label : true, root_classes : ["col-md-6"] }
+		ui_opts : { label : true, root_classes : ["col-sm-6"] }
 	    },
 	    layers : {
+		ui_opts : { root_classes : ["col-sm-12"], child_classes : ["container-fluid"] }
 	    }
 	    
 	}
@@ -321,19 +293,19 @@ var xd1_templates={
     cursor_layer_info : {
 	name : "Cursor Layer Info",
 	type : "cursor_layer_info",
-	ui_opts : {root_classes : ["container-fluid"], child_classes : ["row"], label : true},
+	ui_opts : {root_classes : ["container-fluid"], child_classes : ["row"], render_name : false},
 	elements : {
 	    imgpos : {
 		type: "labelled_vector",
 		name : "Image pixel",
 		value_labels : ["X","Y"],
 		value : [0,0],
-		ui_opts : { label : true, root_classes : ["col-md-5"] }
+		ui_opts : { label : true, root_classes : ["col-sm-6"] }
 	    },
 	    pixval : {
 		name : "Pixel value",
 		type : "double",
-		ui_opts : { label : true, root_classes : ["col-md-5"] }
+		ui_opts : { label : true, root_classes : ["col-sm-6"] }
 	    }
 	}
     },
@@ -369,8 +341,9 @@ var xd1_templates={
 	    //root_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true
 	    //render_name : false,
 	    child_view_type : "div",
-	    fa_icon : "crop"
-	    
+	    fa_icon : "crop",
+	    root_classes : ["container"],
+	    child_classes : ["row"]
 	},
 
 	elements : {
@@ -384,14 +357,14 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "inline", "number_fixed_size"],
+		ui_opts: {root_classes : [ "col-sm-5", "number_fixed_size"],
 			  editable : true, sliding : false, sliding_dir : "h", slided : true, label: true}
 	    },
 
 	    rotation : {
 		name : "Rotation",
 		ui_opts: {sliding: false, sliding_dir:"h", slided : true,
-			  root_classes : ["inline"], label: true, fa_icon : "rotate-left"},
+			  root_classes : ["col-sm-5"], label: true, fa_icon : "rotate-left"},
 		elements : {
 		    angle : {
 			name : "R<sub>α</sub>",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02,
@@ -410,14 +383,14 @@ var xd1_templates={
 			step: "1",
 			ui_opts: {
 			    root_classes : [ "inline"],
-			    editable: true, sliding : true, sliding_dir : "h", slided: false , label: true
+			    editable: true, sliding : false, sliding_dir : "h", slided: false , label: true
 			}
 		    }
 		}
 	    },
 	    
 	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		     ui_opts : { editable : true, root_classes : ["inline"], sliding : false, sliding_dir : "h", slided : true, label: true,
+		     ui_opts : { editable : true, root_classes : ["col-sm-2"], sliding : false, sliding_dir : "h", slided : true, label: true,
 				 fa_icon : "crosshairs"} 
 		   }
 	    
