@@ -357,19 +357,21 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "col-sm-5", "number_fixed_size"],
+		ui_opts: {root_classes : [ "col-xs-12 col-sm-4", "number_fixed_size"], item_classes : ["inline"],
 			  editable : true, sliding : false, sliding_dir : "h", slided : true, label: true}
 	    },
 
 	    rotation : {
 		name : "Rotation",
 		ui_opts: {sliding: false, sliding_dir:"h", slided : true,
-			  root_classes : ["col-sm-5"], label: true, fa_icon : "rotate-left"},
+			  root_classes : ["col-xs-7 col-sm-5"], label: true, fa_icon : "rotate-left",
+			  item_classes : ["inline"]
+			 },
 		elements : {
 		    angle : {
 			name : "R<sub>α</sub>",type : "angle", value : 0.0, min : -100.0, max : 100.0, step: 0.02,
 			tip : "Rotation angle value, in radians, trigonometric counting",
-			ui_opts : { editable : true,root_classes : [ "inline"], label: true }
+			ui_opts : { editable : true,root_classes : [ "inline"], label: true, item_classes : ["inline"] }
 		    },
 
 		    center : {
@@ -383,14 +385,15 @@ var xd1_templates={
 			step: "1",
 			ui_opts: {
 			    root_classes : [ "inline"],
-			    editable: true, sliding : false, sliding_dir : "h", slided: false , label: true
+			    editable: true, sliding : false, sliding_dir : "h", slided: false , label: true,
+			    item_classes : ["inline"]
 			}
 		    }
 		}
 	    },
 	    
 	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		     ui_opts : { editable : true, root_classes : ["col-sm-2"], sliding : false, sliding_dir : "h", slided : true, label: true,
+		     ui_opts : { editable : true, root_classes : ["col-xs-5 col-sm-3"], sliding : false, sliding_dir : "h", slided : true, label: true,
 				 fa_icon : "crosshairs"} 
 		   }
 	    
