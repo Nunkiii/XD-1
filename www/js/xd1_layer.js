@@ -252,9 +252,11 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 }
 
 template_ui_builders.object_editor=function(ui_opts, edit){
+
+    var bbox=edit.elements.bbox;
+    var new_object=bbox.elements.new_object;
+    var new_red=bbox.elements.new_datared;
     
-    var new_object=edit.elements.new_object;
-    var new_red=edit.elements.new_datared;
     var object_tree=window.object_tree=edit.elements.tree;
     
 
@@ -476,11 +478,15 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     var histo_tpl=geom.histo;
     var cuts=layer.cuts=histo_tpl.elements.cuts; 
     var cmap=layer.cmap=geom.cmap; 
-    var lum=geom.lum; 
-    var tr=layer.elements.geometry.elements.translation;
-    var zm=layer.elements.geometry.elements.zoom; 
-    var ag=layer.elements.geometry.elements.rotation.elements.angle; 
-    var rc=layer.elements.geometry.elements.rotation.elements.center;
+
+    var attribs=layer.elements.geometry.elements;
+
+    var lum=attribs.lum;
+    var layer_enable=attribs.enable;
+    var tr=attribs.translation;
+    var zm=attribs.zoom; 
+    var ag=attribs.rotation.elements.angle; 
+    var rc=attribs.rotation.elements.center;
 
     var image=layer.elements.image;
 
@@ -611,7 +617,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
     }, true);
 
     
-    layer.elements.enable.listen("change", function(){
+    layer_enable.listen("change", function(){
 	//console.log("Change !!!");
 	var glm=layer.glm;
 	glm.layer_enabled[layer.id]=this.value;

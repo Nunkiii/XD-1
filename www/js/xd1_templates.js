@@ -59,7 +59,7 @@ var xd1_templates={
 	tpl_builder : "image",
 	template_name : "binary_object",
 	ui_opts : {child_view_type : "div", close: true, render_name : true, name_node : "h2",
-		   child_classes : ["inline"], root_classes : ["container-fluid"] },
+		   child_classes : ["row"], root_classes : ["container-fluid"] },
 	events : ["image_ready"],
 	elements : { 
 	    source : {
@@ -67,14 +67,15 @@ var xd1_templates={
 		name : "FITS file",
 		type : "local_file",
 		ui_opts : {editable: false, sliding : false, slided : false, type : "edit",
-			   root_classes : ["col-md-5"], child_classes : ["row"]
+			   root_classes : ["col-md-12"], child_classes : ["inline"]
 			  },
 	    },
 	    keys : { name : "Metadata", type : "text", elements : {},
-		     ui_opts: {sliding: true, slided: false, label : true, root_classes : ["col-md-4"]}},	    
+		     ui_opts: {sliding: true, slided: false, label : true, root_classes : ["col-md-12"]}},	    
 	    dims : { type: "template", template_name : "image_dimensions",
 		     ui_opts: {sliding: false, slided: false,
-			       root_classes : ["col-md-4"]
+			       root_classes : ["col-md-6"],
+			       child_classes : ["inline"]
 			      }},
 	    bounds : {
 		type : "labelled_vector",
@@ -84,7 +85,8 @@ var xd1_templates={
 		min : "-100000", 
 		max : "100000", 
 		ui_opts : { editable : false, sliding : false , sliding_dir : "h",slided : false, label : true,
-			    root_classes : ["col-md-4"]
+			    root_classes : ["col-md-6"],
+			    child_classes : ["inline"]
 			  }
 		//ui_opts: {}
 	    },
@@ -205,20 +207,37 @@ var xd1_templates={
 	name : "User objects",
 	type : "object_editor",
 	elements : {
-	    new_object : { 
-		name : "New image",
-		type : "action"
-		// elements : {
-		//     img : { name : "An image", type : "template", template_name : "image"},
-		//     toto : { name : "Toto", type : "double", value : 3.14}
-		// }
-	    },
-	    new_datared : { 
-		name : "New image reduction",
-		type : "action"
+	    bbox : {
+		ui_opts : {
+		    //child_view_type : "bbox"
+		    child_classes : ["button-group"]
+		},
+		elements : {
+		    new_object : { 
+			name : "New image",
+			type : "action",
+			ui_opts : {
+			    item_classes : ["btn btn-default btn-sm"],
+			    root_classes : ["input-addon"],
+			    fa_icon : "plus"
+			}
+			// elements : {
+			//     img : { name : "An image", type : "template", template_name : "image"},
+			//     toto : { name : "Toto", type : "double", value : 3.14}
+			// }
+		    },
+		    new_datared : { 
+			name : "New image reduction",
+			type : "action",
+			ui_opts : {
+			    item_classes : ["btn btn-default btn-sm"],
+			    fa_icon : "plus"
+			}
+		    }
+		}
 	    },
 	    tree : {
-		//name : "Object tree",
+		name : "Images",
 		ui_opts : {child_view_type : "tabbed"},
 		elements : {}
 	    }
@@ -335,14 +354,13 @@ var xd1_templates={
     },
 
     geometry : {
-	
 	name : "Geometry",
 	ui_opts: {
 	    //root_classes : ["inline"],  editable : false, sliding : false, sliding_dir : "h", slided : true
 	    //render_name : false,
 	    child_view_type : "div",
 	    fa_icon : "crop",
-	    root_classes : ["container"],
+	    root_classes : ["container-fluid"],
 	    child_classes : ["row"]
 	},
 
@@ -357,14 +375,19 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "col-xs-12 col-sm-4", "number_fixed_size"], item_classes : ["inline"],
+		ui_opts: {root_classes : [ "col-sm-3 col-xs-8", "number_fixed_size"], item_classes : ["inline"],
 			  editable : true, sliding : false, sliding_dir : "h", slided : true, label: true}
+	    },
+	    zoom : {
+		name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
+		ui_opts : { editable : true, root_classes : ["col-xs-4 col-sm-2"], sliding : false, sliding_dir : "h", slided : true, label: true,
+			    fa_icon : "crosshairs"} 
 	    },
 
 	    rotation : {
 		name : "Rotation",
 		ui_opts: {sliding: false, sliding_dir:"h", slided : true,
-			  root_classes : ["col-xs-7 col-sm-5"], label: true, fa_icon : "rotate-left",
+			  root_classes : ["col-sm-3 col-xs-12"], label: true, fa_icon : "rotate-left",
 			  item_classes : ["inline"]
 			 },
 		elements : {
@@ -390,12 +413,8 @@ var xd1_templates={
 			}
 		    }
 		}
-	    },
+	    }
 	    
-	    zoom : { name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		     ui_opts : { editable : true, root_classes : ["col-xs-5 col-sm-3"], sliding : false, sliding_dir : "h", slided : true, label: true,
-				 fa_icon : "crosshairs"} 
-		   }
 	    
 	}
     },
@@ -432,6 +451,7 @@ var xd1_templates={
 	ui_opts : {
 	    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
 	    child_view_type : "div",
+	    name_node : "h3",
 	    
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
 	    //render_name : false,
@@ -439,35 +459,34 @@ var xd1_templates={
 	}, 
 	
 	elements : {
-	    enable : {
-		name : "Enable layer",
-		type : "bool",
-		value : true,
-		ui_opts : {editable : false, label : true, type : "edit", root_classes : ["inline"]}
-	    },
 	    geometry : {
-		//name : "Layer geometry",
+		name : "Layer options", subtitle  : "Set up parameters for this layer",
 		type : "template",
 		template_name : "geometry",
 		ui_opts : {
 		    //root_classes : ["col-md-12"],
-		    child_classes : [],
-		    render_name : false
+		    //render_name : false
 		    //sliding : true , sliding_dir : "h", slided : false
 		    //child_view_type : "pills" 
 		},
 		elements : {
+		    enable : {
+			name : "Display",
+			type : "bool",
+			value : true,
+			ui_opts : {editable : false, label : true, type : "edit", root_classes : ["col-sm-2 col-xs-2"]}
+		    },
+		    lum :  {
+			name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
+			ui_opts : {
+			    input_type : "range", editable: true , type : "short",
+			    root_classes : ["col-sm-2 col-xs-10"],
+			    label : true,
+			    fa_icon : "lightbulb-o"
+			}
+		    }
 		}
 	    },
-	    lum :  {name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
-		    ui_opts : {
-			input_type : "range", editable: true , type : "short",
-			root_classes : ["inline"],
-			label : true,
-			fa_icon : "lightbulb-o"
-		    }
-
-		   },
 	    
 	    // histo : {
 		    // 	name : "Colors and cuts",
@@ -476,12 +495,13 @@ var xd1_templates={
 	    
 		    
 	    cmap : { 
-		name : "Colormap", 
-		type : "colormap",
+		name : "Colormap", subtitle : "Buggy!",
+		type : "colormap", 
 		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
 		ui_opts : {editable : true,
 			   //root_classes : ["col-md-12"],
 			   item_classes : [],
+			   label : true
 			  },
 			// value : [[0,0,0,1,0],
 		// 	      [0.8,0.2,0.8,1.0,0.2],
@@ -528,12 +548,16 @@ var xd1_templates={
     },
     
     xd1 : {
-	/*
-
-*/
+	name: "XD-1",
+	subtitle : "A JS/WebGL FITS viewer",
 	type : "template",
 	tpl_builder : "xd1",
-	ui_opts: {child_view_type : "pills", root: true, label: false, divdir: false, split_frac : 33, root_classes : ["container-fluid"], child_classes : ["row"] },
+	
+	ui_opts: {
+	    child_view_type : "pills", root: true, 
+	    root_classes : ["container-fluid"], child_classes : ["row"],
+	    icon : "/XD-1/ico/discovery1_small.png"
+	},
 	
 	toolbar : {
 	    file : {
@@ -556,9 +580,8 @@ var xd1_templates={
 	
 	elements : {
 	    objects : {
-		name: "XD-1",
-		sibtitle : "A JS/WebGL FITS viewer",
-		name_node : "h1",
+		name : "FITS images",
+//		name_node : "h1",
 		type : "template",
 		ui_opts: {root_classes : ["col-md-12"]},
 		template_name : "user_objects",
@@ -694,7 +717,7 @@ var xd1_templates={
 	    },
 	    layers : {
 		name :  "Image Layers",
-		subtitle : "Configure image layers options.",
+		subtitle : "Configure this view's image layers.",
 		intro : "<p>Up to four image layers can be displayed using a unique floating point RGBA texture as data input.</p><p> Geometry and color computations are done for every screen pixel using an OpenGL shader program using the 4-band floating-point texture and other small pseudo-textures containing the geometrical, colormap and other parameters needed for the final pixel color computation.</p><p> All the texture data is pre-loaded in the GPU RAM and parallel processed by the many potential GPU cores (thousands on high end hardware), resulting in an incredibly fast rendering of the rather complex XD-1 image pipeline.</p>",
 		
 		ui_opts: {
