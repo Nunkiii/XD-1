@@ -365,6 +365,13 @@ var xd1_templates={
 	},
 
 	elements : {
+	    zoom : {
+		name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
+		ui_opts : { editable : true, root_classes : ["col-md-4"], sliding : false, sliding_dir : "h", slided : true, label: true,
+			    fa_icon : "crosshairs"} 
+	    },
+
+
 	    translation : {
 		name : "Translation",
 		tip : "Translation vector in image pixels units",
@@ -375,19 +382,13 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "col-sm-3 col-xs-8", "number_fixed_size"], item_classes : ["inline"],
+		ui_opts: {root_classes : [ "col-md-6", "number_fixed_size"], item_classes : ["inline"],
 			  editable : true, sliding : false, sliding_dir : "h", slided : true, label: true}
 	    },
-	    zoom : {
-		name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		ui_opts : { editable : true, root_classes : ["col-xs-4 col-sm-2"], sliding : false, sliding_dir : "h", slided : true, label: true,
-			    fa_icon : "crosshairs"} 
-	    },
-
 	    rotation : {
 		name : "Rotation",
 		ui_opts: {sliding: false, sliding_dir:"h", slided : true,
-			  root_classes : ["col-sm-3 col-xs-12"], label: true, fa_icon : "rotate-left",
+			  root_classes : ["col-md-6"], label: true, fa_icon : "rotate-left",
 			  item_classes : ["inline"]
 			 },
 		elements : {
@@ -421,12 +422,13 @@ var xd1_templates={
 
     cuts : {
 	type : "labelled_vector",
+	
 	value : [0,0],
 	value_labels : ["Low","High"],
 	min : "-100000", 
 	max : "100000", 
 	step: "100",
-	ui_opts : { editable : true, root_classes : ["inline"],label : true }
+	ui_opts : { editable : true, label : true }
 	//ui_opts: {root_classes : ["inline"]}
     },
 
@@ -450,7 +452,7 @@ var xd1_templates={
 	tpl_builder : "xd1_layer",
 	ui_opts : {
 	    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
-	    child_view_type : "div",
+	    child_view_type : "pills",
 	    name_node : "h3",
 	    
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
@@ -474,13 +476,13 @@ var xd1_templates={
 			name : "Display",
 			type : "bool",
 			value : true,
-			ui_opts : {editable : false, label : true, type : "edit", root_classes : ["col-sm-2 col-xs-2"]}
+			ui_opts : {editable : false, label : true, type : "edit", root_classes : ["col-md-3"]}
 		    },
 		    lum :  {
 			name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
 			ui_opts : {
 			    input_type : "range", editable: true , type : "short",
-			    root_classes : ["col-sm-2 col-xs-10"],
+			    root_classes : ["col-md-5"],
 			    label : true,
 			    fa_icon : "lightbulb-o"
 			}
@@ -497,13 +499,14 @@ var xd1_templates={
 	    cmap : { 
 		name : "Colormap", subtitle : "Buggy!",
 		type : "colormap", 
-		//intro : "This is unstable (because of general questions of svg scaling and how to properly scale d3 plots). &#10; Used as sandbox. Should contain a list of «common» colormaps for straight use .and. these should come from the DB, generically.",
-		ui_opts : {editable : true,
-			   //root_classes : ["col-md-12"],
-			   item_classes : [],
-			   label : true
-			  },
-			// value : [[0,0,0,1,0],
+		intro : "<br/><br/><p class='alert alert-warning'><strong>This is buggy, sorry !</strong>Need rewrite. New version will offer a list of «common» colormaps for straight use and user colormaps will be stored in webstorage.</p>",
+		ui_opts : {
+		    type : "edit",
+		    root_classes : ["container-fluid"],
+		    item_classes : [],
+		    
+		},
+		// value : [[0,0,0,1,0],
 		// 	      [0.8,0.2,0.8,1.0,0.2],
 		// 	      [0.9,0.9,0.2,1.0,0.2],
 		// 	      [0.9,0.9,0.2,1.0,0.5],
@@ -518,19 +521,24 @@ var xd1_templates={
 	    },
 	    
 	    histo : {
-		name : "Histogram",
+		name : "Data histogram, value cuts",
+		subtitle : "Display the histogram and select the value bounds fitting into the colormap.",
+		intro : "<br/><br/><p class='alert alert-warning'><strong>This is buggy, sorry !</strong>The vector view (based on d3.js) is not yet very stable.</p>",
 		type : "template",
 		template_name : "vector",
 		ui_opts : {
 		    root_classes : ["container-fluid"], child_classes : ["row"],
+		    fa_icon : "signal",
 		},
 		elements : {
-		    cuts : { name : "Value cuts", type : "template", template_name : "cuts", 
-			     ui_opts: {
-				 editable : true,  type : "short",
-				 root_classes : ["col-md-12"], child_classes : ["container"],
-				 label : true
-			     }}
+		    cuts :{
+			name : "Value cuts", type : "template", template_name : "cuts", 
+			ui_opts: {
+			    editable : true,  type : "short",
+			    root_classes : ["col-md-12"], child_classes : ["container"],
+			    label : true
+			}
+		    }
 		    
 		    
 		}
@@ -555,8 +563,8 @@ var xd1_templates={
 	
 	ui_opts: {
 	    child_view_type : "pills", root: true, 
-	    root_classes : ["container-fluid"], child_classes : ["row"],
-	    icon : "/XD-1/ico/discovery1_small.png"
+	    root_classes : ["container-fluid"], child_classes : ["row"]
+
 	},
 	
 	toolbar : {
@@ -593,7 +601,8 @@ var xd1_templates={
 	    drawing : {
 		name : "Views",
 		ui_opts : { child_view_type : "div", divdir : false, root_classes : ["col-md-12"], child_classes : ["row"],
-			    fa_icon : "image",
+			    //fa_icon : "image",
+			    icon : "/XD-1/ico/stars.jpg",
 			    render_name : false
 			  },
 		//type : "string", value : "Hello widget !",
@@ -625,11 +634,13 @@ var xd1_templates={
 	    
 	    demo : {
 		name : "Multiband demos",
-		ui_opts : {render_name: false},
 		subtitle : "Loads images from different wavelength bands in multiple color layers of the same display.",
 		tpl_builder : "demo_multilayer",
 		ui_opts : { root_classes : [""], child_classes : ["row"], name_classes : [],
-			    name_node : "h2"},
+			    name_node : "h2",
+			    icon : "/XD-1/ico/layers.png"
+
+			  },
 		elements : {
 		    
 		    cnx : {
@@ -671,8 +682,13 @@ var xd1_templates={
 		}
 	    },
 	    about : {
-		type : "html", url : "/XD-1/about.html", ui_opts : {name_node : "h1", name_classes : [], root_classes : ["container-fluid"]},
-		name : "About xd1",
+		type : "html",
+		url : "/XD-1/about.html",
+		ui_opts : {
+		    name_node : "h1", name_classes : [], root_classes : ["container-fluid"],
+		    icon : "/XD-1/ico/discovery1_small.png"
+		},
+		name : "About...",
 		subtitle: "A multi-document, multi-layer FITS image viewer."
 	    }
 	}
