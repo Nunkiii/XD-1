@@ -190,21 +190,30 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 		//console.log("AB: N= "+ fv.length +" =? "+sz/4+" first elms : " + fv[0] + ", " + fv[1] );
 		var sr=new srz_mem(b);
 		
-		sr.info=cc("div",act.ui_root);
-		sr.info.innerHTML="Downloading "+dgram.header.name+" : "+ format_byte_number(sz);
-		sr.prog=cc("progress",act.ui_root); sr.prog.min=0; sr.prog.max=100;
+		//sr.info=cc("div",act.ui_root);
+		//sr.info.innerHTML="Downloading "+dgram.header.name+" : "+ format_byte_number(sz);
+
+		sr.prog={ name : "Downloading "+dgram.header.name+" : "+ format_byte_number(sz), type : "progress",
+			  ui_opts : { label: true, wrap : true,
+				      root_classes : ["container-fluid"],
+				      wrap_classes : ["progress"], item_classes : ["progress-bar-success progress-bar-striped"]}
+			};
+		tmaster.build_template(sr.prog);create_ui({},sr.prog);
+		
+		act.ui_root.appendChild(sr.prog.ui_root);
+		//sr.prog=cc("progress",act.ui_root); sr.prog.min=0; sr.prog.max=100;
 		
 		sr.on_chunk=function(dgram){
-		    sr.prog.value=100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data);
+		    sr.prog.set_value(Math.ceil(100*( ((dgram.header.cnkid+1)*sr.chunk_size)/sr.sz_data)));
 		    //console.log("Fetching data : "+(Math.floor(100*( (dgram.header.cnkid*sr.chunk_size)/sr.sz_data)))+" %");
 		}
 		
 		
 		
 		sr.on_done=function(){
-
-		    act.ui_root.removeChild(sr.prog);
-		    act.ui_root.removeChild(sr.info);
+		    
+		    //act.ui_root.removeChild(sr.prog.ui_root);
+		    //act.ui_root.removeChild(sr.info);
 		    
 		    console.log("GoT image data !!! " + fvp.byteLength);
 		    var img=tmaster.build_template("image");
@@ -595,13 +604,13 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	reset_histogram();
     });
     
-    histo_tpl.elements.unzoom.listen("click",function(){
+    histo_tpl.elements.btns.elements.unzoom.listen("click",function(){
 	console.log("Unzoom Range change !, recomp histo");
 	compute_histogram(nbins, layer.ext);
 	update_histo_cmap();
     });
     
-    histo_tpl.elements.zoom.listen("click",function(new_range){
+    histo_tpl.elements.btns.elements.zoom.listen("click",function(new_range){
 	console.log("Histo Range change !, recomp histo");
 	compute_histogram(nbins, histo_tpl.elements.range.value);
 	update_histo_cmap();

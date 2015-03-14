@@ -210,7 +210,7 @@ var xd1_templates={
 	    bbox : {
 		ui_opts : {
 		    //child_view_type : "bbox"
-		    child_classes : ["button-group"]
+		    child_classes : ["btn-group"]
 		},
 		elements : {
 		    new_object : { 
@@ -218,7 +218,6 @@ var xd1_templates={
 			type : "action",
 			ui_opts : {
 			    item_classes : ["btn btn-default btn-sm"],
-			    root_classes : ["input-addon"],
 			    fa_icon : "plus"
 			}
 			// elements : {
@@ -562,7 +561,7 @@ var xd1_templates={
 	tpl_builder : "xd1",
 	
 	ui_opts: {
-	    child_view_type : "pills", root: true, 
+	    child_view_type : "tabbed", root: true, 
 	    root_classes : ["container-fluid"], child_classes : ["row"]
 
 	},
@@ -740,7 +739,7 @@ var xd1_templates={
 		    //sliding: true,
 		    root_classes : [],
 		    child_classes : ["row"],
-		    child_view_type : "pills",
+		    child_view_type : "tabbed",
 		    render_name : true,
 		    fa_icon : "film"
 		},
