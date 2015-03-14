@@ -593,11 +593,11 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	update_histo_cmap();
     });
     
-    var autocout={type: "action", name : "Auto cuts", ui_opts : { label: true, btn_type : "xs", fa_icon: "leaf"}  };
+    var autocout={type: "action", name : "Auto cuts", ui_opts : { item_classes : ["btn btn-default btn-sm"], fa_icon: "gears", item_root : true }  };
     
     create_ui({},autocout);
     
-    histo_tpl.ui_childs.div.appendChild(autocout.ui_root);
+    histo_tpl.elements.btns.ui_childs.div.appendChild(autocout.ui_root);
     
     autocout.listen("click",function(){
 	console.log("Unzoom Range change !, recomp histo");

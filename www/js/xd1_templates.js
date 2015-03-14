@@ -331,7 +331,7 @@ var xd1_templates={
     options : {
 	name : "Viewer options",
 	ui_opts : {
-	    root_classes : ["panel panel-default container-fluid"],
+	    root_classes : ["col-md-12"],
 	    //sliding : true, slided : false, child_view_type : "div",
 	    render_name : true,
 	    subtitle : "Set display options",
@@ -359,14 +359,14 @@ var xd1_templates={
 	    //render_name : false,
 	    child_view_type : "div",
 	    fa_icon : "crop",
-	    root_classes : ["container-fluid"],
-	    child_classes : ["row"]
+	    root_classes : ["col-md-12"],
+	    child_classes : ["container-fluid"]
 	},
 
 	elements : {
 	    zoom : {
 		name : "Scale", type: "double", min : 0.00001, max : 1000.0, step: 0.0001, value : 1.0, 
-		ui_opts : { editable : true, root_classes : ["col-md-4"], sliding : false, sliding_dir : "h", slided : true, label: true,
+		ui_opts : { editable : true, root_classes : ["inline"], sliding : false, sliding_dir : "h", slided : true, label: true,
 			    fa_icon : "crosshairs"} 
 	    },
 
@@ -381,14 +381,14 @@ var xd1_templates={
 		min : "-8192", 
 		max : "8192", 
 		step: "1",
-		ui_opts: {root_classes : [ "col-md-6", "number_fixed_size"], item_classes : ["inline"],
+		ui_opts: {root_classes : [ "inline", "number_fixed_size"], child_classes : ["inline"],
 			  editable : true, sliding : false, sliding_dir : "h", slided : true, label: true}
 	    },
 	    rotation : {
 		name : "Rotation",
 		ui_opts: {sliding: false, sliding_dir:"h", slided : true,
-			  root_classes : ["col-md-6"], label: true, fa_icon : "rotate-left",
-			  item_classes : ["inline"]
+			  root_classes : ["inline"], label: true, fa_icon : "rotate-left",
+			  child_classes : ["inline"]
 			 },
 		elements : {
 		    angle : {
@@ -408,7 +408,7 @@ var xd1_templates={
 			step: "1",
 			ui_opts: {
 			    root_classes : [ "inline"],
-			    editable: true, sliding : false, sliding_dir : "h", slided: false , label: true,
+			    editable: true, sliding : true, sliding_dir : "h", slided: false , label: true,
 			    item_classes : ["inline"]
 			}
 		    }
@@ -427,7 +427,7 @@ var xd1_templates={
 	min : "-100000", 
 	max : "100000", 
 	step: "100",
-	ui_opts : { editable : true, label : true }
+	ui_opts : { editable : true, label : true, item_classes : ["inline"] }
 	//ui_opts: {root_classes : ["inline"]}
     },
 
@@ -475,13 +475,13 @@ var xd1_templates={
 			name : "Display",
 			type : "bool",
 			value : true,
-			ui_opts : {editable : false, label : true, type : "edit", root_classes : ["col-md-3"]}
+			ui_opts : {editable : false, label : true, type : "edit", root_classes : ["inline"]}
 		    },
 		    lum :  {
 			name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
 			ui_opts : {
 			    input_type : "range", editable: true , type : "short",
-			    root_classes : ["col-md-5"],
+			    root_classes : ["inline"],
 			    label : true,
 			    fa_icon : "lightbulb-o"
 			}
@@ -526,7 +526,7 @@ var xd1_templates={
 		type : "template",
 		template_name : "vector",
 		ui_opts : {
-		    root_classes : ["container-fluid"], child_classes : ["row"],
+		    //root_classes : ["container-fluid"], child_classes : ["row"],
 		    fa_icon : "signal",
 		},
 		elements : {
@@ -534,7 +534,7 @@ var xd1_templates={
 			name : "Value cuts", type : "template", template_name : "cuts", 
 			ui_opts: {
 			    editable : true,  type : "short",
-			    root_classes : ["col-md-12"], child_classes : ["container"],
+			    root_classes : ["inline"],// child_classes : ["container"],
 			    label : true
 			}
 		    }
@@ -722,8 +722,6 @@ var xd1_templates={
 	    },
 	    options : {
 		ui_opts : {
-		    root_classes : [],
-		    child_classes : ["container"],
 		    fa_icon : "list"
 		},
 		subtitle : "GL display options",
