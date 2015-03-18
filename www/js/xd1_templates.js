@@ -408,8 +408,9 @@ var xd1_templates={
 			step: "1",
 			ui_opts: {
 			    root_classes : [ "inline"],
-			    editable: true, sliding : true, sliding_dir : "h", slided: false , label: true,
-			    item_classes : ["inline"]
+			    child_classes : ["inline"],
+			    editable: true, sliding : false, sliding_dir : "h", slided: false , label: true
+			    
 			}
 		    }
 		}
@@ -475,7 +476,7 @@ var xd1_templates={
 			name : "Display",
 			type : "bool",
 			value : true,
-			ui_opts : {editable : false, label : true, type : "edit", root_classes : ["inline"]}
+			ui_opts : {label : true, type : "edit", root_classes : ["inline"]}
 		    },
 		    lum :  {
 			name : "Luminosity", type: "double", min : "0", max : "1.0", step: "0.01", value : ".1", 
@@ -501,6 +502,7 @@ var xd1_templates={
 		intro : "<br/><br/><p class='alert alert-warning'><strong>This is buggy, sorry !</strong>Need rewrite. New version will offer a list of «common» colormaps for straight use and user colormaps will be stored in webstorage.</p>",
 		ui_opts : {
 		    type : "edit",
+		    //editable : true,
 		    root_classes : ["container-fluid"],
 		    item_classes : [],
 		    
@@ -561,7 +563,9 @@ var xd1_templates={
 	tpl_builder : "xd1",
 	
 	ui_opts: {
-	    child_view_type : "tabbed", root: true, 
+	    child_view_type : "tabbed",
+	    root: true,
+	    tabs_on_name: true,
 	    root_classes : ["container-fluid"], child_classes : ["row"]
 
 	},

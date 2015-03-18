@@ -164,7 +164,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
     if(ù(glscreen)){
 	glscreen=glm.glscreen=tmaster.build_template("glscreen"); 
-	create_ui({ type: "short", root_classes : [] }, glscreen,0 );
+	create_ui({}, glscreen,0 );
     }
 
     glm.canvas=glscreen.canvas;
@@ -577,7 +577,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    
 	    var layer=tmaster.build_template("gl_image_layer"); 
 
-	    var lay_ui=create_ui({type:"short" }, layer, 0);
+	    var lay_ui=create_ui({}, layer, 0);
 	    layer.xd1_attach(glm, lid);
 
 	    
