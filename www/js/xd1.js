@@ -397,7 +397,9 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
 
 	glm.render=function () {
-
+	    var nl; for(nl=0;nl<glm.layers.length;nl++) if(glm.layer_enabled[glm.layers[nl].id]) break;
+	    if(nl===glm.layers.length) return;
+		
 	    var positionLocation = gl.getAttribLocation(glm.program, "vPosition");
 
 	    //console.log("Render vp " + glm.drawing_node.clientWidth + " , " +  glm.drawing_node.clientHeight);
@@ -465,7 +467,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	
 	//var glsl_loc="./"+server_root+"/xd1.glsl";
 	var glsl_loc="/XD-1/xd1.glsl";
-	console.log("Downloading glsl [" + glsl_loc+"]" );
+	//console.log("Downloading glsl [" + glsl_loc+"]" );
 	xhr_query(glsl_loc, function (error, shader_src) {
 	    
 	    if(error!=null){
@@ -474,7 +476,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 		return;
 	    }
 	    
-	    console.log("GLM linking programs...");
+	    //console.log("GLM linking programs...");
 	    
 	    var texture = gl.createTexture();
 	    var cmap_texture = gl.createTexture();

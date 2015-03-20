@@ -343,7 +343,7 @@ var xd1_templates={
     cursor_layer_info : {
 	name : "Cursor Layer Info",
 	type : "cursor_layer_info",
-	ui_opts : {root_classes : ["col-xs-6 col-md-3 "], name_classes : [], child_classes : ["inline"], label : true},
+	ui_opts : {root_classes : ["col-xs-12 col-md-6 "], name_classes : [], child_classes : ["inline"], label : true},
 	elements : {
 	    imgpos : {
 		type: "labelled_vector",
@@ -647,14 +647,14 @@ var xd1_templates={
 			type : "view_manager",
 			ui_opts: {child_view_type : "tabbed",
 				  render_name: false,
-				  root_classes : ["col-md-6"],
+				  root_classes : ["col-md-4"],
 				  child_classes : ["container-fluid"]},
 			elements : {}
 		    },
 		    
 	    	    screen : {
 			ui_opts : {
-			    root_classes : ["col-md-6"],
+			    root_classes : ["col-md-8"],
 			    //root_classes : ["container-fluid"],
 			    child_classes : ["container-fluid"],
 			    item_classes : []},
