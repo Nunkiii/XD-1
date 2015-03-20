@@ -53,11 +53,11 @@ function sbig_drive(dlg, status_cb){
 	
 	
 	var expo_counter=0;
+
 	cam.exptime=dgram.header.exptime;
 	cam.nexpo=dgram.header.nexpo;
 	
 	cam.start_exposure(function (expo_message){
-	    
 	    
 	    console.log("expo message : " + JSON.stringify(expo_message));
 	    
@@ -90,7 +90,7 @@ function sbig_drive(dlg, status_cb){
 		
 		console.log("Got data  + " + (typeof data) );
 		
-		
+	
 		console.log("We have the data buffer serializing... SRZ is  " + typeof SRZ);
 		console.log("We have the data buffer serializing... SRZ is  " + typeof SRZ.srz_mem);
 		

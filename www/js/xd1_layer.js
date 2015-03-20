@@ -433,30 +433,27 @@ template_ui_builders.image=function(ui_opts, image){
 
 	var fvp;
 
-	if(header.name) this.name=header.name;
+	//if(header.name) this.name=header.name;
 
 //	if(header.colormap)
 //	    cmap.set_value(header.colormap);
 	
 	if(fvpin.length){
 	    fvp=fvpin;
-	    length=fvp.length;
+	//     length=fvp.length;
 	}else{
-	    fvp = new Float32Array(fvpin);
-	    length = fvp.byteLength;
+	    fvp =  new Float32Array(fvpin);
+	//     length = fvp.byteLength;
 	}
+	image.set_title(header.name);
 	image.fvp=fvp;
-
-	var w=header.width;
-	var h=header.height;
-	
+	dims.set_value([header.width,header.height]);
 	image.update_extent();
+
 	bin_size.set_value(header.sz);
 
 	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
 	meta.set_value(JSON.stringify(header, null, 5));
-	
-	dims.set_value([w,h]);
 	image.trigger("image_ready",image);
     }
 
@@ -749,7 +746,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	//	for (var i=0;i<sfa.length/20;i++)
 	//	    console.log( i + " : " + sfa[i]);
 	
-	console.log("AUTOCOUT Number of items : " + fa.length, " NB = " + ab.byteLength + " npix="+ll + " cuts + " + JSON.stringify(newcuts));
+	//console.log("AUTOCOUT Number of items : " + fa.length, " NB = " + ab.byteLength + " npix="+ll + " cuts + " + JSON.stringify(newcuts));
 	
 	cuts.set_value(newcuts);
 	//histo_tpl.set_selection(newcuts);
@@ -884,7 +881,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	
 	if(glm.bbig!=null){
 	    if(glm.w>=w && glm.h>=h){
-		console.log("Buffer big enough " + glm.w + ", " + glm.h);
+		//console.log("Buffer big enough " + glm.w + ", " + glm.h);
 		//return; //Ok, GL buffer is big enough
 	    }else{
 
@@ -967,7 +964,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 	    histo[i]=0;
 	}
 	
-	console.log("Compute histo Data bounds : " + layer.ext[0] + ", " + layer.ext[1], " bin size = " + bsize + " nbins " + nbins + " ndata=" + dl + " start " + start + " step " + step);
+	//console.log("Compute histo Data bounds : " + layer.ext[0] + ", " + layer.ext[1], " bin size = " + bsize + " nbins " + nbins + " ndata=" + dl + " start " + start + " step " + step);
 	
 	
 	for(var i=0;i<dl;i++){
@@ -1229,7 +1226,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
 	var pos=ipix[1]*this.width+ ipix[0];
 	var pixel_value = this.arr[pos];
-
+	//console.log("Set val " + JSON.stringify(ipix) );
 	cinfo_tpl.elements.imgpos.set_value(ipix);
 	cinfo_tpl.elements.pixval.set_value(Math.floor(pixel_value*1000)/1000.0);
 	

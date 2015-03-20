@@ -12,13 +12,15 @@ var xd1_templates={
 	    size : {
 		ui_opts : {label : true},
 		name : "Size",
-		type : "bytesize"
-	    },
-	    binary_type : {
-		ui_opts : { label : true},
-		name : "Binary type",
-		type : "string"
+		type : "bytesize",
+		value: 0
 	    }
+	    // binary_type : {
+	    // 	ui_opts : { label : true},
+	    // 	name : "Binary type",
+	    // 	type : "string",
+	    // 	value : "octet/stream"
+	    // }
 	},
 	
     },
@@ -54,16 +56,20 @@ var xd1_templates={
     },
 	
     image : {
-	name : "Image",
+	name : "No data loaded",
 	type : "template",
 	tpl_builder : "image",
 	template_name : "binary_object",
-	ui_opts : {child_view_type : "div", close: true, render_name : true, name_node : "h2",
-		   child_classes : ["row"], root_classes : ["container-fluid"] },
+	ui_opts : {
+	    child_view_type : "div", close: true, render_name : true,
+	    //name_node : "h2",
+	    child_classes : ["container-fluid"], root_classes : ["container-fluid"],
+	    icon : "/sadira/icons/svg/mat_float.svg"
+	},
 	events : ["image_ready"],
 	elements : { 
 	    source : {
-		subtitle: "Select a FITS image file on your local filesystem",
+		subtitle: "Select a FITS image file on your local filesystem :",
 		name : "FITS file",
 		type : "local_file",
 		ui_opts : {editable: false, sliding : false, slided : false, type : "edit",
@@ -94,24 +100,40 @@ var xd1_templates={
 	    view : {
 		name: "Display",
 		ui_opts: {sliding: false, slided: false, bar : false,
-			  root_classes : ["col-md-12"],
-			  child_classes : ["btn-group"]},
+			  root_classes : ["container-fluid"],
+			  child_classes : ["container-fluid"]},
 		elements : {
 		    new_display : {
 			type : "action",
-			name : "View in a new display"
+			name : "View in a new display",
+			ui_opts : {
+			    button_node : "span",
+			    item_classes : ["btn btn-info btn-xs"]
+			}
 		    },
 		    add_to_display : {
 			type : "action",
 			name : "Select existing display",
+			ui_opts : {
+			    button_node : "span",
+			    item_classes : ["btn btn-info btn-xs"]
+			}
 		    },
 		    display_list : {
-			name : "Display list",
+			name : "Select display:",
 			type : "combo",
+			ui_opts : {
+			    type : "edit",
+			    item_classes : [""],
+			}
 		    },
 		    add : {
 			type : "action",
-			name : "Add layer in selected display"
+			name : "Add layer in selected display",
+			ui_opts : {
+			    button_node : "span",
+			    item_classes : ["btn btn-info btn-xs"]
+			}
 		    }
 		    
 		}
@@ -284,25 +306,35 @@ var xd1_templates={
     cursor_info : {
 	name : "Cursor",
 	ui_opts : {
-	    root_classes : ["container-fluid"], child_classes : ["row"]
+	    root_classes : ["container-fluid"], child_classes : ["container-fluid"]
 	},
 	elements : {
-	    screen : {
-		type: "labelled_vector",
-		name : "Screen pixel",
-		value_labels : ["X","Y"],
-		value : [0,0],
-		ui_opts : { label : true, root_classes : ["col-sm-6"] }
+	    position : {
+		//name : "Cursor position",
+		ui_opts : {
+		    root_classes : ["container-fluid panel panel-default"], child_classes : ["row"]
+		},
+		elements : {
+		    screen : {
+			type: "labelled_vector",
+			name : "Screen pixel",
+			value_labels : ["X","Y"],
+			value : [0,0],
+			ui_opts : { label : true, root_classes : ["col-sm-6"], child_classed : ["inline"] }
+		    },
+		    astro : {
+			type: "labelled_vector",
+			name : "Equatorial coordinates",
+			value_labels : ["Ra","Dec"],
+			value : [0,0],
+			ui_opts : { label : true, root_classes : ["col-sm-6"], child_classed : ["inline"] }
+		    }
+		}
 	    },
-	    astro : {
-		type: "labelled_vector",
-		name : "Equatorial coordinates",
-		value_labels : ["Ra","Dec"],
-		value : [0,0],
-		ui_opts : { label : true, root_classes : ["col-sm-6"] }
-	    },
+		    
 	    layers : {
-		ui_opts : { root_classes : ["col-sm-12"], child_classes : ["container-fluid"] }
+		//name : "Layers",
+		ui_opts : { root_classes : ["col-sm-12"], child_classes : ["row"] }
 	    }
 	    
 	}
@@ -311,19 +343,19 @@ var xd1_templates={
     cursor_layer_info : {
 	name : "Cursor Layer Info",
 	type : "cursor_layer_info",
-	ui_opts : {root_classes : ["container-fluid"], child_classes : ["row"], render_name : false},
+	ui_opts : {root_classes : ["col-xs-6 col-md-3 "], name_classes : [], child_classes : ["inline"], label : true},
 	elements : {
 	    imgpos : {
 		type: "labelled_vector",
-		name : "Image pixel",
-		value_labels : ["X","Y"],
+		name : "",
+		value_labels : ["P<sub>X</sub>","P<sub>Y</sub>"],
 		value : [0,0],
-		ui_opts : { label : true, root_classes : ["col-sm-6"] }
+		ui_opts : { child_classes : ["inline"] }
 	    },
 	    pixval : {
-		name : "Pixel value",
+		name : "I",
 		type : "double",
-		ui_opts : { label : true, root_classes : ["col-sm-6"] }
+		ui_opts : { label : true, item_classes : ["inline"] }
 	    }
 	}
     },
@@ -528,7 +560,7 @@ var xd1_templates={
 		type : "template",
 		template_name : "vector",
 		ui_opts : {
-		    //root_classes : ["container-fluid"], child_classes : ["row"],
+		    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
 		    fa_icon : "signal",
 		},
 		elements : {
@@ -536,7 +568,7 @@ var xd1_templates={
 			name : "Value cuts", type : "template", template_name : "cuts", 
 			ui_opts: {
 			    editable : true,  type : "short",
-			    root_classes : ["inline"],// child_classes : ["container"],
+			    root_classes : ["inline"], child_classes : ["inline"],// child_classes : ["container"],
 			    label : true
 			}
 		    }
@@ -563,7 +595,7 @@ var xd1_templates={
 	tpl_builder : "xd1",
 	
 	ui_opts: {
-	    child_view_type : "tabbed",
+	    child_view_type : "pills",
 	    root: true,
 	    tabs_on_name: true,
 	    root_classes : ["container-fluid"], child_classes : ["row"]
@@ -603,7 +635,7 @@ var xd1_templates={
 	    
 	    drawing : {
 		name : "Views",
-		ui_opts : { child_view_type : "div", divdir : false, root_classes : ["col-md-12"], child_classes : ["row"],
+		ui_opts : { child_view_type : "div", root_classes : ["container-fluid"], child_classes : ["row"],
 			    //fa_icon : "image",
 			    icon : "/XD-1/ico/stars.jpg",
 			    render_name : false
@@ -615,13 +647,17 @@ var xd1_templates={
 			type : "view_manager",
 			ui_opts: {child_view_type : "tabbed",
 				  render_name: false,
-				  root_classes : ["col-md-5"],
-				  child_classes : [""]},
+				  root_classes : ["col-md-6"],
+				  child_classes : ["container-fluid"]},
 			elements : {}
 		    },
 		    
 	    	    screen : {
-			ui_opts : { root_classes : ["col-md-7"], item_classes : []},
+			ui_opts : {
+			    root_classes : ["col-md-6"],
+			    //root_classes : ["container-fluid"],
+			    child_classes : ["container-fluid"],
+			    item_classes : []},
 			
 	    		//name : "GL Screen"
 	    		//type : "glscreen"
@@ -787,7 +823,7 @@ var xd1_templates={
 	    colormap : "/sadira/icons/svg/colormap.svg",
 	    object_editor : "/sadira/icons/svg/root.svg",
 	    gl_multilayer : "/sadira/icons/svg/gl_viewport.svg",
-	    gl_image_layer : "/sadira/icons/svg/plot.svg",
+	    //gl_image_layer : "/sadira/icons/svg/plot.svg",
 	    view_manager : "/sadira/icons/svg/plot.svg",
 	};
     });

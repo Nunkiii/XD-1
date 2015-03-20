@@ -52,8 +52,8 @@ template_ui_builders.xd1=function(ui_opts, xd){
     });
     */
 
-    if(è(xd.ui_childs.divider))
-	xd.ui_childs.divider.listen("drag_end", function(){
+    if(è(xd.elements.drawing.ui_childs.divider))
+	xd.elements.drawing.ui_childs.divider.listen("drag_end", function(){
 	    xd.gl_views.forEach(function(v){
 		v.fullscreen(false);
 	    });
@@ -96,6 +96,8 @@ template_ui_builders.xd1=function(ui_opts, xd){
 		if(w>0){
 	
 		    glm.trigger("view_update");
+		    if(è(xd.elements.drawing.ui_childs.divider))
+			xd.elements.drawing.ui_childs.divider.update();
 		    clearInterval(iv);
 		}
 		//drawing_node.style.height=drawing_widget.ui_root.clientWidth+"px";
@@ -150,11 +152,11 @@ template_ui_builders.xd1=function(ui_opts, xd){
 }
 
 template_ui_builders.cursor_layer_info=function(ui_opts, cli){
-    console.log("Building cursor info ....");
+    //console.log("Building cursor info ....");
     var pxv=cli.elements.pixval;
     var cmdiv=cli.cmdiv=cc("div", pxv.ui_root); cmdiv.className="colormap";
-    cmdiv.style.width="10em";
-    cmdiv.style.height="1em";
+    cmdiv.style.width="100%";
+    cmdiv.style.minHeight=".5em";
 }
 
 
@@ -296,7 +298,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 		    glm.p_layer_range[2*lay.id+1]=lay.height*1.0/glm.h;		
 		}
 	    }
-	    console.log("setting new range " + JSON.stringify(glm.p_layer_range));
+	    //console.log("setting new range " + JSON.stringify(glm.p_layer_range));
 	    
     	    var rangeLocation = gl.getUniformLocation(glm.program, "u_layer_range");	
 	    gl.uniform2fv(rangeLocation, glm.p_layer_range);
@@ -324,7 +326,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    var cursor_size=[40, 20]; //pixels...
 
 	    //pointer_info.innerHTML="Screen : (" +screen_pos[0]+"," +screen_pos[1] +") "; 
-	    cursor.elements.screen.set_value(screen_pos);
+	    cursor.elements.position.elements.screen.set_value(screen_pos);
 	    //console.log("clear " + glscreen.canvas.clientWidth + " " + glscreen.canvas.clientHeight);
 	    ctx2d.clearRect(0,0,glscreen.canvas.clientWidth, glscreen.canvas.clientHeight);
 	    
@@ -583,7 +585,8 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    
 	    layer.listen("name_changed", function(n){
 		console.log("Layer name changed");
-		layer_ci[this.id].set_title(n);
+		layer_ci[this.id].subtitle=n;
+		layer_ci[this.id].set_title("Layer "+this.id);
 	    });
 
 	    	    
@@ -592,7 +595,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    layer.cmap.listen("colormap_changed", function(cm){
 		layer_ci[lid].cmdiv.style.background=cm.css_color_gradient;
 	    });
-
+	    
 	    
 	    
 	    layer.container=layer_objects.ui_childs;
