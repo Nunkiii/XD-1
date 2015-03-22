@@ -593,31 +593,16 @@ var xd1_templates={
 	subtitle : "A JS/WebGL FITS viewer",
 	type : "template",
 	tpl_builder : "xd1",
-	
+
+	toolbar : {},
+
 	ui_opts: {
+	    icon : "/XD-1/ico/discovery1_small.png",
 	    child_view_type : "pills",
 	    root: true,
 	    tabs_on_name: true,
-	    root_classes : ["container-fluid"], child_classes : ["row"]
-
-	},
-	
-	toolbar : {
-	    file : {
-		name : "File",
-		elements : {
-		    open : {
-			name : "Open FITS file"
-		    },
-		    demos : {
-			name : "Load a demo"
-		    },
-		}
-	    },
-	    about : {
-		name : "XD-1.984",
-		intro: "A multi-document, multi-layer FITS image viewer."
-	    }
+	    root_classes : ["container-fluid"], child_classes : ["row"],
+	    name_node : "h3"
 	},
 	
 	
@@ -725,7 +710,7 @@ var xd1_templates={
 		url : "/XD-1/about.html",
 		ui_opts : {
 		    name_node : "h1", name_classes : [], root_classes : ["container-fluid"],
-		    icon : "/XD-1/ico/discovery1_small.png"
+		    //icon : "/XD-1/ico/discovery1_small.png"
 		},
 		name : "About...",
 		subtitle: "A multi-document, multi-layer FITS image viewer."
