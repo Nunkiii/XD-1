@@ -511,7 +511,7 @@ template_ui_builders.xd1_layer=function(ui_opts, layer){
 
 	if(brg!=null){
 
-	    var pt  = histo_tpl.svg.createSVGPoint(); 
+	    var pt  = histo_tpl.svg_node.createSVGPoint(); 
 
 	    function rect_corners(rect){
 		//console.log("Getting corners for " + rect );
