@@ -64,7 +64,7 @@ var xd1_templates={
 	    child_view_type : "div", close: true, render_name : true,
 	    //name_node : "h2",
 	    child_classes : ["container-fluid"], root_classes : ["container-fluid"],
-	    icon : "/sadira/icons/svg/mat_float.svg"
+	    icon : "/sadira/icons/mat_float.svg"
 	},
 	events : ["image_ready"],
 	elements : { 
@@ -597,7 +597,7 @@ var xd1_templates={
 	toolbar : {},
 
 	ui_opts: {
-	    icon : "/XD-1/ico/discovery1_small.png",
+	    icon : "/XD-1/ico/xd-1.svg",
 	    child_view_type : "pills",
 	    root: true,
 	    tabs_on_name: true,
@@ -662,7 +662,7 @@ var xd1_templates={
 		tpl_builder : "demo_multilayer",
 		ui_opts : { root_classes : [""], child_classes : ["row"], name_classes : [],
 			    name_node : "h2",
-			    icon : "/XD-1/ico/layers.png"
+			    icon : "/XD-1/ico/multi-layer.svg"
 
 			  },
 		elements : {
@@ -804,10 +804,10 @@ var xd1_templates={
 		string : "sadira/icons/svg/string.svg",
 		
 	    */
-	    image : "/sadira/icons/svg/mat_float.svg",
+	    image : "/sadira/icons/mat_float.svg",
 	    colormap : "/sadira/icons/svg/colormap.svg",
-	    object_editor : "/sadira/icons/svg/root.svg",
-	    gl_multilayer : "/sadira/icons/svg/gl_viewport.svg",
+	    object_editor : "/XD-1/ico/directory.svg",
+	    gl_multilayer : "/XD-1/ico/gl_viewport.svg",
 	    //gl_image_layer : "/sadira/icons/svg/plot.svg",
 	    view_manager : "/sadira/icons/svg/plot.svg",
 	};
