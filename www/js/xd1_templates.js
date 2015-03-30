@@ -26,8 +26,10 @@ var xd1_templates={
     },
     
     image_dimensions : {
-	ui_opts : {type : "short", label : true},
-	name : "Dimensions",
+	ui_opts : {
+	    type : "short", label : true
+	},
+	name : "Image dimensions",
 	tip : "Dimension of the image in pixels",
 	type : "labelled_vector",
 	min : "0",
@@ -57,9 +59,9 @@ var xd1_templates={
 	
     image : {
 	name : "No data loaded",
-	type : "template",
-	tpl_builder : "image",
-	template_name : "binary_object",
+	type : "binary_object",
+	//tpl_builder : "image",
+	//template_name : "binary_object",
 	ui_opts : {
 	    child_view_type : "div", close: true, render_name : true,
 	    //name_node : "h2",
@@ -78,11 +80,13 @@ var xd1_templates={
 	    },
 	    keys : { name : "Metadata", type : "text", elements : {},
 		     ui_opts: {sliding: true, slided: false, label : true, root_classes : ["col-md-12"]}},	    
-	    dims : { type: "template", template_name : "image_dimensions",
-		     ui_opts: {sliding: false, slided: false,
-			       root_classes : ["col-md-6"],
-			       child_classes : ["inline"]
-			      }},
+	    dims : {
+		type : "image_dimensions",
+		ui_opts: {
+		    sliding: false, slided: false,
+		    root_classes : ["col-md-6"],
+		    child_classes : ["inline"]
+		}},
 	    bounds : {
 		type : "labelled_vector",
 		name : "Data value bounds",
@@ -179,20 +183,17 @@ var xd1_templates={
 		    bias : {
 			name : "Bias",
 			ui_opts : { sliding : true, slided : false},
-			type : "template",
-			template_name : "image"
+			type :  "image"
 		    },
 		    flat : {
 			name : "Flat-field",
 			ui_opts : { sliding : true, slided : false},
-			type : "template",
-			template_name : "image"
+			type :  "image"
 		    },
 		    science : {
 			name : "Science",
 			ui_opts : { sliding : true, slided : false},
-			type : "template",
-			template_name : "image"
+			type : "image"
 		    }
 		}
 	    },
@@ -203,8 +204,7 @@ var xd1_templates={
 		    reduced_science : {
 			name : "Reduced science",
 			ui_opts : { sliding : true, slided : false},
-			type : "template",
-			template_name : "image"
+			type : "image"
 		    }
 		}
 	    }
@@ -221,13 +221,13 @@ var xd1_templates={
 		}
 	    },
 	    image : {
-		name : "Image",type : "template",template_name:"image"
+		name : "Image",type :"image"
 	    }
 	}
     },
-    user_objects : {
+
+    object_editor : {
 	name : "User objects",
-	type : "object_editor",
 	elements : {
 	    bbox : {
 		ui_opts : {
@@ -360,7 +360,7 @@ var xd1_templates={
 	}
     },
 
-    options : {
+    gl_options : {
 	name : "Viewer options",
 	ui_opts : {
 	    root_classes : ["col-md-12"],
@@ -479,9 +479,9 @@ var xd1_templates={
     
     
     gl_image_layer : {
-	type : "template",
+	//type : "template",
 	name :  "Geometry/Color configuration",
-	tpl_builder : "xd1_layer",
+	//tpl_builder : "xd1_layer",
 	ui_opts : {
 	    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
 	    child_view_type : "pills",
@@ -495,8 +495,7 @@ var xd1_templates={
 	elements : {
 	    geometry : {
 		name : "Layer options", subtitle  : "Set up parameters for this layer",
-		type : "template",
-		template_name : "geometry",
+		type :  "geometry",
 		ui_opts : {
 		    //root_classes : ["col-md-12"],
 		    //render_name : false
@@ -557,15 +556,15 @@ var xd1_templates={
 		name : "Data histogram, value cuts",
 		subtitle : "Display the histogram and select the value bounds fitting into the colormap.",
 		intro : "<br/><br/><p class='alert alert-warning'><strong>This is buggy, sorry !</strong>The vector view (based on d3.js) is not yet very stable.</p>",
-		type : "template",
-		template_name : "vector",
+		type : "vector",
+
 		ui_opts : {
 		    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
 		    fa_icon : "signal",
 		},
 		elements : {
 		    cuts :{
-			name : "Value cuts", type : "template", template_name : "cuts", 
+			name : "Value cuts", type  : "cuts", 
 			ui_opts: {
 			    editable : true,  type : "short",
 			    root_classes : ["inline"], child_classes : ["inline"],// child_classes : ["container"],
@@ -591,8 +590,8 @@ var xd1_templates={
     xd1 : {
 	name: "XD-1",
 	subtitle : "A JS/WebGL FITS viewer",
-	type : "template",
-	tpl_builder : "xd1",
+	//type : "template",
+	//tpl_builder : "xd1",
 
 	toolbar : {},
 
@@ -610,9 +609,8 @@ var xd1_templates={
 	    objects : {
 		name : "FITS images",
 //		name_node : "h1",
-		type : "template",
+		type : "object_editor",
 		ui_opts: {root_classes : ["col-md-12"]},
-		template_name : "user_objects",
 		elements : {
 		    
 		}
@@ -659,7 +657,7 @@ var xd1_templates={
 	    demo : {
 		name : "Multiband demos",
 		subtitle : "Loads images from different wavelength bands in multiple color layers of the same display.",
-		tpl_builder : "demo_multilayer",
+		type : "demo_multilayer",
 		ui_opts : { root_classes : [""], child_classes : ["row"], name_classes : [],
 			    name_node : "h2",
 			    icon : "/XD-1/ico/multi-layer.svg"
@@ -671,8 +669,7 @@ var xd1_templates={
 			ui_opts : {label: true, root_classes : ["container"], sliding: true, slided: false},
 			name : "Websocket",
 			tip : "Websocket connexion to a sadira server",
-			type : "template",
-			template_name : "sadira"
+			type : "sadira"
 			
 		    },
 		    demos : {
@@ -722,7 +719,6 @@ var xd1_templates={
     
     gl_multilayer : {
 	name : "GL Multilayer",
-	type: "gl_multilayer",
 	events : ["gl_ready"],
 	ui_opts: {
 	    child_view_type : "pills", render_name: false, close: true,
@@ -732,8 +728,7 @@ var xd1_templates={
 	    geometry : {
 		tip : "View geometry",
 		subtitle : "Change GL view's geometrical parameters",
-		type : "template",
-		template_name : "geometry",
+		type : "geometry",
 		ui_opts : {root_classes : []}
 		//ui_opts: {sliding: true, child_view_type : "div"}
 			 
@@ -741,17 +736,15 @@ var xd1_templates={
 	    cursor : {
 		//ui_opts : {render_name : false, root_classes : ["col-md-12"]},
 		subtitle : "Display cursor position information",
-		template_name : "cursor_info",
-		type : "template",
+		type :  "cursor_info",
 		ui_opts : {fa_icon : "bullseye"} 
 	    },
 	    options : {
+		type : "gl_options",
+		subtitle : "GL display options",
 		ui_opts : {
 		    fa_icon : "list"
 		},
-		subtitle : "GL display options",
-		template_name : "options",
-		type : "template"
 	    },
 	    layers : {
 		name :  "Image Layers",

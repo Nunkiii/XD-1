@@ -271,11 +271,11 @@ template_ui_builders.object_editor=function(ui_opts, edit){
 
     new_object.listen("click", function(){
 
-	//console.log("Object image TPL !");
+	console.log("Object image TPL !");
 	var new_img=tmaster.build_template("image");
 	new_img.xd=edit.xd;
-	console.log("Setting XD to " + new_img.xd);
-	//console.log("Object image TPL DONE!");
+	//console.log("Setting XD to " + new_img.xd);
+	console.log("Object image TPL DONE!");
 	var img_ui=create_ui({}, new_img, edit.depth+1);
 	object_tree.ui_childs.add_child(new_img, img_ui);
     });
@@ -290,7 +290,7 @@ template_ui_builders.object_editor=function(ui_opts, edit){
 
 template_ui_builders.image=function(ui_opts, image){
 
-    //console.log("Image constructor ! " + image.name ); for(var e in image.elements.view) console.log("we="+e);
+    console.log("Image constructor ! " + image.name );
 
     var bin_size=image.elements.size;
     var dims=image.elements.dims;
@@ -325,6 +325,7 @@ template_ui_builders.image=function(ui_opts, image){
 
 
     new_display.listen("click", function(){
+	console.log("ND CLISK!");
 	image.xd.create_image_view(image, function(error, glm){
 	    glm.set_title(image.name + " display");
 	});
@@ -460,7 +461,7 @@ template_ui_builders.image=function(ui_opts, image){
     
 }
 
-template_ui_builders.xd1_layer=function(ui_opts, layer){
+template_ui_builders.gl_image_layer=function(ui_opts, layer){
 
     //function layer(xd, id, cb){
     //var div=this.div=document.createElement("div"); 
