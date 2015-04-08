@@ -432,6 +432,7 @@ template_ui_builders.image=function(ui_opts, image){
 
     image.setup_dgram_image=function(header, fvpin){
 
+	console.log("Setup dgram image size " + header.sz);
 	var fvp;
 
 	//if(header.name) this.name=header.name;
@@ -451,7 +452,7 @@ template_ui_builders.image=function(ui_opts, image){
 	dims.set_value([header.width,header.height]);
 	image.update_extent();
 
-	bin_size.set_value(header.sz);
+	//bin_size.set_value(header.sz);
 
 	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
 	meta.set_value(JSON.stringify(header, null, 5));
