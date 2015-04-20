@@ -371,15 +371,19 @@ var xd1_templates={
 	},
 	elements : {
 	    image_axes : {
-		name : "Show image axes", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"] }
+		name : "Show image axes", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"] }
 	    },
 	    x_plot : {
-		name : "Show X plot", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+		name : "Show X plot", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
 									 
 	    },
 	    y_plot : {
-		name : "Show Y plot", type : "bool", value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+		name : "Show Y plot", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+	    },
+	    interp_cmap : {
+		name : "Interpolate colormap", type : "bool", default_value : true, ui_opts : { type : "edit", label : true, root_classes : ["inline"] }
 	    }
+
 
 	}
     },
@@ -520,37 +524,13 @@ var xd1_templates={
 		    }
 		}
 	    },
-	    
+	    cmap : {
+		type : "colormap"
+	    },
 	    // histo : {
 		    // 	name : "Colors and cuts",
 	    // 	ui_opts : { root_classes : ["inline"], child_classes : "inline", sliding : true , sliding_dir : "h", slided : false },
 	    // 	elements : {
-	    
-		    
-	    cmap : { 
-		name : "Colormap", subtitle : "Buggy!",
-		type : "colormap", 
-		intro : "<br/><br/><p class='alert alert-warning'><strong>This is buggy, sorry !</strong>Need rewrite. New version will offer a list of «common» colormaps for straight use and user colormaps will be stored in webstorage.</p>",
-		ui_opts : {
-		    type : "edit",
-		    //editable : true,
-		    root_classes : ["container-fluid"],
-		    item_classes : [],
-		    
-		},
-		// value : [[0,0,0,1,0],
-		// 	      [0.8,0.2,0.8,1.0,0.2],
-		// 	      [0.9,0.9,0.2,1.0,0.2],
-		// 	      [0.9,0.9,0.2,1.0,0.5],
-			// 	      [0.9,0.2,0.2,1.0,0.5],
-		// 	      [1,1,1,1,1]] },
-		
-		
-		value : [[0,0,0,1,0],
-				 [0.7,0.2,0.1,1.0,0.2],
-			 [0.8,0.9,0.1,1.0,0.6],
-			 [1,1,1,1,1]] 
-	    },
 	    
 	    histo : {
 		name : "Data histogram, value cuts",

@@ -40,7 +40,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
     
     
     xd.listen("view_update", function(){
-	console.log("XD1 view update !");
+	//console.log("XD1 view update !");
     });
     
     //    console.log("drawing node is " + drawing_node);
@@ -74,7 +74,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
     }
 
     views.listen("element_selected", function(e){
-	console.log("Selected !! " + e.name);
+	//console.log("Selected !! " + e.name);
 	xd.select_view(e);
     });
     
@@ -113,8 +113,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
 	    if(è(opts.name))
 		glm.set_title(opts.name);
 
-	console.log("Attach view...");
-
+	
 	var i=0; var vn=0;
 	
 	while( typeof views.elements["IV"+vn] != 'undefined'){
@@ -122,7 +121,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
 	    vn++;
 	    
 	}
-	console.log("Attach view...OK");
+	
 	views.elements["IV"+vn]=glm;
 	views.ui_childs.add_child(glm, glmui);
 	xd.gl_views.push(glm);
@@ -183,6 +182,10 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     var rc=glm.rc=geo.rotation.elements.center;
 
     var topng=glm.elements.iexport.elements.topng;
+    
+    var interp_cmap=glm.get("interp_cmap");
+
+
 
     
     // if(typeof glm.drawing_node === 'undefined'){
@@ -224,10 +227,12 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
     glm.p_vals=new Float32Array(4*8);
     glm.p_rotcenters=new Float32Array(4*2);
     glm.p_layer_range=new Float32Array(4*2);
-    glm.ncolors=new Int32Array([0,0,0,0]);    
-    glm.cmap_texdata = new Float32Array(16*128);
-    glm.cmap_fracdata = new Float32Array(16*128);
-    
+    glm.ncolors=new Int32Array([0,0,0,0]);
+    var switches=glm.switches=new Int32Array([interp_cmap.value===true ? 1:0,0,0,0]);    
+    glm.cmap_texdata = new Float32Array(16*256);
+    glm.cmap_fracdata = new Float32Array(16*256);
+
+
     glscreen.webgl_start({}, function(error, gl){
 	
 	if(error){
@@ -236,10 +241,19 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    return;
 	}
 
-	console.log("Webgl started ok!");
-
+	//console.log("Webgl started ok!");
+	
 	glm.gl=gl;
 
+	
+	interp_cmap.listen('change', function(sw){
+    	    glm.switches[0]=sw ? 1 : 0;
+	    //var le_loc=gl.getUniformLocation(glm.program, "u_layer_enabled");
+	    gl.uniform4iv(glm.switches_loc, glm.switches);
+	    glm.render();
+	});
+	
+	
 	tr.listen("change",function(){
 	    //console.log("TR changed ! " + this.value[0]);
 	    gl.uniform2fv(glm.tr_loc, this.value);
@@ -508,8 +522,12 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    glm.angle_loc=gl.getUniformLocation(program, "u_angle");
 	    glm.tr_loc=gl.getUniformLocation(program, "u_tr");
 	    glm.rotcenter_loc=gl.getUniformLocation(program, "u_rotc");
+	    glm.switches_loc=gl.getUniformLocation(program, "u_switches");
+
 	    
 	    gl.uniform4iv(glm.le_loc, layer_enabled);
+	    gl.uniform4iv(glm.switches_loc, switches);
+	    
 	    gl.uniform2f(glm.resolutionLocation, glscreen.canvas.clientWidth, glscreen.canvas.clientHeight);
 	    gl.uniform1f(glm.zoom_loc, zm.value );
 	   // gl.uniform1f(angle_loc, ag.value);
@@ -577,7 +595,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 		//glm.delete_layer(lid);
 	    }
 
-	    console.log("Creating new layer at position " + lid);
+	    //console.log("Creating new layer at position " + lid);
 	    
 	    var layer=tmaster.build_template("gl_image_layer"); 
 
@@ -586,7 +604,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
 	    
 	    layer.listen("name_changed", function(n){
-		console.log("Layer name changed");
+		//console.log("Layer name changed");
 		layer_ci[this.id].subtitle=n;
 		layer_ci[this.id].set_title("Layer "+this.id);
 	    });

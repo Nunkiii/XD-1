@@ -10,8 +10,9 @@ uniform float u_zoom;  //the passed zoom value from the html ui
 uniform float u_angle; //the passed rotation value from the html ui
 uniform vec2 u_tr; //Translations (x,y) vector[2] from the html ui
 uniform vec2 u_rotc;
-uniform ivec4 u_layer_enabled; //4 layers
-uniform vec4 u_test[2];
+uniform ivec4 u_layer_enabled; //Layer compute switch
+uniform ivec4 u_switches; // 0 = Colormap interpolate switch, 1-> nothing
+//uniform vec4 u_test[2];
 uniform vec2 u_layer_range[4]; //The actual (x,y) fraction of the big texture this layer occupies
 uniform vec4 u_pvals[8]; //Geometrical parameters for all layers (see other comments in JS code for description)
 uniform vec2 u_rotcenters[4]; //Center of rotation for each layer in its own pixel frame
@@ -24,29 +25,41 @@ uniform sampler2D u_cmap_colors;//Float texture containing 4 colour vectors rows
 uniform vec2 u_resolution; //The actual size of the big texture (dimensions = powers of 2)
 uniform vec2 u_screen; //The size of the GL canvas in pixels
 
-//This subroutine was needed to avoid too deep if constructions not supported by some nvidia drivers.
+
+
+
+//This subroutine was needed to avoid too deep "if" constructions not supported by some gpu drivers.
 
 void get_color(in float c, in float lpos, in float upv, in int nc, inout vec4 cmap_col){
 
   //Computing this layer's contribution to the pixel color using the colormap data stored in two float textures.
 
-  float frl=0.0,dc,frr; vec4 rc; vec4 lc; 
-
-  //Colormap has (now) a maximum of 128 colors.
-  for(int i=0;i<128;i++){ 
+  if(u_switches[0]==0){
+    for(int i=0;i<256;i++){ 
+      if(i==nc) break;
+      if(texture2D(u_cmap_fracs, vec2((float(i)+.5)/256.0, lpos)).r > c){
+	cmap_col+=texture2D(u_cmap_colors, vec2((float(i-1)+.5)/256.0, lpos))*upv; 
+	break;
+      } 
+    }//end for (colours)
+    return;
+  }
+  //Colormap has (now) a maximum of 256 colors.
+    float frl=0.0,dc,frr; vec4 rc; vec4 lc; 
+  for(int i=0;i<256;i++){ 
 
       if(i==nc) break;
       
-      frr = texture2D(u_cmap_fracs, vec2((float(i)+.5)/128.0, lpos)).r; //Fractional positions of the colours inside the colormap.
-      rc = texture2D(u_cmap_colors, vec2((float(i)+.5)/128.0, lpos)); //The actual colormap colors.
+      frr = texture2D(u_cmap_fracs, vec2((float(i)+.5)/256.0, lpos)).r; //Fractional positions of the colours inside the colormap.
+      rc = texture2D(u_cmap_colors, vec2((float(i)+.5)/256.0, lpos)); //The actual colormap colors.
 
       if(frr>c){
-	dc=frr-frl;
-	rc=(c-frl)/dc*rc;
-	lc=(frr-c)/dc*lc;
-	//cmap_col+=(lc+rc)*u_pvals[2*l+1][2];
-	cmap_col+=(lc+rc)*upv;
-	break;
+	  dc=frr-frl;
+	  rc=(c-frl)/dc*rc;
+	  lc=(frr-c)/dc*lc;
+	  //cmap_col+=(lc+rc)*u_pvals[2*l+1][2];
+	  cmap_col+=(lc+rc)*upv;
+	  break;
       } 
       frl=frr; lc=rc; 
     }//end for (colours)
@@ -87,11 +100,15 @@ void main() { //Beginning of shader program called to retrieve the colour of eac
     c=(texture2D(u_image, p)[l]-u_pvals[2*l][0])/(u_pvals[2*l][1]-u_pvals[2*l][0]);
     lumi=u_pvals[2*l+1][2];
     //Value lower than low cut value ?
-    if(c<=0.0){cmap_col+=lumi*texture2D(u_cmap_colors, vec2(0.5/128.0, lpos)); continue;} 
+    if(c<=0.0){cmap_col+=lumi*texture2D(u_cmap_colors, vec2(0.5/256.0, lpos)); continue;} 
     //Value higher than high cut value ?
-    if(c>=1.0){cmap_col+=lumi*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/128.0, lpos));continue;} 
+    if(c>=1.0){cmap_col+=lumi*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/256.0, lpos));continue;} 
     //Computing color from colormap if value lies in the ]0,1[ range.
-    get_color(c,lpos,lumi, u_ncolors[l], cmap_col);
+
+    if(u_switches[0]==0)
+      cmap_col+=texture2D(u_cmap_colors, vec2(c, lpos))*lumi; //The actual colormap colors.
+    else
+      get_color(c,lpos,lumi, u_ncolors[l], cmap_col);
 
 
   }//end for (layers)
@@ -150,9 +167,9 @@ void main() { //Beginning of shader program called to retrieve the colour of eac
     }
     
     //Value lower than low cut value ?
-    //if(c<=0.0){cmap_col+=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2(0.5/128.0, lpos)); continue;} 
+    //if(c<=0.0){cmap_col+=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2(0.5/256.0, lpos)); continue;} 
     //Value higher than high cut value ?
-    //if(c>=1.0){cmap_col+=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/128.0, lpos));continue;} 
+    //if(c>=1.0){cmap_col+=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/256.0, lpos));continue;} 
 
     //get_color(c,l,lpos,u_pvals[2*l+1][2], u_ncolors[l], cmap_col);
 
@@ -163,9 +180,9 @@ void main() { //Beginning of shader program called to retrieve the colour of eac
     for(int i=0;i<4;i++){
       //      corncol[i]=vec4(0.0,0.0,0.0,1.0);
       //Value lower than low cut value ?
-      //      if(corn[i]<=0.0){corncol[i]=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2(0.5/128.0, lpos)); continue;} 
+      //      if(corn[i]<=0.0){corncol[i]=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2(0.5/256.0, lpos)); continue;} 
       //Value higher than high cut value ?
-      //      if(corn[i]>=1.0){corncol[i]=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/128.0, lpos));continue;} 
+      //      if(corn[i]>=1.0){corncol[i]=u_pvals[2*l+1][2]*texture2D(u_cmap_colors, vec2( (float(u_ncolors[l])-.5)/256.0, lpos));continue;} 
       //get_color(corn[i],l,lpos,u_pvals[2*l+1][2], u_ncolors[l], corncol[i]);
       cornp[i]=cornp[i]-p; 
       d[i]=length(cornp[i]);

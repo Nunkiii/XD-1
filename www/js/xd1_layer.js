@@ -271,11 +271,11 @@ template_ui_builders.object_editor=function(ui_opts, edit){
 
     new_object.listen("click", function(){
 
-	console.log("Object image TPL !");
+	
 	var new_img=tmaster.build_template("image");
 	new_img.xd=edit.xd;
 	//console.log("Setting XD to " + new_img.xd);
-	console.log("Object image TPL DONE!");
+	
 	var img_ui=create_ui({}, new_img, edit.depth+1);
 	object_tree.ui_childs.add_child(new_img, img_ui);
     });
@@ -290,7 +290,7 @@ template_ui_builders.object_editor=function(ui_opts, edit){
 
 template_ui_builders.image=function(ui_opts, image){
 
-    console.log("Image constructor ! " + image.name );
+    //console.log("Image constructor ! " + image.name );
 
     var bin_size=image.elements.size;
     var dims=image.elements.dims;
@@ -325,14 +325,14 @@ template_ui_builders.image=function(ui_opts, image){
 
 
     new_display.listen("click", function(){
-	console.log("ND CLISK!");
+	
 	image.xd.create_image_view(image, function(error, glm){
 	    glm.set_title(image.name + " display");
 	});
     });
 
     add.listen("click", function(){
-	console.log("Selected : " + display_list.ui.selectedIndex);
+	//console.log("Selected : " + display_list.ui.selectedIndex);
 	var vn=dlist[display_list.ui.selectedIndex];
 	var glm=views.elements[vn];
 	glm.create_layer(image);
@@ -432,7 +432,7 @@ template_ui_builders.image=function(ui_opts, image){
 
     image.setup_dgram_image=function(header, fvpin){
 
-	console.log("Setup dgram image size " + header.sz);
+	//console.log("Setup dgram image size " + header.sz);
 	var fvp;
 
 	//if(header.name) this.name=header.name;
@@ -563,7 +563,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	    });	       	
 	    
 	}else
-	    console.log("brg is NULL !");
+	    ;//console.log("brg is NULL !");
 
 
 
@@ -813,7 +813,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	//     tn.style.background=cm.css_color_gradient;
 	// }
 		
-	var of=128*4*layer.id;
+	var of=256*4*layer.id;
 	for(var cmi=0;cmi<cmap_data.length;cmi++){
 	    var c=cmap_data[cmi];
 	    for(var k=0;k<4;k++)
@@ -821,7 +821,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	    glm.cmap_fracdata[of+4*cmi]=c[4];
 	}
 	
-	for(var cmi=cmap_data.length;cmi<128;cmi++){
+	for(var cmi=cmap_data.length;cmi<256;cmi++){
 	    for(var k=0;k<4;k++)
 		glm.cmap_texdata[of+4*cmi+k]=-1.0;
 	    glm.cmap_fracdata[of+4*cmi]=-1;
@@ -830,7 +830,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	// for(var k=0;k<4;k++){
 	//     console.log("Layer " + k + " nc=" + ncolors[k] );
 	//     for(var cmi=0;cmi<ncolors[k];cmi++){
-	// 	console.log("L"+k+" C"+cmi + "=" + cmap_texdata[k*128*4+cmi*4]+","+ cmap_texdata[k*128*4+cmi*4+1]+","+ cmap_texdata[k*128*4+cmi*4+2]+","+ cmap_texdata[k*128*4+cmi*4+3]+"" );
+	// 	console.log("L"+k+" C"+cmi + "=" + cmap_texdata[k*256*4+cmi*4]+","+ cmap_texdata[k*256*4+cmi*4+1]+","+ cmap_texdata[k*256*4+cmi*4+2]+","+ cmap_texdata[k*256*4+cmi*4+3]+"" );
 	//     }
 	// }
 	
@@ -845,7 +845,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 128, 4, 0, gl.RGBA, gl.FLOAT, glm.cmap_texdata);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 4, 0, gl.RGBA, gl.FLOAT, glm.cmap_texdata);
 	gl.uniform1i(gl.getUniformLocation(glm.program, "u_cmap_colors"), 1);
 	
 	gl.activeTexture(gl.TEXTURE2);
@@ -853,7 +853,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	gl.pixelStorei(gl.UNPACK_ALIGNMENT, 1);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
 	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 128,4, 0, gl.RGBA, gl.FLOAT, glm.cmap_fracdata);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256,4, 0, gl.RGBA, gl.FLOAT, glm.cmap_fracdata);
 	gl.uniform1i(gl.getUniformLocation(glm.program, "u_cmap_fracs"), 2);
 	
 	
