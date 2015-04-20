@@ -505,6 +505,7 @@ var xd1_templates={
 		    //render_name : false
 		    //sliding : true , sliding_dir : "h", slided : false
 		    //child_view_type : "pills" 
+		    name_node : "h4"
 		},
 		elements : {
 		    enable : {
@@ -525,7 +526,8 @@ var xd1_templates={
 		}
 	    },
 	    cmap : {
-		type : "colormap"
+		type : "colormap",
+		ui_opts : { name_node : "h4" }
 	    },
 	    // histo : {
 		    // 	name : "Colors and cuts",
@@ -541,6 +543,7 @@ var xd1_templates={
 		ui_opts : {
 		    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
 		    fa_icon : "signal",
+		    name_node : "h4"
 		},
 		elements : {
 		    cuts :{
@@ -709,7 +712,7 @@ var xd1_templates={
 		tip : "View geometry",
 		subtitle : "Change GL view's geometrical parameters",
 		type : "geometry",
-		ui_opts : {root_classes : []}
+		ui_opts : {root_classes : [], name_node : "h4"}
 		//ui_opts: {sliding: true, child_view_type : "div"}
 			 
 	    },
@@ -717,13 +720,14 @@ var xd1_templates={
 		//ui_opts : {render_name : false, root_classes : ["col-md-12"]},
 		subtitle : "Display cursor position information",
 		type :  "cursor_info",
-		ui_opts : {fa_icon : "bullseye"} 
+		ui_opts : {fa_icon : "bullseye", name_node : "h4"} 
 	    },
 	    options : {
 		type : "gl_options",
 		subtitle : "GL display options",
 		ui_opts : {
-		    fa_icon : "list"
+		    fa_icon : "list",
+		    name_node : "h4"
 		},
 	    },
 	    layers : {
@@ -737,7 +741,8 @@ var xd1_templates={
 		    child_classes : ["row"],
 		    child_view_type : "tabbed",
 		    render_name : true,
-		    fa_icon : "film"
+		    fa_icon : "film",
+		    name_node : "h4"
 		},
 		elements : {}
 	    },
@@ -746,7 +751,8 @@ var xd1_templates={
 		intro : "<p>The WebGL canvas content is encoded as a  base64 string embedded to an html image attached to a new browser tab/window.</p><p>This is the most straight way to produce a PNG image from an HTML canvas.",
 		subtitle : "Save current GL view as a bitmap.",
 		ui_opts : {root_classes : [],
-			  item_classes : []
+			   item_classes : [],
+			   name_node : "h4"
 			  },
 		elements : {
 		    topng : {
