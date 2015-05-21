@@ -560,13 +560,10 @@ var xd1_templates={
 		
 		
 	    }
-	    
 	    // ,
 	    // general : {
 	    // 	type : "template", template_name : "levelconf"
-	    
 	    // }
-	    
 	}
     },
     
@@ -584,7 +581,7 @@ var xd1_templates={
 	    root: true,
 	    tabs_on_name: true,
 	    root_classes : ["container-fluid"], child_classes : ["row"],
-	    name_node : "h3"
+	    name_node : "h4"
 	},
 	
 	
