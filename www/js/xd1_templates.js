@@ -580,11 +580,11 @@ var xd1_templates={
 	    child_view_type : "pills",
 	    root: true,
 	    tabs_on_name: true,
-	    root_classes : ["container-fluid"], child_classes : ["row"],
+	    root_classes: ["container-fluid"],
+	    child_classes : ["container-fluid"],
 	    name_node : "h4"
 	},
-	
-	
+
 	elements : {
 	    objects : {
 		name : "FITS images",
@@ -598,11 +598,12 @@ var xd1_templates={
 	    
 	    drawing : {
 		name : "Views",
-		ui_opts : { child_view_type : "div", root_classes : ["container-fluid"], child_classes : ["row"],
-			    //fa_icon : "image",
-			    icon : "/XD-1/ico/stars.jpg",
-			    render_name : false
-			  },
+		ui_opts : {
+		    child_view_type : "div", root_classes : ["container-fluid"], child_classes : ["row"],
+		    //fa_icon : "image",
+		    icon : "/XD-1/ico/stars.jpg",
+		    render_name : false
+		},
 		//type : "string", value : "Hello widget !",
 	    	elements : {
 		    views : {
@@ -686,8 +687,11 @@ var xd1_templates={
 		type : "html",
 		url : "/XD-1/about.html",
 		ui_opts : {
-		    name_node : "h1", name_classes : [], root_classes : ["container-fluid"],
-		    //icon : "/XD-1/ico/discovery1_small.png"
+		    name_node : "h1",
+		    name_classes : [],
+		    root_classes : ["container-fluid"],
+		    child_classes : ["container-fluid"],
+		    icon : "/XD-1/ico/discovery1_small.png"
 		},
 		name : "About...",
 		subtitle: "A multi-document, multi-layer FITS image viewer."
