@@ -526,44 +526,41 @@ var xd1_templates={
 		}
 	    },
 	    cmap : {
-		type : "colormap",
-		ui_opts : { name_node : "h4" }
+	    	type : "colormap",
+	    	ui_opts : { name_node : "h4" }
 	    },
 	    // histo : {
-		    // 	name : "Colors and cuts",
+	    	    // 	name : "Colors and cuts",
 	    // 	ui_opts : { root_classes : ["inline"], child_classes : "inline", sliding : true , sliding_dir : "h", slided : false },
 	    // 	elements : {
 	    
 	    histo : {
-		name : "Data histogram, value cuts",
-		subtitle : "Display the histogram and select the value bounds fitting into the colormap.",
-		intro : "<br/><br/><p class='alert alert-warning'><strong>This is buggy, sorry !</strong>The vector view (based on d3.js) is not yet very stable.</p>",
-		type : "vector",
+	    	name : "Data histogram, value cuts",
+	    	subtitle : "Display the histogram and select the value bounds fitting into the colormap.",
+	    	intro : "<br/><br/><p class='alert alert-warning'><strong>This is buggy, sorry !</strong>The vector view (based on d3.js) is not yet very stable.</p>",
+	    	type : "vector",
 
-		ui_opts : {
-		    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
-		    fa_icon : "signal",
-		    name_node : "h4"
-		},
-		elements : {
-		    cuts :{
-			name : "Value cuts", type  : "cuts", 
-			ui_opts: {
-			    editable : true,  type : "short",
-			    root_classes : ["inline"], child_classes : ["inline"],// child_classes : ["container"],
-			    label : true
-			}
-		    }
+	    	ui_opts : {
+	    	    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
+	    	    fa_icon : "signal",
+	    	    name_node : "h4"
+	    	},
+	    	elements : {
+	    	    cuts :{
+	    		name : "Value cuts", type  : "cuts", 
+	    		ui_opts: {
+	    		    editable : true,  type : "short",
+	    		    root_classes : ["inline"], child_classes : ["inline"],// child_classes : ["container"],
+	    		    label : true
+	    		}
+	    	    }
 		    
 		    
-		}
+	    	}
 		
 		
 	    }
-	    // ,
-	    // general : {
-	    // 	type : "template", template_name : "levelconf"
-	    // }
+	    
 	}
     },
     
@@ -580,8 +577,8 @@ var xd1_templates={
 	    child_view_type : "pills",
 	    root: true,
 	    tabs_on_name: true,
-	    root_classes: ["container-fluid"],
-	    child_classes : ["container-fluid"],
+	    root_classes: [],
+	    child_classes : [],
 	    name_node : "h4"
 	},
 
@@ -599,7 +596,9 @@ var xd1_templates={
 	    drawing : {
 		name : "Views",
 		ui_opts : {
-		    child_view_type : "div", root_classes : ["container-fluid"], child_classes : ["row"],
+		    child_view_type : "div",
+		    root_classes : [],
+		    child_classes : [],
 		    //fa_icon : "image",
 		    icon : "/XD-1/ico/stars.jpg",
 		    render_name : false
@@ -608,10 +607,10 @@ var xd1_templates={
 	    	elements : {
 		    views : {
 			name : "GL Views",
-			type : "view_manager",
+      //type : "view_manager",
 			ui_opts: {child_view_type : "tabbed",
 				  render_name: false,
-				  root_classes : ["col-md-4"],
+				  root_classes : ["col-md-4 col-xs-12 left"],
 				  child_classes : ["container-fluid"]},
 			elements : {}
 		    },
@@ -620,7 +619,7 @@ var xd1_templates={
 			ui_opts : {
 			    root_classes : ["col-md-8"],
 			    //root_classes : ["container-fluid"],
-			    child_classes : ["container-fluid"],
+			    child_classes : [],
 			    item_classes : []},
 			
 	    		//name : "GL Screen"

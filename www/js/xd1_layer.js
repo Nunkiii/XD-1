@@ -290,7 +290,7 @@ template_ui_builders.object_editor=function(ui_opts, edit){
 
 template_ui_builders.image=function(ui_opts, image){
 
-    //console.log("Image constructor ! " + image.name );
+    console.log("Image constructor ! " + image.name );
 
     var bin_size=image.elements.size;
     var dims=image.elements.dims;
@@ -408,10 +408,10 @@ template_ui_builders.image=function(ui_opts, image){
 		// Get the minimum and maximum pixels
 		var extent = dataunit.getExtent(arr);
 		
-		image.set_title(fits_file.ui_input.files[0].name);
+		image.set_title(fits_file.value.name);
 		//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
 
-		bin_size.set_value(fits_file.ui_input.files[0].size);
+		bin_size.set_value(fits_file.size);
 
 		bounds.set_value(extent);
 		console.log("Frame read : D=("+dims.value[0]+","+dims.value[1]+")  externt " + extent[0] + "," + extent[1] + " wh="+w+","+h);
@@ -425,10 +425,10 @@ template_ui_builders.image=function(ui_opts, image){
 	});
     }
     
-    fits_file.onchange=function(evt){
+    fits_file.listen('change',function(evt){
 	var file = evt.target.files[0]; // FileList object
 	image.load_fits_data(file);
-    }
+    });
 
     image.setup_dgram_image=function(header, fvpin){
 
@@ -502,7 +502,8 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
     var bsize=null; 
     var length;
 
-    histo_tpl.elements.selection.ui_root.add_class("disabled");
+    var slct=histo_tpl.get('selection');
+    slct.ui_root.add_class("disabled");
     //histo_tpl.elements.range.ui_root.add_class("disabled");
 
 
@@ -958,8 +959,10 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	
 	var step=(data_bounds[1]-data_bounds[0])/nbins; //histo_tpl.value.length;
 	var start=data_bounds[0];//+.5*step;
+
+	var range=histo_tpl.get('range');
 	
-	bsize=(histo_tpl.elements.range.value[1]-histo_tpl.elements.range.value[0])/nbins;
+	bsize=(range.value[1]-range.value[0])/nbins;
 
 	var histo=[];
 	for(var i=0;i<nbins;i++){
@@ -978,14 +981,15 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	    }
 	}
 
-	if(histo_tpl.plots.length===0){
+	if(histo_tpl.value.length===0){
 	    histo_tpl.add_plot_linear(histo, start, step);
-
+	    
 	}else{
-	    var p= histo_tpl.plots[0];
+	    var p= histo_tpl.value[0];
 	    p.args[1]=start;
 	    p.args[2]=step;
 	    p.data=histo;
+	    
 	    histo_tpl.config_range();
 	    //histo_tpl.set_range();
 	}
@@ -1008,7 +1012,10 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	layer.gl.uniform4fv(pv_loc, glm.p_vals);
 	if(zm.ui)
 	    zm.ui.step=zm.ui.value/10.0;
-	layer.update_geometry();
+	if(layer.update_geometry !==undefined)
+	    layer.update_geometry();
+	else
+	    console.log("UPDATE GEO NOT DEFINED!");
 	glm.render();
     }
     

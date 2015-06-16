@@ -434,8 +434,12 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    
 
 	    for(var l=0;l<glm.layers.length;l++)
-		if(glm.layer_enabled[glm.layers[l].id])
-		    glm.layers[l].update_geometry();
+		if(glm.layer_enabled[glm.layers[l].id]){
+		    if(glm.layers[l].update_geometry!==undefined)
+			glm.layers[l].update_geometry();
+		    else
+			console.log("Strange NO UPDATE GEO !");
+		}
 	    
 	    
 	    //ctx2d.fillStyle = "#FF0000";
