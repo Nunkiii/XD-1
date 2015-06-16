@@ -610,8 +610,9 @@ var xd1_templates={
       //type : "view_manager",
 			ui_opts: {child_view_type : "tabbed",
 				  render_name: false,
-				  root_classes : ["col-md-4 col-xs-12 left"],
-				  child_classes : ["container-fluid"]},
+				  root_classes : ["col-md-4 col-xs-12 scrolling"],
+				  //child_classes : ["container-fluid"]
+				 },
 			elements : {}
 		    },
 		    
@@ -638,9 +639,11 @@ var xd1_templates={
 		name : "Multiband demos",
 		subtitle : "Loads images from different wavelength bands in multiple color layers of the same display.",
 		type : "demo_multilayer",
-		ui_opts : { root_classes : [""], child_classes : ["row"], name_classes : [],
-			    name_node : "h2",
-			    icon : "/XD-1/ico/multi-layer.svg"
+		ui_opts : {
+		    root_classes : ["container-fluid"],
+		    child_classes : ["row"], name_classes : [],
+		    name_node : "h2",
+		    icon : "/XD-1/ico/multi-layer.svg"
 
 			  },
 		elements : {
