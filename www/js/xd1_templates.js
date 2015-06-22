@@ -487,8 +487,9 @@ var xd1_templates={
 	name :  "Geometry/Color configuration",
 	//tpl_builder : "xd1_layer",
 	ui_opts : {
-	    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
-	    child_view_type : "pills",
+	    root_classes : ["container-fluid"],
+	    //child_classes : ["container-fluid"],
+	    child_view_type : "tabbed",
 	    name_node : "h3",
 	    
 		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
@@ -541,7 +542,8 @@ var xd1_templates={
 	    	type : "vector",
 
 	    	ui_opts : {
-	    	    root_classes : ["container-fluid"], child_classes : ["container-fluid"],
+	    	    root_classes : ["container-fluid"],
+		    //child_classes : ["container-fluid"],
 	    	    fa_icon : "signal",
 	    	    name_node : "h4"
 	    	},
@@ -550,7 +552,8 @@ var xd1_templates={
 	    		name : "Value cuts", type  : "cuts", 
 	    		ui_opts: {
 	    		    editable : true,  type : "short",
-	    		    root_classes : ["inline"], child_classes : ["inline"],// child_classes : ["container"],
+	    		    //root_classes : ["inline"],
+			    //child_classes : ["inline"],// child_classes : ["container"],
 	    		    label : true
 	    		}
 	    	    }
@@ -696,7 +699,7 @@ var xd1_templates={
 		    name_node : "h1",
 		    name_classes : [],
 		    root_classes : ["container-fluid"],
-		    child_classes : ["container-fluid"],
+		    item_classes : ["container"],
 		    icon : "/XD-1/ico/discovery1_small.png"
 		},
 		name : "About...",
