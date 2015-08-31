@@ -569,11 +569,15 @@ var xd1_templates={
     
     xd1 : {
 	name: "XD-1",
-	subtitle : "A JS/WebGL FITS viewer",
+	subtitle : "FITS viewer",
 	//type : "template",
 	//tpl_builder : "xd1",
-
-	toolbar : {},
+	
+	toolbar : {
+	    ui_opts : {
+		toolbar_classes : ["navbar-fixed-top navbar-inverse"]
+	    }
+	},
 
 	ui_opts: {
 	    icon : "/XD-1/ico/discovery1_small.png",
@@ -583,7 +587,8 @@ var xd1_templates={
 	    tabs_on_name: true,
 	    root_classes: [],
 	    child_classes : [],
-	    name_node : "h3"
+	    name_node : "h3",
+	    toolbar_brand : true
 	},
 
 	elements : {
@@ -659,7 +664,7 @@ var xd1_templates={
 			ui_opts : {label: true, root_classes : ["container"], sliding: true, slided: false},
 			name : "Websocket",
 			tip : "Websocket connexion to a sadira server",
-			type : "sadira"
+			type : "socket"
 			
 		    },
 		    demos : {
