@@ -364,24 +364,28 @@ var xd1_templates={
 	name : "Viewer options",
 	ui_opts : {
 	    root_classes : ["col-md-12"],
-	    //sliding : true, slided : false, child_view_type : "div",
+	    //sliding : true, slided : false,
+	    child_view_type : "div",
 	    render_name : true,
 	    subtitle : "Set display options",
-	    child_classes : ["col-md-12"]
+	    child_classes : ["container-fluid form form-horizontal"]
 	},
 	elements : {
 	    image_axes : {
-		name : "Show image axes", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"] }
+		name : "Show image axes", type : "bool", default_value : false, ui_opts : {
+		    type : "edit", label : true,
+		    root_classes : ["form-group"]
+		}
 	    },
 	    x_plot : {
-		name : "Show X plot", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+		name : "Show X plot", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : []}
 									 
 	    },
 	    y_plot : {
-		name : "Show Y plot", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : ["inline"]}
+		name : "Show Y plot", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : []}
 	    },
 	    interp_cmap : {
-		name : "Interpolate colormap", type : "bool", default_value : true, ui_opts : { type : "edit", label : true, root_classes : ["inline"] }
+		name : "Interpolate colormap", type : "bool", default_value : true, ui_opts : { type : "edit", label : true, root_classes : [] }
 	    }
 
 
@@ -545,7 +549,8 @@ var xd1_templates={
 	    	    root_classes : ["container-fluid"],
 		    //child_classes : ["container-fluid"],
 	    	    fa_icon : "signal",
-	    	    name_node : "h4"
+	    	    name_node : "h4",
+		    enable_selection : true
 	    	},
 	    	elements : {
 	    	    cuts :{

@@ -597,13 +597,16 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
     
     create_ui({},autocout);
     
-    histo_tpl.elements.btns.ui_childs.div.appendChild(autocout.ui_root);
+    //histo_tpl.elements.btns.ui_childs.div.appendChild(autocout.ui_root);
+    
+    histo_tpl.elements.btns.add_child(autocout);
     
     autocout.listen("click",function(){
 	console.log("Unzoom Range change !, recomp histo");
 	reset_histogram();
     });
-    
+
+    /*
     histo_tpl.elements.btns.elements.unzoom.listen("click",function(){
 	console.log("Unzoom Range change !, recomp histo");
 	compute_histogram(nbins, layer.ext);
@@ -615,7 +618,8 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	compute_histogram(nbins, histo_tpl.elements.range.value);
 	update_histo_cmap();
     });
-
+    */
+    
     var histo_cmap=cc("div",histo_tpl.ui);
     histo_cmap.style.position="absolute";//className="histo_cmap";
     histo_cmap.style.top="0em";
@@ -980,8 +984,8 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 		    histo[bid]++; 
 	    }
 	}
-
-	if(histo_tpl.value.length===0){
+	
+	if(histo_tpl.value===undefined || histo_tpl.value.length===0){
 	    histo_tpl.add_plot_linear(histo, start, step);
 	    
 	}else{
