@@ -216,8 +216,8 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 		    //act.ui_root.removeChild(sr.info);
 		    
 		    console.log("GoT image data !!! " + fvp.byteLength);
-		    var img=tmaster.build_template("image");
-		    var img_ui=create_ui({}, img);
+		    //var img=tmaster.build_template("image");
+		    var img=create_widget('image');
 		    
 		    //xd.elements.objects.elements.tree.ui_childs.add_child(img, img_ui);
 		    
@@ -288,179 +288,6 @@ template_ui_builders.object_editor=function(ui_opts, edit){
     
 }
 
-template_ui_builders.image=function(ui_opts, image){
-
-    console.log("Image constructor ! " + image.name );
-
-    var bin_size=image.elements.size;
-    var dims=image.elements.dims;
-    var bounds=image.elements.bounds;
-    var meta=image.elements.keys;
-    var fits_file=image.elements.source;//.elements.local_fits;
-    //var gloria=image.elements.source.elements.gloria;
-    var view=image.elements.view.elements;
-
-    var new_display=view.new_display;
-    var display_list=view.display_list;
-    var add_to_display=view.add_to_display;
-    var add=view.add;
-  
-    var dlist=[];
-
-    
-    var views;
-    if(è(image.xd))
-	views=image.xd.elements.drawing.elements.views;
-    
-    add_to_display.listen("click", function(){
-	var opts=[];
-	dlist=[];
-	for( var v in views.elements){
-	    dlist.push(v); opts.push(v + " : " + views.elements[v].name );
-	};
-	
-	display_list.set_options(dlist);
-	
-    });
-
-
-    new_display.listen("click", function(){
-	
-	image.xd.create_image_view(image, function(error, glm){
-	    glm.set_title(image.name + " display");
-	});
-    });
-
-    add.listen("click", function(){
-	//console.log("Selected : " + display_list.ui.selectedIndex);
-	var vn=dlist[display_list.ui.selectedIndex];
-	var glm=views.elements[vn];
-	glm.create_layer(image);
-	image.xd.select_view(glm);
-    });
-
-/*	
-    gloria.listen("image_data", function(dgm){
-	image.setup_dgram_image(dgm.header,dgm.data);
-	image.set_title("GloriaImage ID " + dgm.header.gloria.autoID );
-    });
-*/
-
-    image.update_extent=function(){
-	var extent = [1e20,-1e20];
-	for (var i=0;i<image.fvp.length;i++){
-	    var v=image.fvp[i];
-	    if(v>extent[1])extent[1]=v;
-	    if(v<extent[0])extent[0]=v;
-	}
-	bounds.set_value(extent);
-    }
-    
-    image.copy_image=function(image_source){
-	
-	if(typeof image_source.fvp.length != 'undefined'){
-	    
-	    var length=image_source.fvp.length;
-	    var blength=length*4;
-	    
-	    var fvp = image.fvp=new Float32Array(length);
-	    for (var i=0;i<length;i++)
-		fvp[i]=image_source.fvp[i];
-	    image.update_extent();
-		
-	    dims.set_value(image_source.elements.dims.value);
-	    // Get the minimum and maximum pixels
-		//image.set_title(header.name);
-	    bin_size.set_value(blength);
-
-	    
-	    image.trigger("image_ready",image);
-	}
-	
-    }
-    
-    image.load_fits_data=function(data_source){
-	
-	var FITS = astro.FITS;
-	var fits = new FITS(data_source, function(){
-	    // Get the first header-dataunit containing a dataunit
-	    var hdu = this.getHDU();
-	    // Get the first header
-	    var header = hdu.header;
-	    // Read a card from the header
-	    var bitpix = header.get('BITPIX');
-	    // Get the dataunit object
-	    var dataunit = hdu.data;
-	    
-	    //console.log("FITS OK "+ JSON.stringify(header.cards, null, 5));
-
-	    meta.set_value(JSON.stringify(eval(header.cards), null, 5));
-	    
-	    var opts={ dataunit : dataunit };
-	    
-	    // Get pixels representing the image and pass callback with options
-	    dataunit.getFrame(0, function(arr, opts){// Get dataunit, width, and height from options
-		var dataunit = opts.dataunit;
-		var w= dataunit.width;
-		var h= dataunit.height;
-		
-		dims.set_value([w,h]);
-		// Get the minimum and maximum pixels
-		var extent = dataunit.getExtent(arr);
-		
-		image.set_title(fits_file.value.name);
-		//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
-
-		bin_size.set_value(fits_file.size);
-
-		bounds.set_value(extent);
-		console.log("Frame read : D=("+dims.value[0]+","+dims.value[1]+")  externt " + extent[0] + "," + extent[1] + " wh="+w+","+h);
-		//image_info.innerHTML="Dims : ("+image.width+", "+image.height+")";
-		
-		image.fvp=arr;
-		bounds.set_value(extent);
-		image.trigger("image_ready",image);
-		
-	    }, opts);
-	});
-    }
-    
-    fits_file.listen('change',function(evt){
-	var file = evt.target.files[0]; // FileList object
-	image.load_fits_data(file);
-    });
-
-    image.setup_dgram_image=function(header, fvpin){
-
-	//console.log("Setup dgram image size " + header.sz);
-	var fvp;
-
-	//if(header.name) this.name=header.name;
-
-//	if(header.colormap)
-//	    cmap.set_value(header.colormap);
-	
-	if(fvpin.length){
-	    fvp=fvpin;
-	//     length=fvp.length;
-	}else{
-	    fvp =  new Float32Array(fvpin);
-	//     length = fvp.byteLength;
-	}
-	image.set_title(header.name);
-	image.fvp=fvp;
-	dims.set_value([header.width,header.height]);
-	image.update_extent();
-
-	//bin_size.set_value(header.sz);
-
-	//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
-	meta.set_value(JSON.stringify(header, null, 5));
-	image.trigger("image_ready",image);
-    }
-
-    
-}
 
 template_ui_builders.gl_image_layer=function(ui_opts, layer){
 
@@ -478,35 +305,33 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	cmap.update_colors();
     }
 
-    //var layer_opts=this.layer_opts=tmaster.build_template("gl_image_layer"); 
-  //var depth=1;//layer_opts.depth+1;
-    var geom=layer.elements;
-    
+    var histo_tpl=layer.get('histo');
+    var cuts=layer.get('cuts');//=histo_tpl.elements.cuts; 
 
-    var histo_tpl=geom.histo;
-    var cuts=layer.cuts=histo_tpl.elements.cuts; 
-    var cmap=layer.cmap=geom.cmap; 
+    //
+    var cmap=layer.cmap=layer.get('cmap');
+    var geometry=layer.get('geometry');
 
-    var attribs=layer.elements.geometry.elements;
+    var lum=geometry.get('lum');
+    var layer_enable=geometry.get('enable');
+    var tr=geometry.get('translation');
+    var zm=geometry.get('zoom');
+    var ag=geometry.get('angle'); 
+    var rc=geometry.get('center');
 
-    var lum=attribs.lum;
-    var layer_enable=attribs.enable;
-    var tr=attribs.translation;
-    var zm=attribs.zoom; 
-    var ag=attribs.rotation.elements.angle; 
-    var rc=attribs.rotation.elements.center;
-
-    var image=layer.elements.image;
+    var image=layer.get('image');
 
     var nbins=512;
     var bsize=null; 
     var length;
 
     var slct=histo_tpl.get('selection');
-    slct.ui_root.add_class("disabled");
+//    slct.ui_root.add_class("disabled");
     //histo_tpl.elements.range.ui_root.add_class("disabled");
 
-
+    //for(var p in cuts) console.log("cutprop " + p);
+    //cuts.set_value([12,13]);
+    
     function update_histo_cmap(){
 	var brg=histo_tpl.select_brg;
 	//console.log("Selection changed brg = " + brg);
@@ -587,15 +412,20 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	}
     });
 
+    
     histo_tpl.listen("selection_change",function(new_cuts){
-	//console.log("Histo selection change !" + new_cuts[0] + ", " + new_cuts[1]); 
+	//console.log("Histo selection change !" + new_cuts[0] + ", " + new_cuts[1]);
+	//for(var p in cuts) console.log("cutprop " + p);
 	cuts.set_value(new_cuts);
+	cuts.trigger("change");
 	update_histo_cmap();
     });
     
-    var autocout={type: "action", name : "Auto cuts", ui_opts : { item_classes : ["btn btn-default btn-sm"], fa_icon: "gears", item_root : true }  };
+    var autocout_tpl={
+	type: "action", name : "Auto cuts", ui_opts : { item_classes : ["btn btn-default btn-sm"], fa_icon: "gears", item_root : true }
+    };
     
-    create_ui({},autocout);
+    var autocout=create_widget(autocout_tpl);
     
     //histo_tpl.elements.btns.ui_childs.div.appendChild(autocout.ui_root);
     
@@ -632,6 +462,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
     
     layer_enable.listen("change", function(){
 	//console.log("Change !!!");
+	if(layer.glm===undefined) return;
 	var glm=layer.glm;
 	glm.layer_enabled[layer.id]=this.value;
 	var le_loc=layer.gl.getUniformLocation(glm.program, "u_layer_enabled");
@@ -763,6 +594,8 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 
     function reset_histogram(){
 
+	if(layer.ext===undefined) return;
+	
 	var low=layer.ext[0];
 	var high=layer.ext[1];
 
@@ -1250,7 +1083,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	var liney=screen_pixel[1];
 	var ctx2d=this.glm.ctx2d;
 	//var tcenter=e.cursor;
-	var cuts=this.cuts.value;
+	var cutsv=cuts.value;
 
 
 	this.draw_frame();
@@ -1266,7 +1099,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	    ctx2d.moveTo(0,screen_dims[1]);
 	    for(var p=0;p<line_data.length;p++)
 		//ctx2d.lineTo(p,line_data[p]/1000.0);
-		ctx2d.lineTo(p,screen_dims[1]-(line_data[p]-cuts[0])/(cuts[1]-cuts[0])*line_height);
+		ctx2d.lineTo(p,screen_dims[1]-(line_data[p]-cutsv[0])/(cutsv[1]-cutsv[0])*line_height);
 	    
 	    ctx2d.lineWidth = 2;
 	    ctx2d.strokeStyle = 'orange';
@@ -1286,7 +1119,7 @@ template_ui_builders.gl_image_layer=function(ui_opts, layer){
 	    ctx2d.moveTo(0,0);
 	    for(var p=0;p<line_data.length;p++)
 		//ctx2d.lineTo(p,line_data[p]/1000.0);
-		ctx2d.lineTo((line_data[p]-cuts[0])/(cuts[1]-cuts[0])*line_height,p);
+		ctx2d.lineTo((line_data[p]-cutsv[0])/(cutsv[1]-cutsv[0])*line_height,p);
 	    
 	    ctx2d.lineWidth = 2;
 	    ctx2d.strokeStyle = 'blue';

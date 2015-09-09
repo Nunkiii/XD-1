@@ -78,15 +78,21 @@ var xd1_templates={
 			   root_classes : ["col-md-12"], child_classes : ["inline"]
 			  },
 	    },
-	    keys : { name : "Metadata", type : "text", elements : {},
-		     ui_opts: {sliding: true, slided: false, label : true, root_classes : ["col-md-12"]}},	    
+	    keys : {
+		name : "Metadata", type : "text", elements : {},
+		ui_opts: {sliding: true, slided: false, label : true, root_classes : ["col-md-12"]}
+	    },	    
 	    dims : {
 		type : "image_dimensions",
 		ui_opts: {
 		    sliding: false, slided: false,
 		    root_classes : ["col-md-6"],
 		    child_classes : ["inline"]
-		}},
+		},
+		widget_builder : function(ui_opts, dims){
+		    //alert("Hello dims constructor!");
+		}
+	    },
 	    bounds : {
 		type : "labelled_vector",
 		name : "Data value bounds",
@@ -100,7 +106,7 @@ var xd1_templates={
 			  }
 		//ui_opts: {}
 	    },
-
+	    
 	    view : {
 		name: "Display",
 		ui_opts: {sliding: false, slided: false, bar : false,
@@ -146,11 +152,186 @@ var xd1_templates={
 
 	    
 
-	}
-    },
+	},
 
+	widget_builder : function(ui_opts, image){
+	    
+	    console.log("Image constructor ! " + image.name );
+	    
+	    var bin_size=image.elements.size;
+	    var dims=image.elements.dims;
+	    var bounds=image.elements.bounds;
+	    var meta=image.elements.keys;
+	    var fits_file=image.elements.source;//.elements.local_fits;
+	    //var gloria=image.elements.source.elements.gloria;
+	    var view=image.elements.view.elements;
+	    
+	    var new_display=view.new_display;
+	    var display_list=view.display_list;
+	    var add_to_display=view.add_to_display;
+	    var add=view.add;
+	    
+	    var dlist=[];
+	    
+	    
+	    var views;
+	    if(è(image.xd))
+		views=image.xd.elements.drawing.elements.views;
+	    
+	    add_to_display.listen("click", function(){
+		var opts=[];
+		dlist=[];
+		for( var v in views.elements){
+		    dlist.push(v); opts.push(v + " : " + views.elements[v].name );
+		};
+		
+		display_list.set_options(dlist);
+		
+	    });
+	    
+	    
+	    new_display.listen("click", function(){
+		
+		image.xd.create_image_view(image, function(error, glm){
+		    glm.set_title(image.name + " display");
+		});
+	    });
+	    
+	    add.listen("click", function(){
+		//console.log("Selected : " + display_list.ui.selectedIndex);
+		var vn=dlist[display_list.ui.selectedIndex];
+		var glm=views.elements[vn];
+		glm.create_layer(image);
+		image.xd.select_view(glm);
+	    });
+	    
+/*	
+	gloria.listen("image_data", function(dgm){
+	image.setup_dgram_image(dgm.header,dgm.data);
+	image.set_title("GloriaImage ID " + dgm.header.gloria.autoID );
+	});
+*/
+
+	    image.update_extent=function(){
+		var extent = [1e20,-1e20];
+		for (var i=0;i<image.fvp.length;i++){
+		    var v=image.fvp[i];
+		    if(v>extent[1])extent[1]=v;
+		    if(v<extent[0])extent[0]=v;
+		}
+		bounds.set_value(extent);
+	    }
+	    
+	    image.copy_image=function(image_source){
+		
+		if(typeof image_source.fvp.length != 'undefined'){
+		    
+		    var length=image_source.fvp.length;
+		    var blength=length*4;
+		    
+		    var fvp = image.fvp=new Float32Array(length);
+		    for (var i=0;i<length;i++)
+			fvp[i]=image_source.fvp[i];
+		    image.update_extent();
+		    
+		    dims.set_value(image_source.elements.dims.value);
+		    // Get the minimum and maximum pixels
+		    //image.set_title(header.name);
+		    bin_size.set_value(blength);
+		    
+		    
+		    image.trigger("image_ready",image);
+		}
+		
+	    }
+	    
+	    image.load_fits_data=function(data_source){
+		
+		var FITS = astro.FITS;
+		var fits = new FITS(data_source, function(){
+		    // Get the first header-dataunit containing a dataunit
+		    var hdu = this.getHDU();
+		    // Get the first header
+		    var header = hdu.header;
+		    // Read a card from the header
+		    var bitpix = header.get('BITPIX');
+		    // Get the dataunit object
+		    var dataunit = hdu.data;
+		    
+		    //console.log("FITS OK "+ JSON.stringify(header.cards, null, 5));
+		    
+		    meta.set_value(JSON.stringify(eval(header.cards), null, 5));
+		    
+		    var opts={ dataunit : dataunit };
+		    
+		    // Get pixels representing the image and pass callback with options
+		    dataunit.getFrame(0, function(arr, opts){// Get dataunit, width, and height from options
+			var dataunit = opts.dataunit;
+			var w= dataunit.width;
+			var h= dataunit.height;
+			
+			dims.set_value([w,h]);
+			// Get the minimum and maximum pixels
+			var extent = dataunit.getExtent(arr);
+			
+			image.set_title(fits_file.value.name);
+			//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
+			
+			bin_size.set_value(fits_file.size);
+			
+			bounds.set_value(extent);
+			console.log("Frame read : D=("+dims.value[0]+","+dims.value[1]+")  externt " + extent[0] + "," + extent[1] + " wh="+w+","+h);
+			//image_info.innerHTML="Dims : ("+image.width+", "+image.height+")";
+			
+			image.fvp=arr;
+			bounds.set_value(extent);
+			image.trigger("image_ready",image);
+			
+		    }, opts);
+		});
+	    }
+	    
+	    fits_file.listen('change',function(evt){
+		var file = evt.target.files[0]; // FileList object
+		image.load_fits_data(file);
+	    });
+	    
+	    image.setup_dgram_image=function(header, fvpin){
+		
+		//console.log("Setup dgram image size " + header.sz);
+		var fvp;
+		
+		//if(header.name) this.name=header.name;
+		
+		//	if(header.colormap)
+		//	    cmap.set_value(header.colormap);
+		
+		if(fvpin.length){
+		    fvp=fvpin;
+		    //     length=fvp.length;
+		}else{
+		    fvp =  new Float32Array(fvpin);
+		    //     length = fvp.byteLength;
+		}
+		image.set_title(header.name);
+		image.fvp=fvp;
+		dims.set_value([header.width,header.height]);
+		image.update_extent();
+		
+		//bin_size.set_value(header.sz);
+		
+		//console.log("FF set_value is " + typeof(fits_file.elements.dims.set_value) );
+		meta.set_value(JSON.stringify(header, null, 5));
+		image.trigger("image_ready",image);
+	    }
+	    
+	    
+	}
+	
+    },
+    
     image_reduction : {
-	type : "image_reduction",
+	//type : "image_reduction",
 	name : "Simple image reduction",
 	ui_opts : { child_view_type : "pills", close: true},
 	elements : {
@@ -342,7 +523,7 @@ var xd1_templates={
     
     cursor_layer_info : {
 	name : "Cursor Layer Info",
-	type : "cursor_layer_info",
+	//type : "cursor_layer_info",
 	ui_opts : {root_classes : ["col-xs-12 col-md-6 "], name_classes : [], child_classes : ["inline"], label : true},
 	elements : {
 	    imgpos : {
@@ -379,7 +560,6 @@ var xd1_templates={
 	    },
 	    x_plot : {
 		name : "Show X plot", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : []}
-									 
 	    },
 	    y_plot : {
 		name : "Show Y plot", type : "bool", default_value : false, ui_opts : { type : "edit", label : true, root_classes : []}
@@ -462,14 +642,13 @@ var xd1_templates={
 
     cuts : {
 	type : "labelled_vector",
-	
 	value : [0,0],
 	value_labels : ["Low","High"],
 	min : "-100000", 
 	max : "100000", 
 	step: "100",
-	ui_opts : { editable : true, label : true, item_classes : ["inline"] }
-	//ui_opts: {root_classes : ["inline"]}
+	ui_opts : { editable : true, label : true, item_classes : ["inline"] },
+	
     },
 
 
@@ -487,20 +666,16 @@ var xd1_templates={
     
     
     gl_image_layer : {
-	//type : "template",
-	name :  "Geometry/Color configuration",
-	//tpl_builder : "xd1_layer",
+	name :  "Image view",
+
 	ui_opts : {
 	    root_classes : ["container-fluid"],
 	    //child_classes : ["container-fluid"],
 	    child_view_type : "tabbed",
-	    name_node : "h3",
-	    
-		    //type : "short", sliding: false, slided : false, sliding_dir : "v", child_view_type : "bar",
-	    //render_name : false,
-	    close: true
+	    close: true,
+	    //toolbar_brand : true
 	}, 
-	
+	//toolbar : { ui_opts : { toolbar_classes : ["navbar navbar-default"]} },
 	elements : {
 	    geometry : {
 		name : "Layer options", subtitle  : "Set up parameters for this layer",
@@ -613,23 +788,26 @@ var xd1_templates={
 	    drawing : {
 		name : "Views",
 		ui_opts : {
-		    child_view_type : "div",
+		    //child_view_type : "div",
+		    child_view_type : "divider",
 		    root_classes : [],
 		    child_classes : [],
 		    //fa_icon : "image",
 		    icon : "/XD-1/ico/stars.jpg",
-		    render_name : false
+		    render_name : false,
+		    
 		},
 		//type : "string", value : "Hello widget !",
 	    	elements : {
 		    views : {
 			name : "GL Views",
-      //type : "view_manager",
-			ui_opts: {child_view_type : "tabbed",
-				  render_name: false,
-				  root_classes : ["col-md-4 col-xs-12 scrolling"],
-				  //child_classes : ["container-fluid"]
-				 },
+			//type : "view_manager",
+			ui_opts: {
+			    child_view_type : "tabbed",
+			    render_name: false,
+			    root_classes : ["col-md-4 col-xs-12 scrolling"],
+			    //child_classes : ["container-fluid"]
+			},
 			elements : {}
 		    },
 		    
@@ -786,7 +964,8 @@ var xd1_templates={
     }
     ,
     glscreen : {
-	type : "glscreen", ui_opts : {root_classes : [] }
+	//type : "glscreen",
+	ui_opts : {root_classes : [] }
     }
 };
 

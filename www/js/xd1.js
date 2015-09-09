@@ -601,9 +601,9 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 
 	    //console.log("Creating new layer at position " + lid);
 	    
-	    var layer=tmaster.build_template("gl_image_layer"); 
+	    var layer=create_widget("gl_image_layer", layer_objects); 
 
-	    var lay_ui=create_ui({}, layer, 0);
+	    //var lay_ui=create_ui({}, layer, 0);
 	    layer.xd1_attach(glm, lid);
 
 	    
@@ -616,14 +616,14 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    	    
 	    layer.set_title(image.name);
 
-	    layer.cmap.listen("colormap_changed", function(cm){
+	    layer.get('cmap').listen("colormap_changed", function(cm){
 		layer_ci[lid].cmdiv.style.background=cm.css_color_gradient;
 	    });
 	    
 	    
 	    
-	    layer.container=layer_objects.ui_childs;
-	    layer_objects.ui_childs.add_child(layer,lay_ui);
+	    //layer.container=layer_objects.ui_childs;
+	    layer_objects.add_child(layer);
 	    //layer.view_update_childs();
 	    
 	    glm.layers.push(layer);
@@ -641,7 +641,7 @@ template_ui_builders.gl_multilayer=function(ui_opts, glm){
 	    }
 
 	    glm.trigger("view_update");
-	    layer.cmap.trigger("colormap_changed", layer.cmap);
+	    //layer.get('cmap').trigger("colormap_changed", layer.cmap);
 	    
 	    return layer;
 
