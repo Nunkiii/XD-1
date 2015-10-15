@@ -7,8 +7,9 @@
 
 
 
-template_ui_builders.xd1=function(ui_opts, xd){
-
+template_ui_builders.xd1=function(){
+    var xd=this;
+    
     console.log("Hello xd1 constructor on node " + xd.xdone_node );
     
     //xd.ui_root.removeChild(xd.ui_name);
@@ -21,7 +22,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
 
 
     //for(var p in xd.elements ) console.log("xdp = " + p);
-    var mwl_demo=xd.elements.demo;
+    var mwl_demo=xd.get('demo');
 
     var user_objects=xd.elements.objects;
     var drawing_widget=xd.elements.drawing.elements.screen;
@@ -78,13 +79,13 @@ template_ui_builders.xd1=function(ui_opts, xd){
 	xd.select_view(e);
     });
     
-
+    
     xd.create_view=function(cb, opts){
-	var glm=tmaster.build_template("gl_multilayer");
+	var glm=create_widget("gl_multilayer");
 	
 	
 	//glm.parent=views;
-	var glmui = create_ui({}, glm);
+	//var glmui = create_ui({}, glm);
 
 	glm.set_drawing_node(drawing_node);
 	
@@ -123,7 +124,7 @@ template_ui_builders.xd1=function(ui_opts, xd){
 	}
 	
 	views.elements["IV"+vn]=glm;
-	views.ui_childs.add_child(glm, glmui);
+	views.add_child(glm);
 	xd.gl_views.push(glm);
 
 	xd.select_view(glm);

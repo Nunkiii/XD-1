@@ -132,9 +132,8 @@ var def_parameters=[
     ]
 ];
 
-template_ui_builders.demo_multilayer=function(ui_opts, demo){
-
-    //console.log("Build ML demos....");
+template_ui_builders.demo_multilayer=function(){
+    var demo=this;
 
     var demos=demo.elements.demos.elements;
     var sadira=demo.elements.cnx;
@@ -160,9 +159,7 @@ template_ui_builders.demo_multilayer=function(ui_opts, demo){
 
 
     function load_mwl_demo(what,nf,act){
-	
-	
-	var xd=demo.xd;
+	var xd=demo.parent;
 
 	var img_id=0;
 	var d= sadira.dialogs.create_dialog({ handler : "fits.test_get_data", what : what});
